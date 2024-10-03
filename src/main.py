@@ -13,11 +13,21 @@ def import_file():
         try:
             # Leer el archivo de Excel
             excel = pd.read_excel(file)
-            
+            # Verificar si hay tabla
+            if excel.empty:
+                raise ValueError("En el archivo Excel no hay tabla")
             # Mostrar las primeras 5 filas
             print(excel.head())
+            
+        #Manejar los errores: lectura del archivo
+        except ValueError as e:
+            raise ValueError(f"Error al leer el archivo de Excel: {e}")
+        #Manejar los errores: ruta del archivo
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"Archivo no encontrado: {e}")
+        #Manejar los errores inesperados
         except Exception as e:
-            print(f"Error al leer el archivo de Excel: {e}")
+            print(f"Se produjo un error inesperado: {e}")
             
     #Devolver el archivo para futuras operaciones
     return file
