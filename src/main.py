@@ -3,8 +3,13 @@ import sys
 import pandas as pd
 
 def import_file():
+    # Verificar si se ha insertado el nombre del archivo
+    if len(sys.argv) != 2:
+        raise ValueError("No se ha insertado el nombre del archivo")
+    
     # Obtener el archivo
     file = sys.argv[1]
+
     # Obtener la extensión del archivo
     _, extension = os.path.splitext(file)
 
