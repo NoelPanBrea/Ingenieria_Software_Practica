@@ -40,4 +40,4 @@ def import_file():
 #NECESARIO PARA QUE FUNCIONE: pip install pandas openpyxl xlrd
 
 if __name__ == "__main__":
-    import_file()
+    file = import_file()
