@@ -24,6 +24,8 @@ def import_file():
             # Mostrar las primeras 5 filas
             print(excel.head())
             
+            return excel
+            
         #Manejar los errores: lectura del archivo
         except ValueError as e:
             raise ValueError(f"Error al leer el archivo de Excel: {e}")
@@ -35,7 +37,7 @@ def import_file():
             print(f"Se produjo un error inesperado: {e}")
             
     #Devolver el archivo para futuras operaciones
-    return file
+    return None
 
 #NECESARIO PARA QUE FUNCIONE: pip install pandas openpyxl xlrd
 
