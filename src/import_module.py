@@ -36,7 +36,6 @@ def load_file(file_path: str) -> pd.DataFrame:
         if data.empty:
             raise ValueError("En el archivo no hay tabla")
         print("\nDatos cargados correctamente. Primeras filas:\n")
-        print(data.head())  # Muestra las primeras filas de los datos
         return data
     # Error managing: lectura del archivo
     except ValueError as e:
@@ -76,7 +75,6 @@ def import_sql(file_path: str) -> pd.DataFrame:
         data = pd.read_sql(query, conn)
 
         conn.close()
-        print(type(data))
         return data
     except Exception as e:
         raise ValueError(f"Error al cargar la base de datos SQLite: {e}")
