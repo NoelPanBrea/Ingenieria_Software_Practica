@@ -6,6 +6,22 @@ import PySimpleGUI as sg
 sg.theme('DarkTeal9')
 
 
+# Ventana 2
+def import_window():
+    layout1 = [
+        [sg.Text('Introduzca aquí debajo la ruta del archivo csv que desea importar')],
+        [sg.InputText()],
+        [sg.Button('Ok')]
+    ]
+    window1 =sg.Window('TEST2', layout1)
+    while True:
+        event, values = window1.read()
+        if event == sg.WINDOW_CLOSED or event == 'OK': 
+            break
+            
+    window1.close()
+
+
 # Ventana principal
 def main():
     layout = [
