@@ -37,3 +37,7 @@ def main():
             import_window()
             
     window.close()
+
+
+if __name__ == '__main__':
+    main()
