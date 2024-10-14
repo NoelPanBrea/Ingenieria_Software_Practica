@@ -12,6 +12,11 @@ def close_import_window(window):
     dpg.delete_item(window)
 
 
+# Callback para cerrar la aplicación
+def close_main_window(sender, app_data, user_data):
+    dpg.stop_dearpygui()
+
+
 # Ventana principal
 def main():
     with dpg.window(label="Ventana Principal", width=400, height=200):
