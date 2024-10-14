@@ -23,3 +23,14 @@ def main():
         dpg.add_text("Importar archivo CSV")
         dpg.add_button(label="Importar archivo CSV", callback=open_import_window)
         dpg.add_button(label="Salir", callback=close_main_window)
+
+
+# Configuración y ejecución de la ventana
+if __name__ == '__main__':
+    dpg.create_context()
+    main()
+    dpg.create_viewport(title='TEST', width=600, height=300)
+    dpg.setup_dearpygui()
+    dpg.show_viewport()
+    dpg.start_dearpygui()
+    dpg.destroy_context()
