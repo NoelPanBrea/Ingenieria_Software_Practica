@@ -1,7 +1,5 @@
 import pandas as pd
 import sqlite3
-import os
-from tkinter import filedialog
 
 
 def load_file(file_path: str) -> pd.DataFrame:
@@ -20,22 +18,19 @@ def load_file(file_path: str) -> pd.DataFrame:
     """
 
     # Obtain the file's extension
-    extension = os.path.splitext(file_path)[1].lower()
-
     try:
-        if extension in [".sqlite", ".db"]:
-            data = import_sql(file_path)
-        elif extension in [".xlx", ".xlsx"]:
-            data = import_excel(file_path)
-        elif extension in [".csv"]:
-            data = import_csv(file_path)
+        if file_path.lower().endswith('.csv'):
+            data = __import_csv(file_path)
+        elif file_path.lower().endswith(('.xlsx', '.xls')):
+            data = __import_excel(file_path)
+        elif file_path.lower().endswith(('.sqlite', '.db')):
+            data = __import_sql(file_path)
         else:
             raise ValueError('Formato de archivo no soportado')
 
         # Verify there was data in the file
         if data.empty:
             raise ValueError("En el archivo no hay tabla")
-        print("\nDatos cargados correctamente. Primeras filas:\n")
         return data
     # Error managing: lectura del archivo
     except ValueError as e:
@@ -48,7 +43,7 @@ def load_file(file_path: str) -> pd.DataFrame:
         print(f"Se produjo un error inesperado: {e}")
 
 
-def import_sql(file_path: str) -> pd.DataFrame:
+def __import_sql(file_path: str) -> pd.DataFrame:
     """
     Loads data from the first table of a sql file
 
@@ -80,7 +75,7 @@ def import_sql(file_path: str) -> pd.DataFrame:
         raise ValueError(f"Error al cargar la base de datos SQLite: {e}")
 
 
-def import_excel(file_path: str) -> pd.DataFrame:
+def __import_excel(file_path: str) -> pd.DataFrame:
     """
     Loads data from a excel file
 
@@ -103,7 +98,7 @@ def import_excel(file_path: str) -> pd.DataFrame:
     # Needed in order to work: pip install pandas openpyxl xlrd
 
 
-def import_csv(file_path: str) -> pd.DataFrame:
+def __import_csv(file_path: str) -> pd.DataFrame:
     """
     Loads data from a csv file
 
