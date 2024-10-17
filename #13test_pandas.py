@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 # 1. Cargar los datos
 # Reemplaza 'ruta_del_archivo.csv' con la ruta del archivo descargado en tu PC
-ruta_archivo = 'C:\Users\ainho\OneDrive\Documentos\Prácticas\E.S\Ingenieria_Software_Practica\src\housing.csv'
+ruta_archivo = r'C:\Users\ainho\OneDrive\Documentos\housing.csv'
 datos = pd.read_csv(ruta_archivo)
 
 # Verificar los datos cargados
