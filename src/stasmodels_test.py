@@ -22,3 +22,32 @@ x_test = sm.add_constant(x_test)    # Hacemos lo mismo con el conjunto de prueba
 # Ajustar el modelo usando OLS (Ordinary Least Squares = Mínimos Cuadrados Ordinarios)
 modelo = sm.OLS(y_train, x_train)  # Creamos el modelo
 resultados = modelo.fit()          # Ajustamos el modelo
+
+# Imprimir el resumen del modelo
+print(resultados.summary())
+
+# Predecir valores usando el conjunto de prueba
+y_pred = resultados.predict(x_test)
+
+# Calcular el error cuadrático medio (MSE) y el coeficiente de determinación (R²)
+from sklearn.metrics import mean_squared_error, r2_score
+
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+# Mostrar resultados
+print(f"Error Cuadrático Medio (MSE): {mse}")
+print(f"Coeficiente de Determinación (R²): {r2}")
+
+# Agregar la constante al conjunto original de X
+x_const = sm.add_constant(x)
+
+# Graficamos los datos estandarizados
+plt.scatter(x, y)
+# Graficamos la linea de regresion ajustada
+plt.plot(x, resultados.predict(x_const), color='red')
+
+plt.xlabel("Latitud (RM)")
+plt.ylabel("Población (MEDV)")
+
+plt.show()
