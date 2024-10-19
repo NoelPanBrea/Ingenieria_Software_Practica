@@ -26,14 +26,21 @@ modelo.fit(x_train, y_train)
 # Realizar predicciones con el conjunto de prueba
 y_pred = modelo.predict(x_test)
 
-# Dividir los datos en conjunto de entrenamiento y prueba (80% para entrenamiento y 20% para prueba)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+# Calcular el error cuadrático medio (MSE) y el coeficiente de determinación (R²)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
 
-# Crear el modelo de regresión lineal
-modelo = LinearRegression()
+# Mostrar los resultados
+print(f"Error Cuadrático Medio (MSE): {mse}")
+print(f"Coeficiente de Determinación (R²): {r2}")
 
-# Entrenar el modelo con los datos de entrenamiento
-modelo.fit(x_train, y_train)
 
-# Realizar predicciones con el conjunto de prueba
-y_pred = modelo.predict(x_test)
+# Graficamos los datos estandarizados
+plt.scatter(x, y)
+# Graficamos la linea de regresion ajustada
+plt.plot(x, modelo.predict(x), color='red')
+
+plt.xlabel("Latitud (RM)")
+plt.ylabel("Población (MEDV)")
+
+plt.show()
