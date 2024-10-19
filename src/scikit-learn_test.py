@@ -13,3 +13,15 @@ housing_data = pd.read_csv(file_path)
 
 x = housing_data[['latitude']].values # Variables independientes
 y = housing_data['population'].values  # Variable dependiente
+
+# Dividir los datos en conjunto de entrenamiento y prueba (80% para entrenamiento y 20% para prueba)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# Crear el modelo de regresión lineal
+modelo = LinearRegression()
+
+# Entrenar el modelo con los datos de entrenamiento
+modelo.fit(x_train, y_train)
+
+# Realizar predicciones con el conjunto de prueba
+y_pred = modelo.predict(x_test)
