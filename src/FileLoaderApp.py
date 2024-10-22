@@ -214,7 +214,8 @@ class FileLoaderApp(QWidget):
     def apply_preproces(self):
         if self.selected_input_columns is not None and self._preproces_config is not None:
             if self._preproces_config == 'Delete':
-                self.data = self.data.dropna(subset=self.selected_input_columns)
+                self.data = self.data.dropna(
+                    subset=self.selected_input_columns)
             elif self._preproces_config == 'Mean':
                 for x in self.selected_input_columns:
                     self.data[x] = self.data[x].fillna(
@@ -234,6 +235,7 @@ class FileLoaderApp(QWidget):
                 except Exception as e:
                     self.showError(f'Se produjo un error inesperado {e}')
             self.reloadTable()
+
     def openFileDialog(self):
         """
         Muestra el cuadro de diálogo para abrir archivos y carga el archivo seleccionado.
@@ -260,7 +262,6 @@ class FileLoaderApp(QWidget):
             self.data = im.load_file(file_path)
 
             # Mostrar los datos en la tabla
-            
 
             self.reloadTable()
 
@@ -280,7 +281,7 @@ class FileLoaderApp(QWidget):
         for i in range(self.data.shape[0]):
             for j in range(self.data.shape[1]):
                 self.tableWidget.setItem(
-                i, j, QTableWidgetItem(str(self.data.iat[i, j])))
+                    i, j, QTableWidgetItem(str(self.data.iat[i, j])))
 
         self.tableWidget.resizeColumnsToContents()
 
@@ -333,8 +334,8 @@ class FileLoaderApp(QWidget):
         Confirma la selección de columnas y muestra un mensaje con la selección.
         """
         self.selected_input_columns = [self.inputColumnSelector.item(i).text()
-                                  for i in range(self.inputColumnSelector.count())
-                                  if self.inputColumnSelector.item(i).checkState() == Qt.Checked]
+                                       for i in range(self.inputColumnSelector.count())
+                                       if self.inputColumnSelector.item(i).checkState() == Qt.Checked]
         output_column = self.outputColumnSelector.currentText()
 
         if not self.selected_input_columns:
@@ -346,7 +347,7 @@ class FileLoaderApp(QWidget):
             self.showMessage(f"Columnas de entrada: {', '.join(
                 self.selected_input_columns)}\nValores nulos: {', '.join(
                     map(str, self.none_count()))}\nColumna de salida: {output_column} ")
-    
+
     def showMessage(self, message):
         """
         Muestra un mensaje de éxito en una ventana emergente.
