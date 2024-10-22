@@ -119,7 +119,7 @@ class FileLoaderApp(QWidget):
         self.loadButton.clicked.connect(self.openFileDialog)
 
         # Botón para desplegar menú de configuración de preprocesado
-        self.ConfigButton = QPushButton('Configuración')
+        self.ConfigButton = QPushButton('⚙️ Configuración')
         self.ConfigButton.setFixedHeight(50)
         self.ConfigButton.setFixedWidth(200)
         self.ConfigButton.clicked.connect(self.pop_up_menu)
