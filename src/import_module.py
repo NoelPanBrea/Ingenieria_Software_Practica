@@ -32,10 +32,10 @@ def load_file(file_path: str) -> pd.DataFrame:
         if data.empty:
             raise ValueError("En el archivo no hay tabla")
         return data
-    # Error managing: lectura del archivo
+    # Error managing: File reading error
     except ValueError as e:
         raise ValueError(f"Error al leer el archivo de Excel: {e}")
-    # Error managing:
+    # Error managing: File not found error
     except FileNotFoundError as e:
         raise FileNotFoundError(f"Archivo no encontrado: {e}")
     # Error managing: Unexpected exceptions
