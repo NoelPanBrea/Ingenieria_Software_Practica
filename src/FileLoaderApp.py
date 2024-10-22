@@ -1,5 +1,4 @@
 import sys
-import pandas as pd
 import import_module as im
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog, QMenu,
