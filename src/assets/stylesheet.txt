@@ -1,0 +1,90 @@
+QWidget {
+background-color: #FFCC80;
+font-family: 'Helvetica Neue', sans-serif;
+}
+
+QPushButton {
+background-color: #FF7043;
+color: #FFF3E0;
+font-size: 18px;
+font-weight: 500;
+padding: 12px 20px;
+border-radius: 12px;
+border: 2px solid #D84315;
+}
+
+QPushButton:hover {
+background-color: #D84315;
+}
+
+QLabel {
+font-size: 17px;
+font-weight: 600;
+color: #4E342E;
+}
+
+QTableWidget {
+background-color: #FFF3E0;
+border: 2px solid #FF7043;
+border-radius: 8px;
+font-size: 14px;
+color: #4E342E;
+font-weight: 700;
+}
+
+QHeaderView::section {
+background-color: #FFAB91;
+color: #4E342E;
+font-weight: 700;
+border: 1px solid #FF7043;
+padding: 4px;
+}
+
+QListWidget {
+background-color: #FFF3E0;
+border: 2px solid #FF7043;
+border-radius: 8px;
+font-size: 16px;
+padding: 8px;
+color: #4E342E;
+font-weight: 600;
+}
+
+QListWidget::item {
+padding: 10px;
+border: 1px solid #FF7043;
+border-radius: 4px;
+margin: 5px 0;
+color: #4E342E;  /* Color del texto */
+}
+
+QComboBox {
+background-color: #FFF3E0;
+border: 2px solid #FF7043;
+border-radius: 8px;
+font-size: 16px;
+padding: 8px;
+color: #4E342E;
+font-weight: 600;
+}
+
+QComboBox QAbstractItemView {
+    selection-background-color: #D84315;
+}
+
+QListWidget::indicator {
+width: 40px;  
+height: 40px; 
+}
+
+QMenu {
+border: 2px solid #D84315;
+border-radius: 5px;
+text-align: center;
+color: white;
+background-color: #FFCC80;
+}
+
+QMenu::item:selected{
+background-color: #D84315;
+}
