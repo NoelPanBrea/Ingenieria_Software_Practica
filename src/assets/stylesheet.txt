@@ -68,8 +68,7 @@ color: #4E342E;
 font-weight: 600;
 }
 
-QComboBox QAbstractItemView 
-{
+QComboBox::QAbstractItemView {
 selection-background-color: #D84315;
 }
 

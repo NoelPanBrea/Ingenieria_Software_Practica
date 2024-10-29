@@ -45,7 +45,7 @@ class FileLoaderApp(QWidget):
         with open(stylesheet_doc) as stylesheet_doc:
             self.setStyleSheet(stylesheet_doc.read())
 
-        # layouts 
+        # layouts
         self.main_layout = QVBoxLayout()
         self.bar_layout = QHBoxLayout()
         self.io_layout = QGridLayout()
@@ -72,7 +72,8 @@ class FileLoaderApp(QWidget):
         self.main_layout.addLayout(self.bar_layout)
         self.table_widget = QTableWidget()
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_widget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.table_widget.setSizeAdjustPolicy(
+            QAbstractScrollArea.AdjustToContents)
         self.table_widget.setMinimumHeight(100)
         self.main_layout.addWidget(self.table_widget)
         self.main_layout.addLayout(self.io_layout)
@@ -95,9 +96,9 @@ class FileLoaderApp(QWidget):
         res = 'Seleccione columnas de entrada (features):'
         self.input_label = QLabel(res)
         self.input_column_selector = QListWidget()
-        self.input_column_selector.setMaximumHeight(100) 
+        self.input_column_selector.setMaximumHeight(100)
         self.input_column_selector.setMaximumWidth(self.width() // 2)
-        self.input_column_selector.setMinimumWidth(self.height() // 2)  
+        self.input_column_selector.setMinimumWidth(self.height() // 2)
         self.output_label = QLabel('Seleccione columna de salida (target):')
         self.input_column_selector.itemChanged.connect(
             self.on_checkbox_changed)
@@ -107,10 +108,14 @@ class FileLoaderApp(QWidget):
 
         # dependent layouts are inicialized
         self.init_io_inside_layout()
-        self.io_layout.addWidget(self.input_label, 0, 0, alignment = Qt.AlignmentFlag.AlignBottom)
-        self.io_layout.addWidget(self.output_label, 0, 1, alignment = Qt.AlignmentFlag.AlignBottom)
-        self.io_layout.addWidget(self.input_column_selector, 1, 0, alignment = Qt.AlignmentFlag.AlignTop)
-        self.io_layout.addLayout(self.io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
+        self.io_layout.addWidget(
+            self.input_label, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.io_layout.addWidget(self.output_label, 0,
+                                 1, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.io_layout.addWidget(
+            self.input_column_selector, 1, 0, alignment=Qt.AlignmentFlag.AlignTop)
+        self.io_layout.addLayout(
+            self.io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
 
     def init_preprocess_bar_layout(self):
         buttons = ['Eliminar', 'Media', 'Mediana', 'Constantes']
@@ -137,7 +142,7 @@ class FileLoaderApp(QWidget):
 
         self.io_inside_layout.addWidget(self.output_column_selector)
         self.io_inside_layout.addWidget(self.confirm_button)
-    
+
     def delete(self) -> None:
         """
         Sets the Qaction Action1 function
@@ -156,7 +161,7 @@ class FileLoaderApp(QWidget):
         """
         try:
             self.preprocess_applier.apply_preprocess(self.data,
-                self.selected_input_columns)
+                                                     self.selected_input_columns)
         except Exception as e:
             show_error(f'Error al aplicar el preprocesado: {str(e)}')
         self.reload_table()
@@ -191,9 +196,9 @@ class FileLoaderApp(QWidget):
         """
         if self.selected_input_columns:
             input_window = InputDialog(self.selected_input_columns,
-                'Introduzca las constantes', self.styleSheet())
+                                       'Introduzca las constantes', self.styleSheet())
             input_window.exec()
-            constants = input_window.get_inputs() 
+            constants = input_window.get_inputs()
             self.preprocess_applier.set_current_method('constant', constants)
 
     def load_button_handle(self) -> None:
@@ -320,11 +325,13 @@ class FileLoaderApp(QWidget):
         elif self.output_column == '':
             show_error('⚠ Debe seleccionar una columna de salida. ⚠')
         else:
-            res = f'Columnas de entrada: {', '.join(self.selected_input_columns)}'
+            res = f'Columnas de entrada: {
+                ', '.join(self.selected_input_columns)}'
             res += f'\nValores nulos: {', '.join(
                 map(str, none_count(self.data, self.selected_input_columns)))}'
             res += f'\nColumna de salida: {self.output_column} '
             show_message(res)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
