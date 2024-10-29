@@ -68,13 +68,14 @@ color: #4E342E;
 font-weight: 600;
 }
 
-QComboBox QAbstractItemView {
-    selection-background-color: #D84315;
+QComboBox QAbstractItemView 
+{
+selection-background-color: #D84315;
 }
 
 QListWidget::indicator {
-width: 40px;  
-height: 40px; 
+width: 15px;  
+height: 15px; 
 }
 
 QMenu {
@@ -85,6 +86,9 @@ color: white;
 background-color: #FFCC80;
 }
 
-QMenu::item:selected{
+QMenu::item:selected {
 background-color: #D84315;
+}
+QTableView QTableCornerButton::section {
+background: #FFAB91; border: 1px solid #FF7043; border-radius: 3px;
 }
