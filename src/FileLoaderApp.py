@@ -1,10 +1,11 @@
 import sys
 import import_module as im
+from popup_handler import *
+from dataset_calc import *
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
-    QFileDialog, QMenu, QInputDialog, QTableWidget, QTableWidgetItem,
-    QAbstractItemView, QMessageBox, QHBoxLayout, QListWidget, QComboBox,
-    QListWidgetItem, QGridLayout
+    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QMenu,
+    QFrame, QTableWidget, QTableWidgetItem, QAbstractItemView, QHBoxLayout,
+    QListWidget, QComboBox, QListWidgetItem, QGridLayout, QAbstractScrollArea
 )
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QColor
@@ -20,276 +21,183 @@ class FileLoaderApp(QWidget):
          None
         """
         super().__init__()
-        self.initUI()
         self.data = None
         self.selected_input_columns = None
-        self.preproces_config = None
+        self.preprocess_applier = PreprocessApplier()
 
-    def initUI(self):
+        # inits the gui
+        self.init_gui()
+
+    def init_gui(self):
         """
-        Configura la interfaz gráfica de usuario (GUI) de la aplicación.
+        Inicializes the layouts and widgets of the GUI
 
         Returns
         -----------
          None
         """
-        # Configuración de la ventana principal
-        self.setWindowTitle('Lectura de Datasets - GUI')
-        self.setGeometry(100, 100, 1200, 800)  # Ventana más grande
+        # main window config
+        self.setWindowTitle('Linear regresion model maker')
+        self.setGeometry(100, 100, 1200, 800)
 
-        # Estilos de la interfaz gráfica
+        # GUI stylesheet
         stylesheet_doc = 'src/assets/stylesheet.txt'
         with open(stylesheet_doc) as stylesheet_doc:
             self.setStyleSheet(stylesheet_doc.read())
 
-        # Layout principal
-        main_layout = QVBoxLayout()
-        bar_layout = QHBoxLayout()
-        io_layout = QGridLayout()
-        io_inside_layout = QVBoxLayout()
+        # layouts 
+        self.main_layout = QVBoxLayout()
+        self.bar_layout = QHBoxLayout()
+        self.io_layout = QGridLayout()
+        self.io_inside_layout = QVBoxLayout()
+        self.preprocess_bar_layout = QHBoxLayout()
 
+        # inits the main layout
+        self.init_main_layout()
 
-        # Botón para cargar archivos
+        # set the main layout
+        self.setLayout(self.main_layout)
+
+    def init_main_layout(self) -> None:
+        # inits the dependent layouts
+        self.init_bar_layout()
+        self.init_io_layout()
+        self.init_preprocess_bar_layout()
+
+        # layout elements are created
+        res = 'Seleccione una opción de preprocesado de datos:'
+        self.apply_preprocess_label = QLabel(res)
+        self.apply_preprocess_label.hide()
+        # layout elements are added in order
+        self.main_layout.addLayout(self.bar_layout)
+        self.table_widget = QTableWidget()
+        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.table_widget.setMinimumHeight(100)
+        self.main_layout.addWidget(self.table_widget)
+        self.main_layout.addLayout(self.io_layout)
+        self.main_layout.addWidget(self.apply_preprocess_label)
+        self.main_layout.addLayout(self.preprocess_bar_layout)
+
+    def init_bar_layout(self) -> None:
+        # layout elements are created
+        self.file_path_label = QLabel('Ruta del archivo cargado:')
         self.load_button = QPushButton('📂 Abrir Archivo')
         self.load_button.setFixedWidth(200)
         self.load_button.setFixedHeight(50)
-        self.load_button.clicked.connect(self.open_file_dialog)
+        self.load_button.clicked.connect(self.load_button_handle)
 
-        # Botón para desplegar menú de configuración de preprocesado
-        self.config_button = QPushButton('⚙️ Configuración')
-        self.config_button.setFixedHeight(50)
-        self.config_button.setFixedWidth(200)
-        self.config_button.clicked.connect(self.pop_up_menu)
+        # layout elements are added in order
+        self.bar_layout.addWidget(self.load_button)
+        self.bar_layout.addWidget(self.file_path_label)
 
-        # Etiqueta para mostrar la ruta del archivo cargado
-        self.file_path_label = QLabel('Ruta del archivo cargado:')
-
-        bar_layout.addWidget(self.load_button)
-        bar_layout.addWidget(self.file_path_label)
-        bar_layout.addWidget(self.config_button)
-        main_layout.addLayout(bar_layout)
-        # Tabla para mostrar los datos
-        self.table_widget = QTableWidget()
-        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_widget.setMinimumHeight(100)
-        main_layout.addWidget(self.table_widget)
-
-        # Selectores de columnas (inicialmente ocultos)
+    def init_io_layout(self) -> None:
         res = 'Seleccione columnas de entrada (features):'
         self.input_label = QLabel(res)
         self.input_column_selector = QListWidget()
-        # Altura mínima reducida para usar menos espacio
-        self.input_column_selector.setMinimumHeight(150)
-        self.input_column_selector.setMaximumHeight(
-            250)  # Altura máxima reducida
-        self.input_column_selector.setMinimumWidth(
-            self.height() // 2)  
+        self.input_column_selector.setMaximumHeight(100) 
+        self.input_column_selector.setMaximumWidth(self.width() // 2)
+        self.input_column_selector.setMinimumWidth(self.height() // 2)  
         self.output_label = QLabel('Seleccione columna de salida (target):')
-        self.output_column_selector = QComboBox()
-        self.confirm_button = QPushButton('Confirmar selección')
-        self.confirm_button.setMaximumHeight(100)
-        # Ocultar estos elementos inicialmente
+        self.input_column_selector.itemChanged.connect(
+            self.on_checkbox_changed)
         self.input_label.hide()
         self.input_column_selector.hide()
         self.output_label.hide()
+
+        # dependent layouts are inicialized
+        self.init_io_inside_layout()
+        self.io_layout.addWidget(self.input_label, 0, 0, alignment = Qt.AlignmentFlag.AlignBottom)
+        self.io_layout.addWidget(self.output_label, 0, 1, alignment = Qt.AlignmentFlag.AlignBottom)
+        self.io_layout.addWidget(self.input_column_selector, 1, 0, alignment = Qt.AlignmentFlag.AlignTop)
+        self.io_layout.addLayout(self.io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
+
+    def init_preprocess_bar_layout(self):
+        buttons = ['Eliminar', 'Media', 'Mediana', 'Constantes']
+        functions = [self.delete, self.mean, self.median, self.constant]
+        self.preproces_buttons = []
+        self.apply_button = QPushButton('Aplicar preprocesado')
+        self.apply_button.hide()
+        self.apply_button.clicked.connect(self.apply)
+        self.apply_button.setMinimumWidth(400)
+        for name, function in zip(buttons, functions):
+            widget = QPushButton(name)
+            widget.hide()
+            widget.clicked.connect(function)
+            self.preproces_buttons.append(widget)
+            self.preprocess_bar_layout.addWidget(widget)
+        self.preprocess_bar_layout.addWidget(self.apply_button)
+
+    def init_io_inside_layout(self) -> None:
+        self.output_column_selector = QComboBox()
+        self.confirm_button = QPushButton('Confirmar selección')
         self.output_column_selector.hide()
         self.confirm_button.hide()
+        self.confirm_button.clicked.connect(self.confirm_button_handle)
 
-        # Conectar el cambio de estado del checkbox al método correspondiente
-        self.input_column_selector.itemChanged.connect(
-            self.on_checkbox_changed)
-
-        # Agregar al layout pero ocultos
-        io_layout.addWidget(self.input_label, 0, 0, alignment = Qt.AlignmentFlag.AlignBottom)
-        io_layout.addWidget(self.output_label, 0, 1, alignment = Qt.AlignmentFlag.AlignBottom)
-        io_layout.addWidget(self.input_column_selector, 1, 0, alignment = Qt.AlignmentFlag.AlignTop)
-        io_layout.addLayout(io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
-        io_inside_layout.addWidget(self.output_column_selector)
-        io_inside_layout.addWidget(self.confirm_button)
-        main_layout.addLayout(io_layout)
-        
- 
-
-        # Conectar el botón de confirmación con la función confirm_selection
-        self.confirm_button.clicked.connect(self.confirm_selection)
-        # Menu preconfiguración de los datos
-        self.menu = QMenu(self)
-        action1 = self.menu.addAction('Eliminar datos nulos')
-        sub_menu = self.menu.addMenu('Sustituir datos nulos')
-        action2 = self.menu.addAction('Aplicar cambios')
-        subaction1_1 = sub_menu.addAction('Media')
-        subaction1_2 = sub_menu.addAction('Mediana')
-        subaction1_3 = sub_menu.addAction('Constante')
-        action1.triggered.connect(self.action1_handle)
-        action2.triggered.connect(self.action2_handle)
-        subaction1_1.triggered.connect(self.subaction1_1_handle)
-        subaction1_2.triggered.connect(self.subaction1_2_handle)
-        subaction1_3.triggered.connect(self.subaction1_3_handle)
-
-        # Asignar layout principal
-        self.setLayout(main_layout)
-
-    def init_bar_layout(self) -> list:
-        # Botón para cargar archivos
-        self.load_button = QPushButton('📂 Abrir Archivo')
-        self.load_button.setFixedWidth(200)
-        self.load_button.setFixedHeight(50)
-        self.load_button.clicked.connect(self.open_file_dialog)
-
-        # Botón para desplegar menú de configuración de preprocesado
-        self.config_button = QPushButton('⚙️ Configuración')
-        self.config_button.setFixedHeight(50)
-        self.config_button.setFixedWidth(200)
-        self.config_button.clicked.connect(self.pop_up_menu)
-
-        widgets = [self.config_button, self.load_button]
-        return  widgets
-
-    def init_main_layout(self):
-        for layout in self.init_main_layout_l():
-            self.init_main_layout_w()
-
-    def init_main_layout_l(self):
-        # Layout para botones de barra de herramientas
-        bar_layout = QHBoxLayout()
-        for widget in self.init_bar_layout():
-            bar_layout.addWidget(widget)
-        return  bar_layout
+        self.io_inside_layout.addWidget(self.output_column_selector)
+        self.io_inside_layout.addWidget(self.confirm_button)
     
-    def init_main_layout_w(self):
-        # Botón para confirmar la selección de columnas
-        self.confirm_button = QPushButton('Confirmar selección')
-        self.confirm_button.hide()
-        self.confirm_button.clicked.connect(self.confirm_selection)
-
-
-        widgets = [self.confirm_button]
-        return  widgets
-
-    def action1_handle(self) -> None:
+    def delete(self) -> None:
         """
         Sets the Qaction Action1 function
         Returns
         -----------
          None
         """
-        self.preproces_config = 'Delete'
+        self.preprocess_applier.set_current_method('delete')
 
-    def action2_handle(self) -> None:
+    def apply(self) -> None:
         """
         Sets the Qaction Action2 function
         Returns
         -----------
          None
         """
-        self.apply_preproces()
+        try:
+            self.preprocess_applier.apply_preprocess(self.data,
+                self.selected_input_columns)
+        except Exception as e:
+            show_error(f'Error al aplicar el preprocesado: {str(e)}')
+        self.reload_table()
 
-    def subaction1_1_handle(self) -> None:
+    def mean(self) -> None:
         """
-        Sets the Qaction subaction1_1 function
+        Sets the Qaction mean function
 
         Returns
         -----------
          None
         """
-        self.preproces_config = 'Mean'
+        self.preprocess_applier.set_current_method('mean')
 
-    def subaction1_2_handle(self) -> None:
+    def median(self) -> None:
         """
-        Sets the Qaction subaction1_2 function
+        Sets the Qaction median function
 
         Returns
         -----------
          None
         """
-        self.preproces_config = 'Median'
+        self.preprocess_applier.set_current_method('median')
 
-    def subaction1_3_handle(self) -> None:
+    def constant(self) -> None:
         """
-        Sets the Qaction subaction1_3 function
+        Sets the Qaction constant function
 
         Returns
         -----------
          None
         """
-        input_window = QInputDialog(self)
-        constants = input_window.getText(self,
-                                         'Introduzca el valor de las constantes',
-                                         'Constantes separadas por espacios')
-        self.preproces_config = ('Cte', constants) if constants[1] else None
+        if self.selected_input_columns:
+            input_window = InputDialog(self.selected_input_columns,
+                'Introduzca las constantes', self.styleSheet())
+            input_window.exec()
+            constants = input_window.get_inputs() 
+            self.preprocess_applier.set_current_method('constant', constants)
 
-    def pop_up_menu(self) -> None:
-        """
-        Launches the pop_up_menu
-
-        Returns
-        -----------
-         None
-        """
-        pos = self.config_button.mapToGlobal(QPoint(0, 50))
-        self.menu.exec_(pos)
-
-    def none_count(self) -> list[int]:
-        """
-        Counts the None values of the columns in selected_input_columns
-
-        Returns
-        -----------
-        [self.data[x].isna().sum() for\
-                x in self.selected_input_columns]: list[int]
-                List with the number of None values of the selected columns
-        """
-        return [self.data[x].isna().sum() for
-                x in self.selected_input_columns]
-
-    def apply_preproces(self) -> None:
-        """
-        Modifies the value of Nones according to the current configuration
-
-        Returns
-        -----------
-         None
-        """
-        if self.selected_input_columns is not None\
-                and self.preproces_config is not None:
-            if self.preproces_config == 'Delete':
-                self.data = self.data.dropna(
-                    subset=self.selected_input_columns)
-            elif self.preproces_config == 'Mean':
-                for x in self.selected_input_columns:
-                    self.data[x] = self.data[x].fillna(
-                        self.data[x].mean(skipna=True))
-            elif self.preproces_config == 'Median':
-                for x in self.selected_input_columns:
-                    self.data[x] = self.data[x].fillna(
-                        self.data[x].median(skipna=True))
-            elif self.preproces_config[0] == 'Cte':
-                try:
-                    numbers = self.preproces_config[1][0].split(' ')
-                    if len(self.selected_input_columns) != len(numbers):
-                        res = 'El número de constantes ha de ser '
-                        res += 'igual al de columnas seleccionadas'
-                        raise ValueError(res)
-                    for i, x in enumerate(self.selected_input_columns):
-                        self.data[x] = self.data[x].fillna(float(numbers[i]))
-                except Exception as e:
-                    self.show_error(f'Se produjo un error inesperado: {e}')
-            self.reload_table()
-
-    def open_file_dialog(self) -> None:
-        """
-        Shows the dialog to open files and loads the selected file
-
-        Returns
-        -----------
-         None
-        """
-        options = QFileDialog.Options()
-        res = 'Todos los Archivos (*.*);;Archivos CSV (*.csv);;Archivos Excel'
-        res += ' (*.xlsx *.xls);;Base de datos SQLite (*.sqlite *.db)'
-        file_path, _ = QFileDialog.getOpenFileName(self, 'Seleccionar archivo',
-            '', res, options=options)
-
+    def load_button_handle(self) -> None:
+        file_path = open_file_dialog(self)
         if file_path:
             self.file_path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
@@ -310,9 +218,9 @@ class FileLoaderApp(QWidget):
             # Habilitar los selectores de columnas y mostrarlos
             self.enable_selectors(self.data.columns)
             # Mensaje de éxito
-            self.show_message('✅ ¡Archivo cargado exitosamente! 😃')
+            show_message('✅ ¡Archivo cargado exitosamente! 😃')
         except Exception as e:
-            self.show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠')
+            show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠')
 
     def reload_table(self) -> None:
         """
@@ -322,15 +230,14 @@ class FileLoaderApp(QWidget):
         -----------
          None
         """
-        self.table_widget.setRowCount(self.data.shape[0])
+        self.table_widget.setRowCount(self.data.shape[0] // 2)
         self.table_widget.setColumnCount(self.data.shape[1])
         self.table_widget.setHorizontalHeaderLabels(self.data.columns)
 
-        for i in range(self.data.shape[0]):
+        for i in range(self.data.shape[0] // 2):
             for j in range(self.data.shape[1]):
                 self.table_widget.setItem(
                     i, j, QTableWidgetItem(str(self.data.iat[i, j])))
-
         self.table_widget.resizeColumnsToContents()
 
     def enable_selectors(self, columns) -> None:
@@ -353,7 +260,7 @@ class FileLoaderApp(QWidget):
         self.confirm_button.show()
 
         # Agregar checkboxes a las columnas de entrada
-        for index, column in enumerate(columns):
+        for column in columns:
             item = QListWidgetItem(column)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Unchecked)  # Checkbox no marcado por defecto
@@ -387,6 +294,13 @@ class FileLoaderApp(QWidget):
                 self.table_widget.item(row, column_index).setBackground(
                     QColor(255, 243, 224))
 
+    def confirm_button_handle(self) -> None:
+        self.confirm_selection()
+        self.apply_preprocess_label.show()
+        self.apply_button.show()
+        for widgets in self.preproces_buttons:
+            widgets.show()
+
     def confirm_selection(self) -> None:
         """
         Applies the column selection and shows a message with the selection
@@ -401,53 +315,16 @@ class FileLoaderApp(QWidget):
         self.output_column = self.output_column_selector.currentText()
 
         if not self.selected_input_columns:
-            self.show_error(
+            show_error(
                 '⚠ Debe seleccionar al menos una columna de entrada. ⚠')
         elif self.output_column == '':
-            self.show_error('⚠ Debe seleccionar una columna de salida. ⚠')
+            show_error('⚠ Debe seleccionar una columna de salida. ⚠')
         else:
-            self.show_message(f'Columnas de entrada: {', '.join(
-                self.selected_input_columns)}\nValores nulos: {', '.join(
-                    map(str, self.none_count()))}\nColumna de salida: {self.output_column} ')
-
-    def show_message(self, message: str) -> None:
-        """
-        Shows a message in a pop up window
-
-        Parameters 
-        -----------
-        message : str
-            String to show in the pop up
-
-        Returns
-        -----------
-         None
-        """
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.setText(message)
-        msg_box.setWindowTitle("Éxito")
-        msg_box.exec_()
-
-    def show_error(self, message: str) -> None:
-        """
-        Shows an error message in a pop up window
-
-        Parameters 
-        -----------
-        message : str
-            Error string to show in the pop up
-
-        Returns
-        -----------
-         None
-        """
-        error_msg = QMessageBox()
-        error_msg.setIcon(QMessageBox.Critical)
-        error_msg.setText(message)
-        error_msg.setWindowTitle('Error')
-        error_msg.exec_()
-
+            res = f'Columnas de entrada: {', '.join(self.selected_input_columns)}'
+            res += f'\nValores nulos: {', '.join(
+                map(str, none_count(self.data, self.selected_input_columns)))}'
+            res += f'\nColumna de salida: {self.output_column} '
+            show_message(res)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
