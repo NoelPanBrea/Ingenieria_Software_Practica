@@ -48,9 +48,7 @@ class PreprocessApplier():
         self.columns = columns
         try:
             if self.columns is not None and self._current_method is not None:
-                for method in self._methods:
-                     if self._current_method == method:
-                          self.method()
+                self._current_method()
             else:
                 res = 'Se debe elegir una configuración de preprocesado '
                 res += 'y columnas para aplicarla'
