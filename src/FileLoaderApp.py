@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QFrame, QTableWidget, QTableWidgetItem, QAbstractItemView, QHBoxLayout,
     QListWidget, QComboBox, QListWidgetItem, QGridLayout, QAbstractScrollArea
 )
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 
 
@@ -165,6 +165,8 @@ class FileLoaderApp(QWidget):
         except Exception as e:
             show_error(f'Error al aplicar el preprocesado: {str(e)}')
         self.reload_table()
+        for x in range(self.input_column_selector.count()):
+            self.on_checkbox_changed(self.input_column_selector.item(x))
 
     def mean(self) -> None:
         """
@@ -292,7 +294,7 @@ class FileLoaderApp(QWidget):
             # Cambiar color de la columna a naranja
             for row in range(self.table_widget.rowCount()):
                 self.table_widget.item(row, column_index).setBackground(
-                    QColor(255, 171, 145))  # Color naranja
+                    QColor(255, 171, 130))  # Color naranja
         else:
             # Restaurar color de la columna a blanco
             for row in range(self.table_widget.rowCount()):
@@ -301,10 +303,11 @@ class FileLoaderApp(QWidget):
 
     def confirm_button_handle(self) -> None:
         self.confirm_selection()
-        self.apply_preprocess_label.show()
-        self.apply_button.show()
-        for widgets in self.preproces_buttons:
-            widgets.show()
+        if self.selected_input_columns:
+            self.apply_preprocess_label.show()
+            self.apply_button.show()
+            for widgets in self.preproces_buttons:
+                widgets.show()
 
     def confirm_selection(self) -> None:
         """
