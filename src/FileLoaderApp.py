@@ -3,8 +3,8 @@ import import_module as im
 from popup_handler import *
 from dataset_calc import *
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QMenu,
-    QFrame, QTableWidget, QTableWidgetItem, QAbstractItemView, QHBoxLayout,
+    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTabWidget,
+    QTableWidget, QTableWidgetItem, QAbstractItemView, QHBoxLayout,
     QListWidget, QComboBox, QListWidgetItem, QGridLayout, QAbstractScrollArea
 )
 from PyQt5.QtCore import Qt
@@ -45,13 +45,6 @@ class FileLoaderApp(QWidget):
         with open(stylesheet_doc) as stylesheet_doc:
             self.setStyleSheet(stylesheet_doc.read())
 
-        # layouts
-        self.main_layout = QVBoxLayout()
-        self.bar_layout = QHBoxLayout()
-        self.io_layout = QGridLayout()
-        self.io_inside_layout = QVBoxLayout()
-        self.preprocess_bar_layout = QHBoxLayout()
-
         # inits the main layout
         self.init_main_layout()
 
@@ -59,6 +52,28 @@ class FileLoaderApp(QWidget):
         self.setLayout(self.main_layout)
 
     def init_main_layout(self) -> None:
+        self.main_layout = QVBoxLayout()
+        self.tabs_init()
+        self.main_layout.addWidget(self.tabs)
+
+    def tabs_init(self) -> None:
+        self.tabs = QTabWidget()
+        self.data_tab_init()
+        self.plot_tab_init()
+        self.tabs.addTab(self.data_tab, 'Datos')
+        self.tabs.addTab(self.plot_tab, 'Modelo')
+
+    def plot_tab_init(self) -> None:
+        self.plot_tab = QWidget()
+        pass
+
+    def data_tab_init(self) -> None:
+        self.data_tab = QWidget()
+        self.data_layout_init()
+        self.data_tab.setLayout(self.data_layout)
+
+    def data_layout_init(self) -> None:
+        self.data_layout = QVBoxLayout()
         # inits the dependent layouts
         self.init_bar_layout()
         self.init_io_layout()
@@ -69,18 +84,19 @@ class FileLoaderApp(QWidget):
         self.apply_preprocess_label = QLabel(res)
         self.apply_preprocess_label.hide()
         # layout elements are added in order
-        self.main_layout.addLayout(self.bar_layout)
+        self.data_layout.addLayout(self.bar_layout)
         self.table_widget = QTableWidget()
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContents)
         self.table_widget.setMinimumHeight(100)
-        self.main_layout.addWidget(self.table_widget)
-        self.main_layout.addLayout(self.io_layout)
-        self.main_layout.addWidget(self.apply_preprocess_label)
-        self.main_layout.addLayout(self.preprocess_bar_layout)
+        self.data_layout.addWidget(self.table_widget)
+        self.data_layout.addLayout(self.io_layout)
+        self.data_layout.addWidget(self.apply_preprocess_label)
+        self.data_layout.addLayout(self.preprocess_bar_layout)
 
     def init_bar_layout(self) -> None:
+        self.bar_layout = QHBoxLayout()
         # layout elements are created
         self.file_path_label = QLabel('Ruta del archivo cargado:')
         self.load_button = QPushButton('📂 Abrir Archivo')
@@ -93,6 +109,7 @@ class FileLoaderApp(QWidget):
         self.bar_layout.addWidget(self.file_path_label)
 
     def init_io_layout(self) -> None:
+        self.io_layout = QGridLayout()
         res = 'Seleccione columnas de entrada (features):'
         self.input_label = QLabel(res)
         self.input_column_selector = QListWidget()
@@ -118,6 +135,7 @@ class FileLoaderApp(QWidget):
             self.io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
 
     def init_preprocess_bar_layout(self):
+        self.preprocess_bar_layout = QHBoxLayout()
         buttons = ['Eliminar', 'Media', 'Mediana', 'Constantes']
         functions = [self.delete, self.mean, self.median, self.constant]
         self.preproces_buttons = []
@@ -134,6 +152,7 @@ class FileLoaderApp(QWidget):
         self.preprocess_bar_layout.addWidget(self.apply_button)
 
     def init_io_inside_layout(self) -> None:
+        self.io_inside_layout = QVBoxLayout()
         self.output_column_selector = QComboBox()
         self.confirm_button = QPushButton('Confirmar selección')
         self.output_column_selector.hide()
