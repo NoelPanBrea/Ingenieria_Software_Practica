@@ -65,7 +65,7 @@ class FileLoaderApp(QWidget):
         self.init_preprocess_bar_layout()
 
         # layout elements are created
-        res = 'Seleccione una opción de preprocesado de datos:'
+        res = 'Seleccione una opción de preprocesado de datos nulos:'
         self.apply_preprocess_label = QLabel(res)
         self.apply_preprocess_label.hide()
         # layout elements are added in order
@@ -294,7 +294,7 @@ class FileLoaderApp(QWidget):
             # Cambiar color de la columna a naranja
             for row in range(self.table_widget.rowCount()):
                 self.table_widget.item(row, column_index).setBackground(
-                    QColor(255, 171, 130))  # Color naranja
+                    QColor(255, 171, 130))  # Color naranja 147
         else:
             # Restaurar color de la columna a blanco
             for row in range(self.table_widget.rowCount()):
