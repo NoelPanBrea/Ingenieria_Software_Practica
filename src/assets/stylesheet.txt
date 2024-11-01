@@ -91,3 +91,37 @@ background-color: #D84315;
 QTableView QTableCornerButton::section {
 background: #FFAB91; border: 1px solid #FF7043; border-radius: 3px;
 }
+
+
+QTabWidget::pane {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    border-radius: 5px;
+}
+
+QTabBar::tab {
+    background-color: #FFAB91;
+    color: #4E342E;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 2px;
+    border: 2px solid #FF7043;
+    border-bottom: none;
+    min-width: 100px;
+}
+
+QTabBar::tab:selected {
+    background-color: #FF7043;
+    color: #FFF3E0;
+    font-weight: bold;
+    border-color: #D84315;
+    border-bottom: 2px solid #FF7043;
+}
+
+QTabBar::tab:hover {
+    background-color: #D84315;
+    color: #FFF3E0;
+}

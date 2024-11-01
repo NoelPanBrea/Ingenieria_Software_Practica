@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, 'src')
-from popup_handler import InputDialog
+from tabs.data_aux.popup_handler import InputDialog
 from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtCore
 if __name__ == '__main__':
