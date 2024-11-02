@@ -84,7 +84,7 @@ class DataTab(QWidget):
 
         # Sección de preprocesado
         self.preprocess_label = QLabel(
-            'Seleccione una opción de preprocesado de datos:')
+            'Seleccione una opción de preprocesado de datos nulos:')
         self.preprocess_label.hide()
         self.preprocess_toolbar = PreprocessToolbar()
 

@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLabel
+import pandas as pd
 
 from tabs.data_tab import DataTab
+from tabs.linear_model_tab import LinearModelTab
 
 class MainWindow(QTabWidget):
     """
@@ -54,19 +56,37 @@ class MainWindow(QTabWidget):
         """
         Inicializa las pestañas de la ventana principal.
 
-        Crea la pestaña de datos y una pestaña vacía. Luego, agrega estas
-        pestañas al QTabWidget para que el usuario pueda navegar entre ellas.
+        Crea la pestaña de datos y la pestaña de modelo lineal (si hay datos),
+        luego agrega estas pestañas al QTabWidget.
         """
-        # Create the first tab (data tab)
+        # Crear la pestaña de datos
         self.data_tab = DataTab()
-        
-        # Create the second tab (empty for now)
-        self.empty_tab = QWidget()
-        empty_layout = QVBoxLayout()
-        empty_label = QLabel("Esta pestaña está vacía de momento.")
-        empty_layout.addWidget(empty_label)
-        self.empty_tab.setLayout(empty_layout)
 
-        # Add tabs to the QTabWidget
-        self.addTab(self.data_tab, "Data")
-        self.addTab(self.empty_tab, "Empty")
+        # Conectar la carga de datos para crear el modelo lineal después
+        self.data_tab.load_button.clicked.connect(self.create_linear_model_tab)
+
+        # Agregar la pestaña de datos al QTabWidget
+        self.addTab(self.data_tab, "Datos")
+
+    def create_linear_model_tab(self):
+        """
+        Crea la pestaña de modelo lineal si los datos están disponibles.
+        """
+        if self.data_tab.data is not None:
+            input_columns = ['latitude', 'longitude']  # Ajusta según tus datos
+            output_column = 'population'  # Ajusta según tus datos
+
+            # Crear la pestaña de modelo lineal
+            self.linear_model_tab = LinearModelTab(self.data_tab.data, input_columns, output_column)
+
+            # Verificar si ya existe una pestaña de modelo lineal y reemplazarla si es necesario
+            index = self.indexOf(self.linear_model_tab) if hasattr(self, 'linear_model_tab') else -1
+            if index == -1:
+                # Agregar la pestaña si no existe
+                self.addTab(self.linear_model_tab, "Modelo Lineal")
+            else:
+                # Reemplazar la pestaña existente
+                self.removeTab(index)
+                self.addTab(self.linear_model_tab, "Modelo Lineal")
+        else:
+            print("Por favor, carga los datos antes de crear el modelo lineal.")

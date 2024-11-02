@@ -103,7 +103,10 @@ class PreprocessApplier():
         por valores constantes definidos en la lista cte.
         """
         for i, x in enumerate(self.columns):
-            self.dataframe[x] = self.dataframe[x].fillna(float(self.cte[i]))
+            if self.cte[i]:
+                self.dataframe[x] = self.dataframe[x].fillna(float(self.cte[i]))
+            else:
+                raise ValueError()
 
     def apply_preprocess(self, dataframe: DataFrame, columns: list[str]) -> None:
         """
@@ -128,10 +131,15 @@ class PreprocessApplier():
                 self._current_method()
             else:
                 res = 'Se debe elegir una configuración de preprocesado '
-                res += 'y columnas para aplicarla'
-                raise ValueError(res)
+                res += 'para aplicar'
+                raise IndexError(res)
+        except IndexError as e:
+            raise Exception(f'{e} + ')
+        except ValueError as e:
+            res = 'En el campo constantes se deben introducir números '
+            raise ValueError(res + f'con "." como separador de decimales')
         except Exception as e:
-            raise Exception(f'{e}')
+            raise Exception(f'Ha ocurrido un error inesperado: {e}')
 
 
 def none_count(dataframe: DataFrame, columns: list[str]) -> list[int]:
