@@ -201,8 +201,7 @@ class DataTab(QWidget):
         """
         summary = (
             f'Columnas de entrada: {", ".join(input_columns)}\n'
-            f'Valores nulos: {
-                ", ".join(map(str, none_count(self.data, input_columns)))}\n'
+            f'Valores nulos: {", ".join(map(str, none_count(self.data, input_columns)))}\n'
             f'Columna de salida: {output_column}'
         )
         show_message(summary)
