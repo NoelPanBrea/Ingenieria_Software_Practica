@@ -42,10 +42,6 @@ class DataTab(QWidget):
     preprocess_toolbar : PreprocessToolbar
         Barra de herramientas con botones de opciones de preprocesado.
 
-    Notes
-    -----
-    Asegúrate de que `PreprocessApplier` y `import_module` estén implementados
-    correctamente para que los métodos de preprocesado funcionen como se espera.
     """
 
     def __init__(self):
@@ -74,6 +70,20 @@ class DataTab(QWidget):
         # Tabla de datos
         self.table = DataTable()
 
+        #Iniciamos el selector de columnas y la seccion de preprocesado
+        self.init_selector()
+        self.init_preprocess()
+
+        # Añadir todos los componentes al diseño principal
+        layout.addLayout(file_bar)
+        layout.addWidget(self.table)
+        layout.addWidget(self.column_selector)
+        layout.addWidget(self.preprocess_label)
+        layout.addWidget(self.preprocess_toolbar)
+
+        self.setLayout(layout)
+
+    def init_selector(self):
         # Selector de columnas (inicialmente oculto)
         self.column_selector = ColumnSelector()
         self.column_selector.setVisible(False)
@@ -82,12 +92,15 @@ class DataTab(QWidget):
         self.column_selector.input_column_selector.itemChanged.connect(
             self.on_column_selection_changed)
 
+    def init_preprocess(self):
         # Sección de preprocesado
         self.preprocess_label = QLabel(
             'Seleccione una opción de preprocesado de datos nulos:')
         self.preprocess_label.hide()
         self.preprocess_toolbar = PreprocessToolbar()
+        self.connect_buttons()
 
+    def connect_buttons(self):
         # Conectar botones de preprocesado
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
             lambda: self.set_preprocessing_method('delete'))
@@ -100,14 +113,7 @@ class DataTab(QWidget):
         self.preprocess_toolbar.apply_button.clicked.connect(
             self.apply_preprocessing)
 
-        # Añadir todos los componentes al diseño principal
-        layout.addLayout(file_bar)
-        layout.addWidget(self.table)
-        layout.addWidget(self.column_selector)
-        layout.addWidget(self.preprocess_label)
-        layout.addWidget(self.preprocess_toolbar)
-
-        self.setLayout(layout)
+        
 
     def load_data(self):
         """
