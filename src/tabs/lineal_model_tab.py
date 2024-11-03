@@ -2,10 +2,10 @@
 import pandas as pd
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import root_mean_squared_error, r2_score
 
 # Importar el modelo y la función gráfica de tus archivos
-from tabs.lineal_model_aux.linear_model import LinealModel, create_graphic
+from tabs.lineal_model_aux.lineal_model import LinealModel, create_graphic
 
 
 class LinearModelTab(QWidget):
