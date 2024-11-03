@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLabel
 import pandas as pd
 
 from tabs.data_tab import DataTab
-from tabs.linear_model_tab import LinearModelTab
+from tabs.lineal_model_tab import LinearModelTab
 
 class MainWindow(QTabWidget):
     """
