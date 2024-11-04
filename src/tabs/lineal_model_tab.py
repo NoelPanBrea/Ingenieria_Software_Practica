@@ -7,7 +7,7 @@ from sklearn.metrics import root_mean_squared_error, r2_score
 
 # Importar el modelo y la función gráfica de tus archivos
 from tabs.lineal_model_aux.lineal_model import LinealModel, create_graphic
-
+from tabs.data_aux.popup_handler import *
 
 class LinearModelTab(QWidget):
     def __init__(self, data, input_columns, output_column):
@@ -29,7 +29,6 @@ class LinearModelTab(QWidget):
         # Crear los elementos de la interfaz
         self.init_train_button()
         self.init_save_button()
-        self.init_load_button()
         self.init_result_label()
         self.init_description_field()
 
@@ -40,7 +39,6 @@ class LinearModelTab(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.train_button)
         layout.addWidget(self.save_button)
-        layout.addWidget(self.load_button)
         layout.addWidget(self.result_label)
         layout.addWidget(self.description_display)
         layout.addWidget(self.description_input)
@@ -67,13 +65,7 @@ class LinearModelTab(QWidget):
         """
         Inicializa el botón de guardado del modelo.
         """
-        self.save_button = QPushButton("Guardar Modelo")
-    
-    def init_load_button(self):
-        """
-        Inicializa el botón de carga del modelo.
-        """
-        self.load_button = QPushButton("Cargar modelos")
+        self.save_button = QPushButton("💾 Guardar Modelo")
 
     def init_description_field(self):
         """
@@ -108,9 +100,8 @@ class LinearModelTab(QWidget):
         # Conectar el botón de entrenamiento al método correspondiente
         self.train_button.clicked.connect(self.train_model)
         
-        # Conectar el botón de guardado y carga de modelos
+        # Conectar el botón de guardado de modelos
         self.save_button.clicked.connect(self.save_model)
-        # self.load_button.clicked.connect(self.load_model)
 
         # Conectar eventos para el campo de descripción
         self.description_display.mousePressEvent = self.on_label_click
@@ -175,7 +166,7 @@ class LinearModelTab(QWidget):
         Guarda el modelo lineal.
         """
         if self.model is None:
-            self.result_label.setText("No hay ningún modelo entrenado para guardar.")
+            show_error('⚠ Debe primero entrenar el modelo ⚠')
             return
 
         # Datos del modelo a guardar
@@ -194,13 +185,12 @@ class LinearModelTab(QWidget):
             }
         }
 
-        # Guardar en archivo JSON
-        joblib.dump(model_data, "linear_model_data.joblib")
+    
+        try:
+         joblib.dump(model_data, "linear_model_data.joblib")
         
-        self.result_label.setText("Modelo guardado exitosamente en 'linear_model_data.joblib'.")
-
-    def load_model(self):
-        """
-        Carga el modelo lineal.
-        """
-        pass
+         show_message("✅ ¡Modelo guardado exitosamente! 😃")
+         
+        except Exception as e:
+            show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
+            

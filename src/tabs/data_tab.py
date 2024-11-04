@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from typing import List, Optional
 import pandas as pd
+import joblib
 
 import tabs.data_aux.import_module as im
 from tabs.data_aux.popup_handler import *
@@ -59,13 +60,17 @@ class DataTab(QWidget):
         layout = QVBoxLayout()
 
         # Sección de carga de archivo
-        file_bar = QHBoxLayout()
+        self.file_widget = QWidget()
+        self.model_widget = QWidget()
+        file_bar = QHBoxLayout(self.file_widget)
+        model_bar = QHBoxLayout(self.model_widget)
         self.load_button = QPushButton('📂 Abrir Archivo')
         self.load_button.setFixedSize(200, 50)
-        self.load_button.clicked.connect(self.load_data)
+        self.loadmodel_button = QPushButton('🗃️ Cargar Modelo')
+        self.loadmodel_button.setFixedSize(200, 50)
         self.file_path_label = QLabel('Ruta del archivo cargado:')
-        file_bar.addWidget(self.load_button)
-        file_bar.addWidget(self.file_path_label)
+        self.model_path_label = QLabel('Ruta del modelo cargado:')
+        
 
         # Tabla de datos
         self.table = DataTable()
@@ -73,9 +78,15 @@ class DataTab(QWidget):
         #Iniciamos el selector de columnas y la seccion de preprocesado
         self.init_selector()
         self.init_preprocess()
-
+        
+        file_bar.addWidget(self.load_button)
+        file_bar.addWidget(self.file_path_label)
+        
+        model_bar.addWidget(self.loadmodel_button)
+        model_bar.addWidget(self.model_path_label)
         # Añadir todos los componentes al diseño principal
-        layout.addLayout(file_bar)
+        layout.addWidget(self.file_widget)
+        layout.addWidget(self.model_widget)
         layout.addWidget(self.table)
         layout.addWidget(self.column_selector)
         layout.addWidget(self.preprocess_label)
@@ -101,6 +112,10 @@ class DataTab(QWidget):
         self.connect_buttons()
 
     def connect_buttons(self):
+        # Conectar botón de carga
+        self.load_button.clicked.connect(self.load_data)
+        self.loadmodel_button.clicked.connect(self.load_model)
+        
         # Conectar botones de preprocesado
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
             lambda: self.set_preprocessing_method('delete'))
@@ -113,7 +128,35 @@ class DataTab(QWidget):
         self.preprocess_toolbar.apply_button.clicked.connect(
             self.apply_preprocessing)
 
-        
+    def load_model(self):
+        model_path = open_file_dialog(self)
+        if not model_path:
+            return
+
+        try:
+            self.model = joblib.load(model_path)
+            self.model_path_label.setText(
+                f'📄 Ruta del modelo cargado: {model_path}')
+            self.file_widget.hide()
+            show_message('✅ ¡Modelo cargado exitosamente! 😃')
+            
+            self.display_model_data()
+            
+        except Exception as e:
+            show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠')
+    
+    def display_model_data(self):
+        try:
+            if isinstance(self.model, dict):  
+                data = pd.DataFrame(self.model)
+                    
+            else:
+                show_error("⚠ Formato de modelo no soportado ⚠")
+                return
+
+            self.table.update_data(data)
+        except Exception as e:
+            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
 
     def load_data(self):
         """
@@ -133,10 +176,12 @@ class DataTab(QWidget):
             self.data = im.load_file(file_path)
             self.file_path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
+            self.model_widget.hide()
             self.table.update_data(self.data)
             self.column_selector.populate_columns(self.data.columns)
             self.column_selector.setVisible(True)
             show_message('✅ ¡Archivo cargado exitosamente! 😃')
+                
         except Exception as e:
             show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠')
 
