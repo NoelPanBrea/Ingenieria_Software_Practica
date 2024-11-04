@@ -1,5 +1,6 @@
 # linear_model_tab.py
 import pandas as pd
+import joblib 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from sklearn.metrics import root_mean_squared_error, r2_score
@@ -27,6 +28,8 @@ class LinearModelTab(QWidget):
         """
         # Crear los elementos de la interfaz
         self.init_train_button()
+        self.init_save_button()
+        self.init_load_button()
         self.init_result_label()
         self.init_description_field()
 
@@ -36,6 +39,8 @@ class LinearModelTab(QWidget):
         # Configurar el layout de la pestaña
         layout = QVBoxLayout()
         layout.addWidget(self.train_button)
+        layout.addWidget(self.save_button)
+        layout.addWidget(self.load_button)
         layout.addWidget(self.result_label)
         layout.addWidget(self.description_display)
         layout.addWidget(self.description_input)
@@ -57,6 +62,18 @@ class LinearModelTab(QWidget):
         Inicializa la etiqueta de resultados.
         """
         self.result_label = QLabel("Presiona el botón para entrenar el modelo.")
+    
+    def init_save_button(self):
+        """
+        Inicializa el botón de guardado del modelo.
+        """
+        self.save_button = QPushButton("Guardar Modelo")
+    
+    def init_load_button(self):
+        """
+        Inicializa el botón de carga del modelo.
+        """
+        self.load_button = QPushButton("Cargar modelos")
 
     def init_description_field(self):
         """
@@ -90,6 +107,10 @@ class LinearModelTab(QWidget):
         """
         # Conectar el botón de entrenamiento al método correspondiente
         self.train_button.clicked.connect(self.train_model)
+        
+        # Conectar el botón de guardado y carga de modelos
+        self.save_button.clicked.connect(self.save_model)
+        # self.load_button.clicked.connect(self.load_model)
 
         # Conectar eventos para el campo de descripción
         self.description_display.mousePressEvent = self.on_label_click
@@ -148,3 +169,38 @@ class LinearModelTab(QWidget):
         
         self.description_input.hide()
         self.description_display.show()
+
+    def save_model(self):
+        """
+        Guarda el modelo lineal.
+        """
+        if self.model is None:
+            self.result_label.setText("No hay ningún modelo entrenado para guardar.")
+            return
+
+        # Datos del modelo a guardar
+        model_data = {
+            "formula": (self.model.formula),                          # Fórmula del modelo
+            "coefficients": self.model.coef_.tolist(),                # Coeficientes del modelo
+            "intercept": self.model.intercept_,                      # Intersección del modelo
+            "description": self.description_display.text(),         # Descripción del modelo
+            "metrics": {
+                "r2_score": r2_score(self.model.y, self.model.y_pred),
+                "rmse": root_mean_squared_error(self.model.y, self.model.y_pred)
+            },
+            "columns": {
+                "input": self.input_columns,
+                "output": self.output_column
+            }
+        }
+
+        # Guardar en archivo JSON
+        joblib.dump(model_data, "linear_model_data.joblib")
+        
+        self.result_label.setText("Modelo guardado exitosamente en 'linear_model_data.joblib'.")
+
+    def load_model(self):
+        """
+        Carga el modelo lineal.
+        """
+        pass
