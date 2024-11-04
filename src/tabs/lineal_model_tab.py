@@ -105,7 +105,7 @@ class LinearModelTab(QWidget):
         self.model.fit()
         
         # Obtener métricas del modelo
-        mse = mean_squared_error(self.model.y, self.model.y_pred)
+        mse = root_mean_squared_error(self.model.y, self.model.y_pred)
         r2 = r2_score(self.model.y, self.model.y_pred)
 
         # Mostrar las métricas en la interfaz
