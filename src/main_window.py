@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLabel
 import pandas as pd
 
 from tabs.data_tab import DataTab
-from tabs.lineal_model_tab import LinearModelTab
+from tabs.lineal_model_tab import LinealModelTab
 
 class MainWindow(QTabWidget):
     """
@@ -63,7 +63,7 @@ class MainWindow(QTabWidget):
         self.data_tab = DataTab()
 
         # Conectar la carga de datos para crear el modelo lineal después
-        self.data_tab.load_button.clicked.connect(self.create_linear_model_tab)
+        self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
         # Agregar la pestaña de datos al QTabWidget
         self.addTab(self.data_tab, "Datos")
@@ -72,21 +72,17 @@ class MainWindow(QTabWidget):
         """
         Crea la pestaña de modelo lineal si los datos están disponibles.
         """
-        if self.data_tab.data is not None:
-            input_columns = ['latitude', 'longitude']  # Ajusta según tus datos
-            output_column = 'population'  # Ajusta según tus datos
+        # Crear la pestaña de modelo lineal
+        self.linear_model_tab = LinealModelTab(self.data_tab.data, 
+                                               self.data_tab.selected_input_columns, 
+                                               self.data_tab.selected_output_column)
 
-            # Crear la pestaña de modelo lineal
-            self.linear_model_tab = LinearModelTab(self.data_tab.data, input_columns, output_column)
-
-            # Verificar si ya existe una pestaña de modelo lineal y reemplazarla si es necesario
-            index = self.indexOf(self.linear_model_tab) if hasattr(self, 'linear_model_tab') else -1
-            if index == -1:
-                # Agregar la pestaña si no existe
-                self.addTab(self.linear_model_tab, "Modelo Lineal")
-            else:
-                # Reemplazar la pestaña existente
-                self.removeTab(index)
-                self.addTab(self.linear_model_tab, "Modelo Lineal")
+        # Verificar si ya existe una pestaña de modelo lineal y reemplazarla si es necesario
+        index = self.indexOf(self.linear_model_tab) if hasattr(self, 'linear_model_tab') else -1
+        if index == -1:
+            # Agregar la pestaña si no existe
+            self.addTab(self.linear_model_tab, "Modelo Lineal")
         else:
-            print("Por favor, carga los datos antes de crear el modelo lineal.")
+            # Reemplazar la pestaña existente
+            self.removeTab(index)
+            self.addTab(self.linear_model_tab, "Modelo Lineal")

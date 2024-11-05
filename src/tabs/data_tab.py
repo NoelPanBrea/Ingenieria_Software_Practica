@@ -49,6 +49,7 @@ class DataTab(QWidget):
         super().__init__()
         self.data: Optional[pd.DataFrame] = None
         self.selected_input_columns: Optional[List[str]] = None
+        self.selected_output_column: Optional[str] = None
         self.preprocess_applier = PreprocessApplier()
         self.init_ui()
 
@@ -258,6 +259,7 @@ class DataTab(QWidget):
             return
 
         self.selected_input_columns = input_columns
+        self.selected_output_column = output_column
         self.show_selection_summary(input_columns, output_column)
         self.enable_preprocessing()
 
@@ -311,7 +313,7 @@ class DataTab(QWidget):
             input_window = InputDialog(
                 self.selected_input_columns,
                 'Introduzca las constantes',
-                self.styleSheet()
+                parent = self
             )
             input_window.exec()
             constants = input_window.get_inputs()

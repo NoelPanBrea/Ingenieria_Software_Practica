@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
 import joblib
-from class_LinealModel import *
+from tabs.lineal_model_aux.class_LinealModel import *
 from sklearn.metrics import mean_squared_error, r2_score
 from tabs.lineal_model_aux.description import *
 from tabs.data_aux.popup_handler import *
@@ -89,7 +89,7 @@ class LinealModelTab(QWidget):
         layout.addItem(spacer)
 
         self.save_button = QPushButton("💾 Guardar Modelo")
-        self.save_buton.clicked.connect(self.save_model)
+        self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
         layout.addWidget(self.save_button)
         
@@ -97,10 +97,11 @@ class LinealModelTab(QWidget):
     
     def create_model(self):
         # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
+        self.save_button.setVisible(True)
         self.clear_previous_graph()
 
         if self.data is None or self.input_columns is None or self.output_column is None:
-            QMessageBox.critical(self, "Error", "ADRIII EL ERROR ESTÁ EN LINEALMODELTAB")
+            QMessageBox.critical(self, "Error", "ERROR")
         else:
             try:
                 self.canvas = None  # Restablecer la referencia a None
