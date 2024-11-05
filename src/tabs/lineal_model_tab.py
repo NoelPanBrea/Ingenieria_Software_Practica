@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
 import joblib
-
-from tabs.lineal_model_aux.lineal_model import *
+from class_LinealModel import *
+from sklearn.metrics import mean_squared_error, r2_score
 from tabs.lineal_model_aux.description import *
 from tabs.data_aux.popup_handler import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -225,7 +225,7 @@ class LinealModelTab(QWidget):
             "description": self.description_display.text(),         # Descripción del modelo
             "metrics": {
                 "r2_score": r2_score(self.model.y, self.model.y_pred),
-                "rmse": root_mean_squared_error(self.model.y, self.model.y_pred)
+                "rmse": mean_squared_error(self.model.y, self.model.y_pred)
             },
             "columns": {
                 "input": self.input_columns,

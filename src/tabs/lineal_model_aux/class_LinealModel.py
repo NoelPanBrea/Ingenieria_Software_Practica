@@ -34,7 +34,7 @@ class LinealModel:
         self.coef_ = self.model.coef_
         self.intercept_ = self.model.intercept_
         self.predict()
-        self.plot()
+        # self.plot()
         self.evaluate()
         self.calc_formula()
 
@@ -43,7 +43,7 @@ class LinealModel:
         return self.y_pred
 
     # Crea la gráfica
-    def plot(self):
+    # def plot(self):
         if len(self.input_columns) == 1:
             create_graphic(self.x, self.y, self.y_pred, self.input_columns, self.output_column)
         else:
