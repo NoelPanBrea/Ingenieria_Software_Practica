@@ -1,7 +1,7 @@
 # linear_model_tab.py
 import pandas as pd
 import joblib 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QLineEdit, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from sklearn.metrics import root_mean_squared_error, r2_score
 
@@ -23,31 +23,38 @@ class LinearModelTab(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        """
-        Configura la interfaz de usuario de la pestaña.
-        """
-        # Crear los elementos de la interfaz
-        self.init_train_button()
-        self.init_save_button()
-        self.init_result_label()
-        self.init_description_field()
+     """
+     Configura la interfaz de usuario de la pestaña.
+     """
+     # Crear los elementos de la interfaz
+     self.init_train_button()
+     self.init_save_button()
+     self.init_result_label()
+     self.init_description_field()
 
-        # Conectar eventos
-        self.connect_signals()
+     # Conectar eventos
+     self.connect_signals()
 
-        # Configurar el layout de la pestaña
-        layout = QVBoxLayout()
-        layout.addWidget(self.train_button)
-        layout.addWidget(self.save_button)
-        layout.addWidget(self.result_label)
-        layout.addWidget(self.description_display)
-        layout.addWidget(self.description_input)
-        
-        # Espaciador para empujar widgets hacia arriba
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        layout.addItem(spacer)
-        
-        self.setLayout(layout)
+     # Configurar el layout de la pestaña
+     layout = QVBoxLayout()
+    
+     layout.addWidget(self.train_button)
+     layout.addWidget(self.result_label)
+     layout.addWidget(self.description_display)
+     layout.addWidget(self.description_input)
+
+     # Espaciador para empujar widgets hacia arriba
+     layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+     # Crear un layout horizontal para el botón de guardar en la parte inferior derecha
+     save_button_layout = QHBoxLayout()
+     save_button_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+     save_button_layout.addWidget(self.save_button)
+
+     # Añadir el layout horizontal al layout principal
+     layout.addLayout(save_button_layout)
+
+     self.setLayout(layout)
 
     def init_train_button(self):
         """
@@ -66,6 +73,7 @@ class LinearModelTab(QWidget):
         Inicializa el botón de guardado del modelo.
         """
         self.save_button = QPushButton("💾 Guardar Modelo")
+        self.save_button.setVisible(False)
 
     def init_description_field(self):
         """
@@ -124,13 +132,13 @@ class LinearModelTab(QWidget):
         self.result_label.setText(
             f"Modelo entrenado.\nError cuadrático medio: {mse:.2f}\nCoeficiente de determinación (R²): {r2:.2f}\nFórmula: {self.model.formula}"
         )
-
         # Graficar el modelo si solo hay una variable independiente
         if len(self.input_columns) == 1:
             create_graphic(self.model.x, self.model.y, self.model.y_pred, self.input_columns, self.output_column)
         else:
             print("No se puede graficar con múltiples variables independientes.")
-    
+        
+        self.save_button.setVisible(True)
     def on_label_click(self, event):
         """
         Activa el modo de edición cuando se hace clic en la descripción.
@@ -184,7 +192,6 @@ class LinearModelTab(QWidget):
                 "output": self.output_column
             }
         }
-
     
         try:
          joblib.dump(model_data, "linear_model_data.joblib")

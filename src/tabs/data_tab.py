@@ -64,6 +64,7 @@ class DataTab(QWidget):
         self.model_widget = QWidget()
         file_bar = QHBoxLayout(self.file_widget)
         model_bar = QHBoxLayout(self.model_widget)
+        
         self.load_button = QPushButton('📂 Abrir Archivo')
         self.load_button.setFixedSize(200, 50)
         self.loadmodel_button = QPushButton('🗃️ Cargar Modelo')
@@ -78,6 +79,8 @@ class DataTab(QWidget):
         #Iniciamos el selector de columnas y la seccion de preprocesado
         self.init_selector()
         self.init_preprocess()
+        
+        self.connect_buttons()
         
         file_bar.addWidget(self.load_button)
         file_bar.addWidget(self.file_path_label)
@@ -109,7 +112,6 @@ class DataTab(QWidget):
             'Seleccione una opción de preprocesado de datos nulos:')
         self.preprocess_label.hide()
         self.preprocess_toolbar = PreprocessToolbar()
-        self.connect_buttons()
 
     def connect_buttons(self):
         # Conectar botón de carga
@@ -146,18 +148,55 @@ class DataTab(QWidget):
             show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠')
     
     def display_model_data(self):
-        try:
-            if isinstance(self.model, dict):  
-                data = pd.DataFrame(self.model)
-                    
-            else:
-                show_error("⚠ Formato de modelo no soportado ⚠")
-                return
+     """
+     Muestra los datos del modelo cargado en la tabla.
+     """
+     try:
+        # Verificar que el modelo tiene el formato esperado
+        if isinstance(self.model, dict):
+            # Extraer los datos relevantes del modelo
+            formula = self.model.get("formula", "N/A")
+            coefficients = self.model.get("coefficients", [])
+            intercept = self.model.get("intercept", "N/A")
+            description = self.model.get("description", "Sin descripción")
+            metrics = self.model.get("metrics", {})
+            columns = self.model.get("columns", {})
 
-            self.table.update_data(data)
-        except Exception as e:
-            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
+            # Obtener R² y RMSE, agregando MSE
+            r2_score = metrics.get("r2_score", "N/A")
+            rmse = metrics.get("rmse", "N/A")
 
+            # Obtener columnas de entrada y salida
+            input_columns = ", ".join(columns.get("input", []))
+            output_column = columns.get("output", "N/A")
+            
+            # Crear un diccionario con los datos del modelo para visualización
+            data_dict = {
+                "Descripción": [
+                    "Fórmula", "Intercepto", "Coeficientes", "Descripción",
+                    "R²", "RMSE", "Columnas de Entrada", "Columna de Salida"
+                ],
+                "Valor": [
+                    formula,
+                    intercept,
+                    ", ".join(map(str, coefficients)),
+                    description,
+                    r2_score,
+                    rmse,
+                    input_columns,
+                    output_column
+                ]
+            }
+            model_data_df = pd.DataFrame(data_dict)
+
+            # Actualizar la tabla con el DataFrame generado
+            self.table.update_data(model_data_df)
+            
+        else:
+            show_error("⚠ Formato de modelo no soportado ⚠")
+     except Exception as e:
+        show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
+        
     def load_data(self):
         """
         Carga un archivo de datos seleccionado por el usuario, actualizando la

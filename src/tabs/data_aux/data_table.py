@@ -52,11 +52,16 @@ class DataTable(QTableWidget):
         Solo se muestra la mitad de las filas del DataFrame original para mejorar
         la eficiencia y reducir la carga visual en la interfaz.
         """
-        self.setRowCount(data.shape[0] // 2)
+        if data.shape[0] <= 10:
+            shown_rows = data.shape[0]
+        else:
+            shown_rows = data.shape[0] // 2
+            
+        self.setRowCount(shown_rows)
         self.setColumnCount(data.shape[1])
         self.setHorizontalHeaderLabels(data.columns)
 
-        for i in range(data.shape[0] // 2):
+        for i in range(shown_rows):
             for j in range(data.shape[1]):
                 self.setItem(i, j, QTableWidgetItem(str(data.iat[i, j])))
         self.resizeColumnsToContents()
