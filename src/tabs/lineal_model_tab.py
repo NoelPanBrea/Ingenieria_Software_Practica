@@ -1,84 +1,47 @@
-# linear_model_tab.py
-import pandas as pd
-import joblib 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QLineEdit, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
+                            QSpacerItem, QMessageBox)
 from PyQt5.QtCore import Qt
-from sklearn.metrics import root_mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import joblib
 
-# Importar el modelo y la función gráfica de tus archivos
-from tabs.lineal_model_aux.lineal_model import LinealModel, create_graphic
+from tabs.lineal_model_aux.lineal_model import *
+from tabs.lineal_model_aux.description import *
 from tabs.data_aux.popup_handler import *
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
-class LinearModelTab(QWidget):
-    def __init__(self, data, input_columns, output_column):
-        super().__init__()
-        
-        # Guardar datos y columnas
+
+class LinealModelTab(QWidget):
+    def __init__(self, data, input_columns, output_column, parent=None):
+        super().__init__(parent)
+        self.model_description = ModelDescription()
         self.data = data
         self.input_columns = input_columns
         self.output_column = output_column
         self.model = None
+        self.canvas = None  # Referencia para el gráfico
+        self.setup_ui()
 
-        # Inicializar la interfaz
-        self.init_ui()
 
-    def init_ui(self):
-     """
-     Configura la interfaz de usuario de la pestaña.
-     """
-     # Crear los elementos de la interfaz
-     self.init_train_button()
-     self.init_save_button()
-     self.init_result_label()
-     self.init_description_field()
+    def setup_ui(self):
+        layout = QVBoxLayout()
+        
+        # Botón para crear el modelo
+        self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
+        self.create_model_button.clicked.connect(self.create_model)
+        layout.addWidget(self.create_model_button)
 
-     # Conectar eventos
-     self.connect_signals()
+        # Etiquetas para mostrar fórmula y métricas
+        self.formula_label = QLabel("Fórmula del Modelo:")
+        self.r2_label = QLabel("R²: ")
+        self.mse_label = QLabel("ECM: ")
+        
+        # Añadir al layout
+        layout.addWidget(self.formula_label)
+        layout.addWidget(self.r2_label)
+        layout.addWidget(self.mse_label)
 
-     # Configurar el layout de la pestaña
-     layout = QVBoxLayout()
-    
-     layout.addWidget(self.train_button)
-     layout.addWidget(self.result_label)
-     layout.addWidget(self.description_display)
-     layout.addWidget(self.description_input)
-
-     # Espaciador para empujar widgets hacia arriba
-     layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
-
-     # Crear un layout horizontal para el botón de guardar en la parte inferior derecha
-     save_button_layout = QHBoxLayout()
-     save_button_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
-     save_button_layout.addWidget(self.save_button)
-
-     # Añadir el layout horizontal al layout principal
-     layout.addLayout(save_button_layout)
-
-     self.setLayout(layout)
-
-    def init_train_button(self):
-        """
-        Inicializa el botón de entrenamiento del modelo.
-        """
-        self.train_button = QPushButton("Entrenar Modelo Lineal")
-
-    def init_result_label(self):
-        """
-        Inicializa la etiqueta de resultados.
-        """
-        self.result_label = QLabel("Presiona el botón para entrenar el modelo.")
-    
-    def init_save_button(self):
-        """
-        Inicializa el botón de guardado del modelo.
-        """
-        self.save_button = QPushButton("💾 Guardar Modelo")
-        self.save_button.setVisible(False)
-
-    def init_description_field(self):
-        """
-        Configura el campo de descripción editable.
-        """
+        # Configurar etiqueta para mostrar la descripción
         self.description_display = QLabel("Haz clic para añadir una descripción...")
         self.description_display.setStyleSheet("""
             QLabel {
@@ -88,9 +51,10 @@ class LinearModelTab(QWidget):
             }
         """)
         self.description_display.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.description_display.setMouseTracking(True)
         self.description_display.setCursor(Qt.PointingHandCursor)
         
-        # Campo de texto para editar la descripción
+        # Configurar campo de texto editable
         self.description_input = QLineEdit()
         self.description_input.setPlaceholderText("Escribe aquí la descripción del modelo...")
         self.description_input.setStyleSheet("""
@@ -99,52 +63,108 @@ class LinearModelTab(QWidget):
                 padding: 2px;
             }
         """)
-        self.description_input.hide()  # Ocultar inicialmente el campo de edición
+        self.description_input.hide()
 
-    def connect_signals(self):
-        """
-        Conecta los eventos de la interfaz.
-        """
-        # Conectar el botón de entrenamiento al método correspondiente
-        self.train_button.clicked.connect(self.train_model)
-        
-        # Conectar el botón de guardado de modelos
-        self.save_button.clicked.connect(self.save_model)
-
-        # Conectar eventos para el campo de descripción
-        self.description_display.mousePressEvent = self.on_label_click
+        # Conectar eventos de interacción
         self.description_input.returnPressed.connect(self.save_description)
         self.description_input.focusOutEvent = self.on_focus_lost
+        self.description_display.mousePressEvent = self.on_label_click
 
-    def train_model(self):
-        """
-        Entrena el modelo lineal y muestra los resultados en la interfaz.
-        """
-        # Crear y ajustar el modelo lineal
-        self.model = LinealModel(self.data, self.input_columns, self.output_column)
-        self.model.fit()
+        # Cargar descripción desde la base de datos o archivo
+        loaded_description = self.model_description.load_description()
+        if loaded_description:
+            self.description_display.setText(loaded_description)
         
-        # Obtener métricas del modelo
-        mse = root_mean_squared_error(self.model.y, self.model.y_pred)
-        r2 = r2_score(self.model.y, self.model.y_pred)
+        layout.addWidget(self.description_display)
+        layout.addWidget(self.description_input)
 
-        # Mostrar las métricas en la interfaz
-        self.result_label.setText(
-            f"Modelo entrenado.\nError cuadrático medio: {mse:.2f}\nCoeficiente de determinación (R²): {r2:.2f}\nFórmula: {self.model.formula}"
-        )
-        # Graficar el modelo si solo hay una variable independiente
-        if len(self.input_columns) == 1:
-            create_graphic(self.model.x, self.model.y, self.model.y_pred, self.input_columns, self.output_column)
+        # Contenedor para la gráfica
+        self.graph_container = QWidget()
+        self.graph_layout = QVBoxLayout(self.graph_container)
+        self.graph_layout.setContentsMargins(0, 10, 0, 10)  # Margen para separar del resto
+        layout.addWidget(self.graph_container)
+        
+        # Espaciador para empujar widgets hacia arriba
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        layout.addItem(spacer)
+
+        self.save_button = QPushButton("💾 Guardar Modelo")
+        self.save_buton.clicked.connect(self.save_model)
+        self.save_button.setVisible(False)
+        layout.addWidget(self.save_button)
+        
+        self.setLayout(layout)
+    
+    def create_model(self):
+        # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
+        self.clear_previous_graph()
+
+        if self.data is None or self.input_columns is None or self.output_column is None:
+            QMessageBox.critical(self, "Error", "ADRIII EL ERROR ESTÁ EN LINEALMODELTAB")
         else:
-            print("No se puede graficar con múltiples variables independientes.")
+            try:
+                self.canvas = None  # Restablecer la referencia a None
+                # Crear y ajustar el modelo
+                self.model = LinealModel(self.data, self.input_columns, self.output_column)
+                self.model.fit()
+
+                # Actualizar la interfaz con la fórmula y métricas
+                self.formula_label.setText(f"Fórmula del Modelo: {self.model.formula}")
+                self.r2_label.setText(f"R²: {self.model.r2_:.4f}")
+                self.mse_label.setText(f"ECM: {self.model.mse_:.4f}")
+
+                # Graficar si es posible
+                if len(self.model.input_columns) == 1:
+                    self.plot_graph()
+                else:
+                    QMessageBox.information(self, 
+                                            "Atención", "No se puede crear una gráfica, debido a que la regresión lineal es múltiple, no simple.")
+
+
+                # Confirmación de éxito
+                QMessageBox.information(self, "Éxito", "El modelo de regresión lineal ha sido creado exitosamente.")
+            
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Error al crear el modelo lineal: {str(e)}")
+
+    def clear_previous_graph(self):
+        # Verificar si existe una gráfica previa y eliminarla
+        if self.canvas:
+            self.canvas.setParent(None)
+            self.canvas.deleteLater()
+            self.canvas = None  # Restablecer la referencia a None
+
+    def plot_graph(self):
         
-        self.save_button.setVisible(True)
+        # Crear la figura y el canvas
+        fig = Figure(figsize=(5, 4), dpi=100)
+        self.canvas = FigureCanvas(fig)
+        ax = fig.add_subplot(111)
+
+        # Dibujar la gráfica de dispersión y la línea de regresión
+        ax.scatter(self.model.x, self.model.y, label="Datos Reales")
+        ax.plot(self.model.x, self.model.y_pred, color='red', label="Línea de Regresión")
+        ax.set_xlabel(self.model.input_columns[0])
+        ax.set_ylabel(self.model.output_column)
+        ax.legend()
+
+        # Añadir el canvas al contenedor de la gráfica
+        self.graph_layout.addWidget(self.canvas)
+        self.canvas.draw()
+
     def on_label_click(self, event):
         """
         Activa el modo de edición cuando se hace clic en la descripción.
         """
         self.description_display.hide()
-        self.description_input.setText(self.description_display.text())
+        current_text = self.description_display.text()
+        
+        # Limpiar el campo si tiene el texto por defecto
+        if current_text == "Haz clic para añadir una descripción...":
+            self.description_input.setText("")
+        else:
+            self.description_input.setText(current_text)
+            
         self.description_input.show()
         self.description_input.setFocus()
 
@@ -165,10 +185,30 @@ class LinearModelTab(QWidget):
             self.description_display.setText("Haz clic para añadir una descripción...")
         else:
             self.description_display.setText(description)
+            self.model_description.save_description(description)  # Guardar en almacenamiento
         
         self.description_input.hide()
         self.description_display.show()
 
+    # Método para obtener la descripción actual
+    def get_current_description(self):
+        """
+        Retorna la descripción actual del modelo.
+        """
+        text = self.description_display.text()
+        if text == "(Opcional) Haz clic para añadir una descripción...":
+            return ""
+        return text
+
+    # Método para establecer una descripción 
+    def set_description(self, description):
+        """
+        Establece una descripción.
+        """
+        if description:
+            self.description_display.setText(description)
+            self.model_description.save_description(description)
+    
     def save_model(self):
         """
         Guarda el modelo lineal.
@@ -200,4 +240,11 @@ class LinearModelTab(QWidget):
          
         except Exception as e:
             show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
-            
+
+    def update_data(self, data, input_columns, output_column):
+        """
+        Actualiza los datos, columnas de entrada y columna de salida de la pestaña de modelo.
+        """
+        self.data = data
+        self.input_columns = input_columns
+        self.output_column = output_column
