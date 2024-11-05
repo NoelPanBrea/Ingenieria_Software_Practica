@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
 import joblib
-from class_LinealModel import *
+from tabs.lineal_model_aux.class_LinealModel import *
 from sklearn.metrics import mean_squared_error, r2_score
 from tabs.lineal_model_aux.description import *
 from tabs.data_aux.popup_handler import *

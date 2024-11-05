@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import root_mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
 # Función para crear la gráfica
@@ -51,7 +51,7 @@ class LinealModel:
 
     # Calcula coeficientes de errores
     def evaluate(self):      
-        self.mse_ = root_mean_squared_error(self.y, self.y_pred)
+        self.mse_ = mean_squared_error(self.y, self.y_pred)
         self.r2_ = r2_score(self.y, self.y_pred)
         
         print(f"Error Cuadrático Medio (MSE): {self.mse_}")
