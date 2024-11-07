@@ -191,7 +191,7 @@ class DataTab(QWidget):
             model_data_df = pd.DataFrame(data_dict)
 
             # Actualizar la tabla con el DataFrame generado
-            self.table.update_data(model_data_df)
+            self.table.update_data(model_data_df, self.data.shape[0])
             
         else:
             show_error("⚠ Formato de modelo no soportado ⚠")
@@ -217,7 +217,7 @@ class DataTab(QWidget):
             self.file_path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
             self.model_widget.hide()
-            self.table.update_data(self.data)
+            self.table.update_data(self.data, self.data.shape[0])
             self.column_selector.populate_columns(self.data.columns)
             self.column_selector.setVisible(True)
             show_message('✅ ¡Archivo cargado exitosamente! 😃')

@@ -55,12 +55,12 @@ class ColumnSelector(QWidget):
         así como las etiquetas `input_label` y `output_label`.
         """
         layout = QGridLayout()
-        io_inside_layout = QVBoxLayout()
 
         self.input_label = QLabel('Seleccione columnas de entrada (features):')
         self.output_label = QLabel('Seleccione columna de salida (target):')
         self.input_column_selector.setMinimumHeight(150)
         self.input_column_selector.setMaximumHeight(250)
+        self.confirm_button.setMinimumHeight(150)
 
         layout.addWidget(self.input_label, 0, 0,
                          alignment=Qt.AlignmentFlag.AlignBottom)
@@ -68,10 +68,8 @@ class ColumnSelector(QWidget):
                          alignment=Qt.AlignmentFlag.AlignBottom)
         layout.addWidget(self.input_column_selector, 1, 0,
                          alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addLayout(io_inside_layout, 1, 1, Qt.AlignmentFlag.AlignTop)
-
-        io_inside_layout.addWidget(self.output_column_selector)
-        io_inside_layout.addWidget(self.confirm_button)
+        layout.addWidget(self.output_column_selector, 1, 1, Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.confirm_button, 1, 2, Qt.AlignmentFlag.AlignTop)
 
         self.setLayout(layout)
 

@@ -42,13 +42,6 @@ class LinealModel:
         self.y_pred = self.model.predict(self.x)
         return self.y_pred
 
-    # Crea la gráfica
-    # def plot(self):
-        if len(self.input_columns) == 1:
-            create_graphic(self.x, self.y, self.y_pred, self.input_columns, self.output_column)
-        else:
-            print("No se puede graficar cuando hay más de una variable independiente.")
-
     # Calcula coeficientes de errores
     def evaluate(self):      
         self.mse_ = mean_squared_error(self.y, self.y_pred)
@@ -74,12 +67,3 @@ if __name__ == '__main__':
     model = LinealModel(data, input_columns, output_column)
     model.fit()
     print(model.formula)
-
-
-
-
-
-
-
-
-

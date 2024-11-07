@@ -38,7 +38,7 @@ class DataTable(QTableWidget):
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setMinimumHeight(100)
 
-    def update_data(self, data: pd.DataFrame):
+    def update_data(self, data: pd.DataFrame, size: int):
         """
         Actualiza los datos de la tabla con un subconjunto de filas del DataFrame.
 
@@ -52,11 +52,8 @@ class DataTable(QTableWidget):
         Solo se muestra la mitad de las filas del DataFrame original para mejorar
         la eficiencia y reducir la carga visual en la interfaz.
         """
-        if data.shape[0] <= 10:
-            shown_rows = data.shape[0]
-        else:
-            shown_rows = data.shape[0] // 2
-            
+        shown_rows = size if size >= data.shape[0] else data.shape[0]
+
         self.setRowCount(shown_rows)
         self.setColumnCount(data.shape[1])
         self.setHorizontalHeaderLabels(data.columns)
