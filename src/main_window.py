@@ -63,6 +63,7 @@ class MainWindow(QTabWidget):
         self.data_tab = DataTab()
 
         # Conectar la carga de datos para crear el modelo lineal después
+        self.tabs_counter = 0
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
         # Agregar la pestaña de datos al QTabWidget
@@ -72,6 +73,7 @@ class MainWindow(QTabWidget):
         """
         Crea la pestaña de modelo lineal si los datos están disponibles.
         """
+        self.tabs_counter += 1
         # Crear la pestaña de modelo lineal
         self.linear_model_tab = LinealModelTab(self.data_tab.data, 
                                                self.data_tab.selected_input_columns, 
@@ -81,8 +83,8 @@ class MainWindow(QTabWidget):
         index = self.indexOf(self.linear_model_tab) if hasattr(self, 'linear_model_tab') else -1
         if index == -1:
             # Agregar la pestaña si no existe
-            self.addTab(self.linear_model_tab, "Modelo Lineal")
+            self.addTab(self.linear_model_tab, f"Modelo Lineal {self.tabs_counter}")
         else:
             # Reemplazar la pestaña existente
             self.removeTab(index)
-            self.addTab(self.linear_model_tab, "Modelo Lineal")
+            self.addTab(self.linear_model_tab, f"Modelo Lineal {self.tabs_counter}")
