@@ -231,8 +231,11 @@ class DataTab(QWidget):
             Elemento de la lista en `input_column_selector` que ha cambiado de estado.
         """
         column_index = self.column_selector.input_column_selector.row(item)
-        self.table.highlight_column(
-            column_index, item.checkState() == Qt.Checked)
+        state = item.checkState()
+
+        if column_index !=\
+            self.column_selector.output_column_selector.currentIndex() or state:
+            self.table.highlight_column(column_index, state)
         
     def on_output_column_selection_changed(self):
         """
@@ -246,10 +249,14 @@ class DataTab(QWidget):
         """
         current_column_index = self.column_selector.output_column_selector.currentIndex()
         last_column_index = self.column_selector.output_column_selector.last_selected
-        self.table.highlight_column(
-            current_column_index, True)
-        self.table.highlight_column(
-            last_column_index, False)
+        self.table.highlight_column(current_column_index, True)
+
+        if not self.column_selector.input_column_selector.item(
+            last_column_index).checkState() and\
+                last_column_index != current_column_index:
+
+            self.table.highlight_column(
+                last_column_index, False)
 
     def on_selection_confirmed(self):
         """
