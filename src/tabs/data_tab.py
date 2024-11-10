@@ -100,6 +100,8 @@ class DataTab(QWidget):
             self.on_selection_confirmed)
         self.column_selector.input_column_selector.itemChanged.connect(
             self.on_column_selection_changed)
+        self.column_selector.output_column_selector.itemChanged.connect(
+            self.on_column_selection_changed)
 
     def init_preprocess(self):
         # Sección de preprocesado
@@ -218,7 +220,7 @@ class DataTab(QWidget):
         except Exception as e:
             show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠')
 
-    def on_column_selection_changed(self, item):
+    def on_input_column_selection_changed(self, item):
         """
         Resalta una columna en la tabla cuando se selecciona o deselecciona
         en el selector de columnas.
@@ -229,6 +231,20 @@ class DataTab(QWidget):
             Elemento de la lista en `input_column_selector` que ha cambiado de estado.
         """
         column_index = self.column_selector.input_column_selector.row(item)
+        self.table.highlight_column(
+            column_index, item.checkState() == Qt.Checked)
+        
+    def on_output_column_selection_changed(self, item):
+        """
+        Resalta una columna en la tabla cuando se selecciona o deselecciona
+        en el selector de columnas.
+
+        Parameters
+        ----------
+        item : QListWidgetItem
+            Elemento de la lista en `input_column_selector` que ha cambiado de estado.
+        """
+        column_index = self.column_selector.output_column_selector.row(item)
         self.table.highlight_column(
             column_index, item.checkState() == Qt.Checked)
 

@@ -66,7 +66,8 @@ class MainWindow(QTabWidget):
         self.linear_model_tab_list[-1].model_description.clear_description()
         
         # Agregar la pestaña de modelo lineal con la "X" de cierre
-        self.addTab(self.linear_model_tab_list[-1], f"Modelo {self.tabs_counter}")
+        self.addTab(self.linear_model_tab_list[-1],
+                     f"Modelo {self.tabs_counter}")
         if len(self.linear_model_tab_list) > 1 and\
               self.linear_model_tab_list[-2].model is None:
             self.close_tab(len(self.linear_model_tab_list) - 1)
