@@ -280,7 +280,7 @@ class DataTab(QWidget):
         """
         summary = (
             f'Columnas de entrada: {", ".join(input_columns)}\n'
-            f'Valores nulos: {", ".join(map(str, none_count(self.data, input_columns)))}\n'
+            f'Valores nulos: {", ".join(map(str, none_count(self.data, input_columns + [output_column])))}\n'
             f'Columna de salida: {output_column}'
         )
         show_message(summary)
@@ -326,11 +326,11 @@ class DataTab(QWidget):
             # Aplica el método de preprocesado y actualiza los datos
             self.preprocess_applier.apply_preprocess(
                 self.data,
-                self.selected_input_columns
+                self.selected_input_columns + [self.selected_output_column]
             )
 
             # Actualizar la tabla después de aplicar el preprocesado
-            self.table.update_data(self.data)
+            self.table.update_data(self.data, self.data.shape[0])
 
             # Repoblar el selector de columnas por si hay cambios en la estructura
             self.column_selector.populate_columns(self.data.columns)
