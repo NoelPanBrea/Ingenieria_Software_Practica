@@ -60,6 +60,9 @@ class MainWindow(QTabWidget):
                                                self.data_tab.selected_input_columns, 
                                                self.data_tab.selected_output_column)
 
+        # Limpiar la descripción al crear una nueva pestaña
+        self.linear_model_tab.model_description.clear_description()
+        
         # Agregar la pestaña de modelo lineal con la "X" de cierre
         self.addTab(self.linear_model_tab, f"Modelo {self.tabs_counter}")
 
