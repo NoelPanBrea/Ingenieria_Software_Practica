@@ -64,3 +64,11 @@ class PreprocessToolbar(QWidget):
         for button in self.buttons.values():
             button.show()
         self.apply_button.show()
+    
+    def hide_buttons(self):
+        """
+        Oculta todos los botones de métodos de preprocesado y el botón de aplicar.
+        """
+        for button in self.buttons.values():
+            button.hide()
+        self.apply_button.hide()

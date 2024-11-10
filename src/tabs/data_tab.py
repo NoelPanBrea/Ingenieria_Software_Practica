@@ -61,18 +61,14 @@ class DataTab(QWidget):
         layout = QVBoxLayout()
 
         # Sección de carga de archivo
-        self.file_widget = QWidget()
-        self.model_widget = QWidget()
-        file_bar = QHBoxLayout(self.file_widget)
-        model_bar = QHBoxLayout(self.model_widget)
+        self.load_widget = QWidget()
+        load_bar = QHBoxLayout(self.load_widget)
         
-        self.load_button = QPushButton('📂 Abrir Archivo')
-        self.load_button.setFixedSize(200, 50)
-        self.loadmodel_button = QPushButton('🗃️ Cargar Modelo')
-        self.loadmodel_button.setFixedSize(200, 50)
-        self.file_path_label = QLabel('Ruta del archivo cargado:')
-        self.model_path_label = QLabel('Ruta del modelo cargado:')
-        
+        self.file_button = QPushButton('📂 Abrir Archivo')
+        self.file_button.setFixedSize(200, 50)
+        self.model_button = QPushButton('🗃️ Cargar Modelo')
+        self.model_button.setFixedSize(200, 50)
+        self.path_label = QLabel('Ruta del archivo cargado:')
 
         # Tabla de datos
         self.table = DataTable()
@@ -83,14 +79,12 @@ class DataTab(QWidget):
         
         self.connect_buttons()
         
-        file_bar.addWidget(self.load_button)
-        file_bar.addWidget(self.file_path_label)
+        load_bar.addWidget(self.file_button)
+        load_bar.addWidget(self.model_button)
+        load_bar.addWidget(self.path_label)
         
-        model_bar.addWidget(self.loadmodel_button)
-        model_bar.addWidget(self.model_path_label)
         # Añadir todos los componentes al diseño principal
-        layout.addWidget(self.file_widget)
-        layout.addWidget(self.model_widget)
+        layout.addWidget(self.load_widget)
         layout.addWidget(self.table)
         layout.addWidget(self.column_selector)
         layout.addWidget(self.preprocess_label)
@@ -116,8 +110,8 @@ class DataTab(QWidget):
 
     def connect_buttons(self):
         # Conectar botón de carga
-        self.load_button.clicked.connect(self.load_data)
-        self.loadmodel_button.clicked.connect(self.load_model)
+        self.file_button.clicked.connect(self.load_data)
+        #self.model_button.clicked.connect(self.load_model)
         
         # Conectar botones de preprocesado
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
@@ -134,70 +128,70 @@ class DataTab(QWidget):
     def load_model(self):
         model_path = open_file_dialog(self)
         if not model_path:
-            return
+            return False
 
         try:
+            #Cargar el modelo
             self.model = joblib.load(model_path)
-            self.model_path_label.setText(
+            
+            #Ocultar la tabla y el selector de columnas
+            self.column_selector.setVisible(False)
+            self.preprocess_label.hide()
+            self.preprocess_toolbar.hide_buttons()
+            
+            #Mostrar la ruta del modelo cargado Y confirmación de la carga
+            self.path_label.setText(
                 f'📄 Ruta del modelo cargado: {model_path}')
-            self.file_widget.hide()
             show_message('✅ ¡Modelo cargado exitosamente! 😃')
             
             self.display_model_data()
             
+            return True
+        
         except Exception as e:
             show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠')
-    
-    def display_model_data(self):
-     """
-     Muestra los datos del modelo cargado en la tabla.
-     """
-     try:
-        # Verificar que el modelo tiene el formato esperado
-        if isinstance(self.model, dict):
-            # Extraer los datos relevantes del modelo
-            formula = self.model.get("formula", "N/A")
-            coefficients = self.model.get("coefficients", [])
-            intercept = self.model.get("intercept", "N/A")
-            description = self.model.get("description", "Sin descripción")
-            metrics = self.model.get("metrics", {})
-            columns = self.model.get("columns", {})
-
-            # Obtener R² y RMSE, agregando MSE
-            r2_score = metrics.get("r2_score", "N/A")
-            rmse = metrics.get("rmse", "N/A")
-
-            # Obtener columnas de entrada y salida
-            input_columns = ", ".join(columns.get("input", []))
-            output_column = columns.get("output", "N/A")
-            
-            # Crear un diccionario con los datos del modelo para visualización
-            data_dict = {
-                "Descripción": [
-                    "Fórmula", "Intercepto", "Coeficientes", "Descripción",
-                    "R²", "RMSE", "Columnas de Entrada", "Columna de Salida"
-                ],
-                "Valor": [
-                    formula,
-                    intercept,
-                    ", ".join(map(str, coefficients)),
-                    description,
-                    r2_score,
-                    rmse,
-                    input_columns,
-                    output_column
-                ]
-            }
-            model_data_df = pd.DataFrame(data_dict)
-
-            # Actualizar la tabla con el DataFrame generado
-            self.table.update_data(model_data_df, self.data.shape[0])
-            
-        else:
-            show_error("⚠ Formato de modelo no soportado ⚠")
-     except Exception as e:
-        show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
+            return False
         
+    def display_model_data(self):
+        """
+        Muestra los datos del modelo cargado en la tabla.
+        """
+        try:
+            if isinstance(self.model, dict):
+                # Extraer y construir DataFrame con los datos del modelo
+                data_dict = {
+                    "Descripción": [
+                        "Fórmula", "Intercepto", "Coeficientes", "Descripción",
+                        "R²", "RMSE", "Columnas de Entrada", "Columna de Salida"
+                    ],
+                    "Valor": [
+                        self.model.get("formula", "N/A"),
+                        self.model.get("intercept", "N/A"),
+                        ", ".join(map(str, self.model.get("coefficients", []))),
+                        self.model.get("description", "Sin descripción"),
+                        self.model.get("metrics", {}).get("r2_score", "N/A"),
+                        self.model.get("metrics", {}).get("rmse", "N/A"),
+                        ", ".join(self.model.get("columns", {}).get("input", [])),
+                        self.model.get("columns", {}).get("output", "N/A")
+                    ]
+                }
+                model_data_df = pd.DataFrame(data_dict)
+
+                # Llama a update_data solo si el DataFrame tiene datos
+                if model_data_df is not None and not model_data_df.empty:
+                    self.table.update_data(model_data_df, model_data_df.shape[0])
+                else:
+                    show_error("⚠ El modelo no contiene datos válidos ⚠")
+                    return False
+            else:
+                show_error("⚠ Formato de modelo no soportado ⚠")
+                return False
+            
+            return True
+        except Exception as e:
+            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
+            return False
+
     def load_data(self):
         """
         Carga un archivo de datos seleccionado por el usuario, actualizando la
@@ -214,9 +208,8 @@ class DataTab(QWidget):
 
         try:
             self.data = im.load_file(file_path)
-            self.file_path_label.setText(
+            self.path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
-            self.model_widget.hide()
             self.table.update_data(self.data, self.data.shape[0])
             self.column_selector.populate_columns(self.data.columns)
             self.column_selector.setVisible(True)

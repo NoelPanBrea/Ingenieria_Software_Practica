@@ -52,15 +52,21 @@ class DataTable(QTableWidget):
         Solo se muestra la mitad de las filas del DataFrame original para mejorar
         la eficiencia y reducir la carga visual en la interfaz.
         """
-        shown_rows = size if size >= data.shape[0] else data.shape[0]
-
-        self.setRowCount(shown_rows)
+        self.setRowCount(size)
         self.setColumnCount(data.shape[1])
         self.setHorizontalHeaderLabels(data.columns)
-
-        for i in range(shown_rows):
+        
+        #Definir precisión general para floats
+        float_precision = 4
+        
+        for i in range(size):
             for j in range(data.shape[1]):
-                self.setItem(i, j, QTableWidgetItem(str(data.iat[i, j])))
+                cell_value = data.iat[i, j]
+                # Formate si el valor es un float
+                if isinstance(cell_value, float):
+                    cell_value = f"{cell_value:.{float_precision}f}"
+                self.setItem(i, j, QTableWidgetItem(str(cell_value)))
+        
         self.resizeColumnsToContents()
 
     def highlight_column(self, column_index: int, highlight: bool):
