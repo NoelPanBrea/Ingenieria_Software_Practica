@@ -48,8 +48,8 @@ class MainWindow(QTabWidget):
         self.tabs_counter = 0
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
-        # Conectar el botón de carga de modelo
-        self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
+        #Crear pestana al cargar modelo
+        #self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
     def create_linear_model_tab(self):
         """
         Crea la pestaña de modelo lineal si los datos están disponibles.
