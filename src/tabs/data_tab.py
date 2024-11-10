@@ -369,6 +369,10 @@ class DataTab(QWidget):
                 else:
                     item.setCheckState(Qt.Unchecked)
 
+            last_selected = self.column_selector.output_column_selector.current_selection
+            self.column_selector.output_column_selector.setCurrentIndex(last_selected)
+            self.on_output_column_selection_changed()
+
             show_message('✅ ¡Preprocesado aplicado exitosamente!')
         except Exception as e:
             show_error(f'Error al aplicar el preprocesado: {str(e)}')

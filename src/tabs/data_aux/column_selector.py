@@ -98,6 +98,7 @@ class ColumnSelector(QWidget):
             self.input_column_selector.addItem(item)
 
         self.output_column_selector.addItems(columns)
+        self.output_column_selector.setCurrentIndex(-1)
 
     def get_selected_columns(self) -> tuple:
         """

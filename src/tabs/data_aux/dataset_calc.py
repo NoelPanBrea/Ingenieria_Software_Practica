@@ -134,7 +134,7 @@ class PreprocessApplier():
                 res += 'para aplicar'
                 raise IndexError(res)
         except IndexError as e:
-            raise Exception(f'{e} + ')
+            raise Exception(f'{e}')
         except ValueError as e:
             res = 'En el campo constantes se deben introducir números '
             raise ValueError(res + f'con "." como separador de decimales')
