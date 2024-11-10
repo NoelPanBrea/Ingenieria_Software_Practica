@@ -85,6 +85,6 @@ class DataTable(QTableWidget):
         El color del resaltado es fijo. Si `highlight` es True, se aplica un color de resaltado,
         y si es False, se aplica un color de fondo neutro.
         """
-        color = QColor(255, 171, 150) if highlight else QColor(255, 243, 224) #Old color = B147
+        color = QColor(255, 171, 170) if highlight else QColor(255, 243, 224) #Old color = B147
         for row in range(self.rowCount()):
             self.item(row, column_index).setBackground(color)
