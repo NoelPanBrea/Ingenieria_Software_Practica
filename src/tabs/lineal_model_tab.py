@@ -145,7 +145,8 @@ class LinealModelTab(QWidget):
         }
     
         try:
-         joblib.dump(model_data, "linear_model_data.joblib")
+         file_path = save_file_dialog()
+         joblib.dump(model_data, file_path)
         
          show_message("✅ ¡Modelo guardado exitosamente! 😃")
          
