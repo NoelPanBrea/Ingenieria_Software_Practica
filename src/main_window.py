@@ -46,6 +46,7 @@ class MainWindow(QTabWidget):
 
         # Conectar la carga de datos para crear el modelo lineal después
         self.tabs_counter = 0
+        self.linear_model_tab_list = []
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
         #Crear pestana al cargar modelo
@@ -54,17 +55,23 @@ class MainWindow(QTabWidget):
         """
         Crea la pestaña de modelo lineal si los datos están disponibles.
         """
+
         self.tabs_counter += 1
         # Crear la pestaña de modelo lineal
-        self.linear_model_tab = LinealModelTab(self.data_tab.data, 
-                                               self.data_tab.selected_input_columns, 
-                                               self.data_tab.selected_output_column)
+        self.linear_model_tab_list.append(LinealModelTab(self.data_tab.data, 
+                                        self.data_tab.selected_input_columns, 
+                                    self.data_tab.selected_output_column))
 
         # Limpiar la descripción al crear una nueva pestaña
-        self.linear_model_tab.model_description.clear_description()
+        self.linear_model_tab_list[-1].model_description.clear_description()
         
         # Agregar la pestaña de modelo lineal con la "X" de cierre
-        self.addTab(self.linear_model_tab, f"Modelo {self.tabs_counter}")
+        self.addTab(self.linear_model_tab_list[-1], f"Modelo {self.tabs_counter}")
+        if len(self.linear_model_tab_list) > 1 and\
+              self.linear_model_tab_list[-2].model is None:
+            self.close_tab(len(self.linear_model_tab_list) - 1)
+            del(self.linear_model_tab_list[-2])
+
 
     def load_model_open_tab(self):
         """	
