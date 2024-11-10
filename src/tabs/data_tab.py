@@ -111,7 +111,7 @@ class DataTab(QWidget):
     def connect_buttons(self):
         # Conectar botón de carga
         self.file_button.clicked.connect(self.load_data)
-        #self.model_button.clicked.connect(self.load_model)
+        self.model_button.clicked.connect(self.load_model)
         
         # Conectar botones de preprocesado
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
