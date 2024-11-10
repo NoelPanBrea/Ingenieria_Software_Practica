@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel, QListWidget, 
-    QGridLayout, QComboBox, QListWidgetItem
+    QWidget, QPushButton, QLabel, QListWidget, 
+    QGridLayout, QListWidgetItem
 )
+from tabs.data_aux.combo_box import ComboBox
 from PyQt5.QtCore import Qt
 from typing import List
 
@@ -43,7 +44,7 @@ class ColumnSelector(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.input_column_selector = QListWidget()
-        self.output_column_selector = QComboBox()
+        self.output_column_selector = ComboBox()
         self.confirm_button = QPushButton('Confirmar selección')
         self.init_ui()
 
