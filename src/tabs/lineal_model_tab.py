@@ -6,7 +6,7 @@ import joblib
 from tabs.lineal_model_aux.class_LinealModel import *
 from sklearn.metrics import mean_squared_error, r2_score
 from tabs.lineal_model_aux.description import *
-from tabs.data_aux.popup_handler import *
+from tabs.popup_handler import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
