@@ -3,32 +3,31 @@ from pandas import DataFrame
 
 class PreprocessApplier():
     """
-    Aplica métodos de preprocesamiento a un DataFrame.
+    Applies preprocessing methods to a DataFrame.
 
-    Esta clase permite aplicar diferentes métodos de preprocesamiento
-    a un conjunto de datos, específicamente para manejar valores nulos
-    en las columnas especificadas.
+    This class allows the application of various preprocessing methods 
+    to a dataset, specifically for handling null values in specified columns.
 
     Attributes 
     ----------
     _methods : dict[str, function]
-        Diccionario que asocia los nombres de los métodos con sus funciones.
+        Dictionary associating method names with their functions.
     cte : list[float]
-        Lista de constantes que se usarán en algunos métodos.
+        List of constants to be used in certain methods.
     dataframe : pd.DataFrame
-        El DataFrame en el que se aplicará el preprocesamiento.
+        The DataFrame on which preprocessing will be applied.
     columns : list[str]
-        Lista de columnas del DataFrame que se procesarán.
+        List of DataFrame columns to be processed.
     _current_method : function
-        Método de preprocesamiento actual que se aplicará.
+        The current preprocessing method to be applied.
     """
 
     def __init__(self) -> None:
         """
-        Inicializa el objeto PreprocessApplier.
+        Initializes the PreprocessApplier object.
 
-        Configura el diccionario de métodos de preprocesamiento y
-        inicializa las variables de estado.
+        Sets up the dictionary of preprocessing methods and 
+        initializes state variables.
         """
         self._methods = {'delete': self.delete, 'mean': self.mean,
                          'median': self.median, 'constant': self.constant}
@@ -40,45 +39,45 @@ class PreprocessApplier():
     @property
     def methods(self) -> dict['function']:
         """
-        Obtiene los métodos de preprocesamiento disponibles.
+        Gets the available preprocessing methods.
 
         Returns
         ----------
         dict
-            Diccionario que asocia los nombres de los métodos con sus funciones.
+            Dictionary associating method names with their functions.
         """
         return self._methods
 
     def set_current_method(self, value: str, cte: list[float] = None):
         """
-        Establece el método de preprocesamiento actual.
+        Sets the current preprocessing method.
 
         Parameters
         ----------
         value : str
-            Nombre del método de preprocesamiento a utilizar.
+            Name of the preprocessing method to use.
         cte : list[float], optional
-            Lista de constantes para el método 'constant'.
+            List of constants for the 'constant' method.
         """
         self._current_method = self._methods[value]
         self.cte = cte
 
     def delete(self) -> None:
         """
-        Elimina filas con valores nulos en las columnas especificadas.
+        Deletes rows with null values in the specified columns.
 
-        Modifica el DataFrame actual eliminando las filas que contienen
-        valores nulos en las columnas definidas.
+        Modifies the current DataFrame by removing rows that contain
+        null values in the defined columns.
         """
         self.dataframe = self.dataframe.dropna(
             inplace=True, subset=self.columns)
 
     def mean(self) -> None:
         """
-        Reemplaza valores nulos con la media de cada columna.
+        Replaces null values with the mean of each column.
 
-        Reemplaza los valores nulos en las columnas especificadas por
-        la media de cada columna.
+        Replaces null values in the specified columns with 
+        the mean of each column.
         """
         for x in self.columns:
             self.dataframe[x] = self.dataframe[x].fillna(
@@ -86,10 +85,10 @@ class PreprocessApplier():
 
     def median(self) -> None:
         """
-        Reemplaza valores nulos con la mediana de cada columna.
+        Replaces null values with the median of each column.
 
-        Reemplaza los valores nulos en las columnas especificadas por
-        la mediana de cada columna.
+        Replaces null values in the specified columns with 
+        the median of each column.
         """
         for x in self.columns:
             self.dataframe[x] = self.dataframe[x].fillna(
@@ -97,10 +96,10 @@ class PreprocessApplier():
 
     def constant(self) -> None:
         """
-        Reemplaza valores nulos con constantes especificadas.
+        Replaces null values with specified constants.
 
-        Reemplaza los valores nulos en las columnas especificadas
-        por valores constantes definidos en la lista cte.
+        Replaces null values in the specified columns with 
+        constant values defined in the cte list.
         """
         for i, x in enumerate(self.columns):
             if self.cte[i]:
@@ -110,19 +109,19 @@ class PreprocessApplier():
 
     def apply_preprocess(self, dataframe: DataFrame, columns: list[str]) -> None:
         """
-        Modifica los valores de Nones según la configuración actual.
+        Modifies None values based on the current configuration.
 
         Parameters
         ----------
         dataframe : pd.DataFrame
-            El DataFrame sobre el cual aplicar el preprocesamiento.
+            The DataFrame on which preprocessing will be applied.
         columns : list[str]
-            Lista de columnas a las que se aplicará el preprocesamiento.
+            List of columns to which preprocessing will be applied.
 
         Raises
         ------
         ValueError
-            Si no se elige una configuración de preprocesamiento o columnas.
+            If no preprocessing configuration or columns are selected.
         """
         self.dataframe = dataframe
         self.columns = columns
@@ -144,18 +143,18 @@ class PreprocessApplier():
 
 def none_count(dataframe: DataFrame, columns: list[str]) -> list[int]:
     """
-    Cuenta los valores None en las columnas especificadas.
+    Counts None values in the specified columns.
 
     Parameters
     ----------
     dataframe : pd.DataFrame
-        DataFrame en el que se contarán los valores None.
+        DataFrame in which None values will be counted.
     columns : list[str]
-        Lista de columnas para contar los valores None.
+        List of columns to count None values.
 
     Returns
     ----------
     list[int]
-        Lista con el número de valores None en las columnas seleccionadas.
+        List with the number of None values in the selected columns.
     """
     return [dataframe[x].isna().sum() for x in columns]

@@ -122,7 +122,9 @@ class LinealModelTab(QWidget):
     
     def save_model(self):
         """
-        Guarda el modelo lineal.
+        Saves the trained linear regression model to a file.
+        The model data includes the formula, coefficients, intercept, description, 
+        metrics (R², RMSE), and column information.
         """
         if self.model is None:
             show_error('⚠ Debe primero entrenar el modelo ⚠')
@@ -155,7 +157,8 @@ class LinealModelTab(QWidget):
 
     def update_data(self, data, input_columns, output_column):
         """
-        Actualiza los datos, columnas de entrada y columna de salida de la pestaña de modelo.
+        Updates the data, input columns, and output column of the model tab.
+        This is useful when refreshing the model after loading new data or modifying columns.
         """
         self.data = data
         self.input_columns = input_columns

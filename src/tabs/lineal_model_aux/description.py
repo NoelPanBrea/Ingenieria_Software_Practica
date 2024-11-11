@@ -13,7 +13,7 @@ class ModelDescription:
 
     def setup_ui_elements(self):
         """
-        Configura los elementos de la UI relacionados con la descripción
+        Sets up the UI elements related to the description.
         """
         self.display_label = QLabel(self.DEFAULT_TEXT)
         self.display_label.setStyleSheet("""
@@ -38,7 +38,9 @@ class ModelDescription:
         self.input_field.hide()
 
     def setup_events(self):
-        """Configura los eventos de los widgets"""
+        """
+        Sets up the events for the widgets.
+        """
         self.input_field.returnPressed.connect(
             lambda: self.update_description())
         self.input_field.focusOutEvent = self.on_focus_lost
@@ -69,32 +71,44 @@ class ModelDescription:
         self.display_label.show()
 
     def on_label_click(self, event):
-        """Maneja el clic en la etiqueta de descripción"""
+        """
+        Handles the click on the description label.
+        """
         self.show_edit_mode()
 
     def on_focus_lost(self, event):
-        """Maneja la pérdida de foco del campo de entrada"""
+        """
+        Handles the loss of focus from the input field.
+        """
         self.update_description()
         QLineEdit.focusOutEvent(self.input_field, event)
 
     def add_to_layout(self, layout):
-        """Añade los widgets al layout proporcionado"""
+        """
+        Adds the widgets to the provided layout.
+        """
         layout.addWidget(self.display_label)
         layout.addWidget(self.input_field)
 
     def clear_description(self):
-        """Limpia la descripción"""
+        """
+        Clears the description.
+        """
         self.description = ""
         self.display_label.setText(self.DEFAULT_TEXT)
 
     def get_description(self):
-        """Obtiene la descripción actual"""
+        """
+        Gets the current description.
+        """
         if self.display_label.text() == self.DEFAULT_TEXT:
             return ""
         return self.description
 
     def set_description(self, description):
-        """Establece una descripción cargada"""
+        """
+        Sets a loaded description.
+        """
         if description:
             self.description = description
             self.display_label.setText(description)

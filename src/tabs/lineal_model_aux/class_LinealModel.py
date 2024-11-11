@@ -46,9 +46,6 @@ class LinealModel:
     def evaluate(self):      
         self.mse_ = mean_squared_error(self.y, self.y_pred)
         self.r2_ = r2_score(self.y, self.y_pred)
-        
-        print(f"Error Cuadrático Medio (MSE): {self.mse_}")
-        print(f"Coeficiente de Determinación (R²): {self.r2_}")
 
     # Crea la fórmula de la regresión lineal
     def calc_formula(self):
@@ -66,4 +63,3 @@ if __name__ == '__main__':
     
     model = LinealModel(data, input_columns, output_column)
     model.fit()
-    print(model.formula)

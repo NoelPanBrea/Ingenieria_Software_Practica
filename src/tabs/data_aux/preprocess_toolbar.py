@@ -2,23 +2,22 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QHBoxLayout
 
 class PreprocessToolbar(QWidget):
     """
-    Barra de herramientas de preprocesado que permite seleccionar diferentes métodos
-    de preprocesado de datos.
+    Preprocessing toolbar that allows selection of various data preprocessing methods.
 
-    Esta barra contiene botones que representan métodos de preprocesado (eliminar nulos,
-    media, mediana, constantes) y un botón de aplicación.
+    This toolbar contains buttons representing preprocessing methods (delete nulls,
+    mean, median, constants) and an apply button.
 
     Parameters
     ----------
     parent : QWidget, optional
-        El widget principal que contendrá la barra de herramientas de preprocesado, por defecto None.
+        The main widget that will contain the preprocessing toolbar, by default None.
 
     Attributes
     ----------
     buttons : dict
-        Diccionario que almacena los botones de métodos de preprocesado.
+        Dictionary storing the buttons for preprocessing methods.
     apply_button : QPushButton
-        Botón para aplicar el preprocesado seleccionado.
+        Button to apply the selected preprocessing method.
     """
 
     def __init__(self, parent=None):
@@ -27,12 +26,12 @@ class PreprocessToolbar(QWidget):
 
     def init_ui(self):
         """
-        Inicializa y organiza los botones de preprocesado en una barra horizontal.
+        Initializes and arranges the preprocessing buttons in a horizontal toolbar.
 
         Notes
         -----
-        Todos los botones se ocultan inicialmente y solo se muestran cuando el usuario ha seleccionado
-        las columnas adecuadas para el preprocesado.
+        All buttons are initially hidden and are only shown when the user has selected
+        the appropriate columns for preprocessing.
         """
         layout = QHBoxLayout()
         self.buttons = {}
@@ -59,7 +58,7 @@ class PreprocessToolbar(QWidget):
 
     def show_buttons(self):
         """
-        Muestra todos los botones de métodos de preprocesado y el botón de aplicar.
+        Displays all preprocessing method buttons and the apply button.
         """
         for button in self.buttons.values():
             button.show()
@@ -67,7 +66,7 @@ class PreprocessToolbar(QWidget):
     
     def hide_buttons(self):
         """
-        Oculta todos los botones de métodos de preprocesado y el botón de aplicar.
+        Hides all preprocessing method buttons and the apply button.
         """
         for button in self.buttons.values():
             button.hide()

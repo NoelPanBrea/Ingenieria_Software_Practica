@@ -15,35 +15,34 @@ from tabs.data_aux.preprocess_toolbar import PreprocessToolbar
 
 class DataTab(QWidget):
     """
-    Pestaña de datos que administra la carga, selección y preprocesado de datos.
+    Data tab that manages data loading, selection, and preprocessing.
 
-    Esta clase organiza los elementos de la interfaz gráfica relacionados con
-    la carga de archivos, selección de columnas y opciones de preprocesado,
-    facilitando la interacción con el usuario y la aplicación de operaciones en
-    un DataFrame.
+    This class organizes the GUI elements related to file loading, column selection,
+    and preprocessing options, facilitating user interaction and operations on a DataFrame.
 
     Attributes
     ----------
     data : pd.DataFrame, optional
-        El DataFrame que contiene los datos cargados.
+        The DataFrame containing the loaded data.
     selected_input_columns : List[str], optional
-        Lista de columnas seleccionadas como entradas para el análisis.
+        List of columns selected as inputs for analysis.
     preprocess_applier : PreprocessApplier
-        Objeto para gestionar y aplicar el método de preprocesado seleccionado.
+        Object for managing and applying the selected preprocessing method.
     load_button : QPushButton
-        Botón para abrir un archivo de datos.
+        Button to open a data file.
     file_path_label : QLabel
-        Etiqueta que muestra la ruta del archivo cargado.
+        Label displaying the loaded file path.
     table : DataTable
-        Tabla que muestra una vista previa de los datos cargados.
+        Table showing a preview of the loaded data.
     column_selector : ColumnSelector
-        Selector de columnas para elegir las columnas de entrada y salida.
+        Column selector to choose input and output columns.
     preprocess_label : QLabel
-        Etiqueta que describe las opciones de preprocesado.
+        Label describing the preprocessing options.
     preprocess_toolbar : PreprocessToolbar
-        Barra de herramientas con botones de opciones de preprocesado.
+        Toolbar with buttons for preprocessing options.
 
     """
+
 
     def __init__(self):
         super().__init__()
@@ -55,8 +54,8 @@ class DataTab(QWidget):
 
     def init_ui(self):
         """
-        Inicializa la interfaz gráfica de la pestaña de datos, incluyendo botones,
-        etiquetas y tablas para la carga de datos y la selección de preprocesado.
+        Initializes the data tab's user interface, including buttons, labels,
+        and tables for data loading and preprocessing selection.
         """
         layout = QVBoxLayout()
 
@@ -156,7 +155,7 @@ class DataTab(QWidget):
         
     def display_model_data(self):
         """
-        Muestra los datos del modelo cargado en la tabla.
+        Displays the loaded model's data in the table.
         """
         try:
             if isinstance(self.model, dict):
@@ -196,13 +195,12 @@ class DataTab(QWidget):
 
     def load_data(self):
         """
-        Carga un archivo de datos seleccionado por el usuario, actualizando la
-        tabla y el selector de columnas.
+        Loads a data file selected by the user, updating the table and column selector.
 
         Notes
         -----
-        Utiliza `im.load_file` para cargar el archivo y `show_message` para
-        informar al usuario en caso de éxito o error.
+        Uses `im.load_file` to load the file and `show_message` to notify the user
+        in case of success or failure.
         """
         file_path = open_file_dialog(self)
         if not file_path:
@@ -222,13 +220,13 @@ class DataTab(QWidget):
 
     def on_input_column_selection_changed(self, item):
         """
-        Resalta una columna en la tabla cuando se selecciona o deselecciona
-        en el selector de columnas.
+        Highlights a column in the table when it is selected or deselected
+        in the column selector.
 
         Parameters
         ----------
         item : QListWidgetItem
-            Elemento de la lista en `input_column_selector` que ha cambiado de estado.
+            List item in `input_column_selector` that has changed state.
         """
         column_index = self.column_selector.input_column_selector.row(item)
         state = item.checkState()
@@ -239,13 +237,13 @@ class DataTab(QWidget):
         
     def on_output_column_selection_changed(self):
         """
-        Resalta una columna en la tabla cuando se selecciona o deselecciona
-        en el selector de columnas.
+        Highlights a column in the table when it is selected or deselected
+        in the column selector.
 
         Parameters
         ----------
         item : QListWidgetItem
-            Elemento de la lista en `input_column_selector` que ha cambiado de estado.
+            List item in `input_column_selector` that has changed state.
         """
         current_column_index = self.column_selector.output_column_selector.currentIndex()
         last_column_index = self.column_selector.output_column_selector.last_selected
@@ -260,13 +258,12 @@ class DataTab(QWidget):
 
     def on_selection_confirmed(self):
         """
-        Confirma las columnas seleccionadas por el usuario y activa la
-        interfaz de preprocesado.
+        Confirms the columns selected by the user and enables the preprocessing interface.
 
         Raises
         ------
         ValueError
-            Si no se seleccionan columnas de entrada o una columna de salida.
+            If no input columns or an output column are selected.
         """
         input_columns, output_column = self.column_selector.get_selected_columns()
 
@@ -280,29 +277,30 @@ class DataTab(QWidget):
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
         self.show_selection_summary(input_columns, output_column)
-        self.enable_preprocessing()
+        if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
+            self.enable_preprocessing() 
 
     def set_preprocessing_method(self, method: str):
         """
-        Define el método de preprocesado actual y muestra el botón 'Aplicar'.
+        Sets the current preprocessing method and displays the 'Apply' button.
 
         Parameters
         ----------
         method : str
-            Método de preprocesado a aplicar ('delete', 'mean', 'median', 'constant').
+            Preprocessing method to apply ('delete', 'mean', 'median', 'constant').
         """
         self.preprocess_applier.set_current_method(method)
 
     def show_selection_summary(self, input_columns: List[str], output_column: str):
         """
-        Muestra un resumen de las columnas seleccionadas en un mensaje emergente.
+        Displays a summary of the selected columns in a pop-up message.
 
         Parameters
         ----------
         input_columns : List[str]
-            Lista de nombres de columnas seleccionadas como entrada.
+            List of column names selected as input.
         output_column : str
-            Nombre de la columna seleccionada como salida.
+            Name of the column selected as output.
         """
         summary = (
             f'Columnas de entrada: {", ".join(input_columns)}\n'
@@ -313,20 +311,20 @@ class DataTab(QWidget):
 
     def enable_preprocessing(self):
         """
-        Muestra la sección de preprocesado en la interfaz, permitiendo al usuario
-        seleccionar y aplicar un método de preprocesado.
+        Shows the preprocessing section in the interface, allowing the user
+        to select and apply a preprocessing method.
         """
         self.preprocess_label.show()
         self.preprocess_toolbar.show_buttons()
 
     def handle_constant_method(self):
         """
-        Muestra un diálogo de entrada para definir valores constantes por columna
-        cuando el usuario selecciona el método de preprocesado de constante.
+        Shows an input dialog to define constant values by column
+        when the user selects the constant preprocessing method.
 
         Notes
         -----
-        Este método solo se activa si hay columnas de entrada seleccionadas.
+        This method only activates if input columns are selected.
         """
         if self.selected_input_columns:
             input_window = InputDialog(
@@ -340,13 +338,13 @@ class DataTab(QWidget):
 
     def apply_preprocessing(self):
         """
-        Aplica el método de preprocesado seleccionado a los datos cargados
-        y actualiza la tabla y el selector de columnas.
+        Applies the selected preprocessing method to the loaded data
+        and updates the table and column selector.
 
         Raises
         ------
         Exception
-            Si ocurre un error durante el preprocesado de datos.
+            If an error occurs during data preprocessing.
         """
         try:
             # Aplica el método de preprocesado y actualiza los datos

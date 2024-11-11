@@ -8,37 +8,36 @@ from typing import List
 
 class ColumnSelector(QWidget):
     """
-    Selector de columnas para elegir columnas de entrada y salida en una interfaz gráfica.
+    Column selector for choosing input and output columns in a graphical interface.
 
-    Este widget permite a los usuarios seleccionar columnas de entrada (features) y una columna
-    de salida (target) a partir de un conjunto de datos. El usuario puede seleccionar múltiples
-    columnas de entrada y confirmar su selección.
+    This widget allows users to select input columns (features) and an output column (target) 
+    from a dataset. The user can select multiple input columns and confirm their selection.
 
     Parameters
     ----------
     parent : QWidget, optional
-        El widget principal que contendrá al selector de columnas, por defecto None.
+        The main widget that will contain the column selector, default is None.
 
     Attributes
     ----------
     Important Attributes
         input_column_selector : QListWidget
-            Lista de columnas disponibles para seleccionar como entrada (features).
+            List of available columns to select as input (features).
         output_column_selector : QComboBox
-            Desplegable que muestra las columnas disponibles para elegir la columna de salida (target).
+            Dropdown that displays available columns to choose the output column (target).
         confirm_button : QPushButton
-            Botón para confirmar la selección de columnas.
+            Button to confirm the column selection.
     
     Other Attributes
         input_label : QLabel
-            Etiqueta descriptiva para la lista de columnas de entrada.
+            Descriptive label for the input columns list.
         output_label : QLabel
-            Etiqueta descriptiva para la selección de columna de salida.
+            Descriptive label for selecting the output column.
 
     Notes
     -----
-    Es importante que los nombres de columna del dataset se establezcan antes de que el usuario
-    intente realizar la selección. Esto se logra a través del método `populate_columns`.
+    It is important that the dataset column names are set before the user attempts selection. 
+    This is achieved through the `populate_columns` method.
     """
 
     def __init__(self, parent=None):
@@ -50,10 +49,10 @@ class ColumnSelector(QWidget):
 
     def init_ui(self):
         """
-        Inicializa la interfaz gráfica del selector de columnas.
+        Initializes the graphical interface for the column selector.
 
-        Crea y organiza los widgets `input_column_selector`, `output_column_selector`, `confirm_button`,
-        así como las etiquetas `input_label` y `output_label`.
+        Creates and organizes the `input_column_selector`, `output_column_selector`, 
+        and `confirm_button` widgets, as well as the `input_label` and `output_label`.
         """
         layout = QGridLayout()
 
@@ -76,17 +75,17 @@ class ColumnSelector(QWidget):
 
     def populate_columns(self, columns: List[str]):
         """
-        Pobla el selector de columnas con los nombres de las columnas del dataset.
+        Populates the column selector with the dataset's column names.
 
         Parameters
         ----------
         columns : List[str]
-            Lista de nombres de columnas para poblar los selectores de entrada y salida.
+            List of column names to populate the input and output selectors.
 
         Notes
         -----
-        Llama a este método después de cargar los datos para asegurarse de que el selector
-        de columnas muestre las opciones correctas.
+        Call this method after loading the data to ensure that the column selector 
+        shows the correct options.
         """
         self.input_column_selector.clear()
         self.output_column_selector.clear()
@@ -102,18 +101,17 @@ class ColumnSelector(QWidget):
 
     def get_selected_columns(self) -> tuple:
         """
-        Obtiene las columnas seleccionadas como entrada y salida.
+        Gets the selected input and output columns.
 
         Returns
         -------
         tuple
-            Una tupla que contiene una lista de columnas seleccionadas como entrada 
-            y una columna de salida seleccionada.
+            A tuple containing a list of selected input columns and a selected output column.
 
         Raises
         ------
         ValueError
-            Si no hay ninguna columna seleccionada como entrada o salida.
+            If no input or output column is selected.
         """
         input_columns = [
             self.input_column_selector.item(i).text()

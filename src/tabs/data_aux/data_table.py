@@ -4,25 +4,25 @@ import pandas as pd
 
 class DataTable(QTableWidget):
     """
-    Tabla de datos para mostrar un subconjunto de datos de un `DataFrame` en un widget QTableWidget.
+    Data table to display a subset of a `DataFrame` in a QTableWidget widget.
 
-    La clase proporciona funcionalidades para actualizar y resaltar columnas en función de
-    criterios seleccionados.
+    This class provides functionalities to update and highlight columns based on 
+    selected criteria.
 
     Parameters
     ----------
     parent : QWidget, optional
-        El widget principal que contiene la tabla, por defecto None.
+        The main widget containing the table, default is None.
 
     Attributes
     ----------
     table_data : pd.DataFrame
-        DataFrame que contiene los datos actualmente cargados en la tabla.
+        DataFrame containing the data currently loaded into the table.
 
     Notes
     -----
-    Este widget no permite la edición directa de los datos y ajusta automáticamente el tamaño
-    de las columnas para adaptarse al contenido.
+    This widget does not allow direct data editing and automatically adjusts 
+    column sizes to fit the content.
     """
 
     def __init__(self, parent=None):
@@ -31,8 +31,8 @@ class DataTable(QTableWidget):
 
     def init_ui(self):
         """
-        Configura las propiedades iniciales de la tabla, como el ajuste de tamaño
-        y la desactivación de edición directa.
+        Sets up the initial properties of the table, such as size adjustment 
+        and disabling direct editing.
         """
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -40,17 +40,17 @@ class DataTable(QTableWidget):
 
     def update_data(self, data: pd.DataFrame, size: int):
         """
-        Actualiza los datos de la tabla con un subconjunto de filas del DataFrame.
+        Updates the table data with a subset of rows from the DataFrame.
 
         Parameters
         ----------
         data : pd.DataFrame
-            El DataFrame con los datos que se mostrarán en la tabla.
+            The DataFrame containing the data to be displayed in the table.
 
         Notes
         -----
-        Solo se muestra la mitad de las filas del DataFrame original para mejorar
-        la eficiencia y reducir la carga visual en la interfaz.
+        Only half of the original DataFrame's rows are displayed to improve 
+        efficiency and reduce visual load on the interface.
         """
         self.setRowCount(size)
         self.setColumnCount(data.shape[1])
@@ -71,19 +71,19 @@ class DataTable(QTableWidget):
 
     def highlight_column(self, column_index: int, highlight: bool):
         """
-        Cambia el color de fondo de una columna específica para resaltarla.
+        Changes the background color of a specific column to highlight it.
 
         Parameters
         ----------
         column_index : int
-            Índice de la columna que se desea resaltar.
+            Index of the column to be highlighted.
         highlight : bool
-            Indica si se debe aplicar o quitar el resaltado de la columna.
+            Indicates whether to apply or remove the highlight from the column.
 
         Notes
         -----
-        El color del resaltado es fijo. Si `highlight` es True, se aplica un color de resaltado,
-        y si es False, se aplica un color de fondo neutro.
+        The highlight color is fixed. If `highlight` is True, a highlight color is applied,
+        and if False, a neutral background color is used.
         """
         color = QColor(255, 171, 170) if highlight else QColor(255, 243, 224) #Old color = B147
         for row in range(self.rowCount()):

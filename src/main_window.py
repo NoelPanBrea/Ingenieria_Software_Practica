@@ -6,12 +6,12 @@ from tabs.lineal_model_tab import LinealModelTab
 
 class MainWindow(QTabWidget):
     """
-    Ventana principal de la aplicación que gestiona las pestañas.
+    Main window of the application that manages the tabs.
     """
 
     def __init__(self):
         """
-        Inicializa la ventana principal y configura sus propiedades.
+        Initializes the main window and sets its properties.
         """
         super().__init__()
 
@@ -33,7 +33,7 @@ class MainWindow(QTabWidget):
 
     def init_tabs(self):
         """
-        Inicializa las pestañas de la ventana principal.
+        Initializes the tabs of the main window.
         """
         # Crear la pestaña de datos
         self.data_tab = DataTab()
@@ -53,7 +53,7 @@ class MainWindow(QTabWidget):
         #self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
     def create_linear_model_tab(self):
         """
-        Crea la pestaña de modelo lineal si los datos están disponibles.
+        Creates the linear model tab if the data is available.
         """
 
         self.tabs_counter += 1
@@ -74,8 +74,8 @@ class MainWindow(QTabWidget):
 
 
     def load_model_open_tab(self):
-        """	
-        Carga un modelo y abre una pestaña de LinealModelTab.
+        """    
+        Loads a model and opens a LinealModelTab.
         """
         model_loaded = self.data_tab.load_model()
         if model_loaded:
@@ -83,7 +83,7 @@ class MainWindow(QTabWidget):
         
     def close_tab(self, index):
         """
-        Cierra la pestaña en el índice dado.
+        Closes the tab at the given index.
         """
         # Evita que la pestaña de datos se cierre
         if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
