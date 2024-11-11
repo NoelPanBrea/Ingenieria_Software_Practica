@@ -7,7 +7,7 @@ import pandas as pd
 import joblib
 
 import tabs.data_aux.import_module as im
-from tabs.popup_handler import *
+from tabs.data_aux.common_aux.popup_handler import *
 from tabs.data_aux.dataset_calc import *
 from tabs.data_aux.column_selector import ColumnSelector
 from tabs.data_aux.data_table import DataTable
