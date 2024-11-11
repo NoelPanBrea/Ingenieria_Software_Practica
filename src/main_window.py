@@ -71,7 +71,6 @@ class MainWindow(QTabWidget):
         if len(self.linear_model_tab_list) > 1 and\
               self.linear_model_tab_list[-2].model is None:
             self.close_tab(len(self.linear_model_tab_list) - 1)
-            del(self.linear_model_tab_list[-2])
 
 
     def load_model_open_tab(self):
