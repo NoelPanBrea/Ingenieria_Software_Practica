@@ -89,3 +89,4 @@ class MainWindow(QTabWidget):
         # Evita que la pestaña de datos se cierre
         if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
             self.removeTab(index)
+            del(self.linear_model_tab_list[index - 1])
