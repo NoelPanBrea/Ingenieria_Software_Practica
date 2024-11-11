@@ -280,7 +280,8 @@ class DataTab(QWidget):
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
         self.show_selection_summary(input_columns, output_column)
-        self.enable_preprocessing()
+        if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
+            self.enable_preprocessing() 
 
     def set_preprocessing_method(self, method: str):
         """
