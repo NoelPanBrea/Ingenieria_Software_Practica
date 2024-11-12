@@ -4,17 +4,17 @@ import sqlite3
 
 def load_file(file_path: str) -> pd.DataFrame:
     """
-    Loads a .sql, .db, .csv, .xls, .xlsx file
+    Loads a .sql, .db, .csv, .xls, or .xlsx file.
 
     Parameters 
     -----------
     file_path : str
-        Desired file's path
+        Path to the desired file.
 
     Returns
     -----------
-     data: Dataframe
-        Data in a pd.DataFrame
+     data: DataFrame
+        Data in a pd.DataFrame.
     """
 
     # Obtain the file's extension
@@ -45,17 +45,17 @@ def load_file(file_path: str) -> pd.DataFrame:
 
 def __import_sql(file_path: str) -> pd.DataFrame:
     """
-    Loads data from the first table of a sql file
+    Loads data from the first table of a SQL file.
 
     Parameters 
     -----------
     file_path: str
-        File_path to the .sql/.db file
+        Path to the .sql/.db file.
 
     Returns
     -----------
-     data: Dataframe
-        Data in a  pd.DataFrame
+     data: DataFrame
+        Data in a pd.DataFrame.
     """
     try:
         conn = sqlite3.connect(file_path)
@@ -77,17 +77,17 @@ def __import_sql(file_path: str) -> pd.DataFrame:
 
 def __import_excel(file_path: str) -> pd.DataFrame:
     """
-    Loads data from a excel file
+    Loads data from an Excel file.
 
     Parameters 
     -----------
     file_path: str
-        File_path to the .xlx/.xlxs file
+        Path to the .xls/.xlsx file.
 
     Returns
     -----------
-     data: Dataframe
-        Data in a pd.DataFrame
+     data: DataFrame
+        Data in a pd.DataFrame.
     """
     try:
         # Read excel file
@@ -100,17 +100,17 @@ def __import_excel(file_path: str) -> pd.DataFrame:
 
 def __import_csv(file_path: str) -> pd.DataFrame:
     """
-    Loads data from a csv file
+    Loads data from a CSV file.
 
     Parameters 
     -----------
     file_path: str
-        File_path to the .csv file
+        Path to the .csv file.
 
     Returns
     -----------
-     data: Dataframe
-        Data in a pd.DataFrame
+     data: DataFrame
+        Data in a pd.DataFrame.
     """
     try:
         # Read csv file

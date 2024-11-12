@@ -22,7 +22,7 @@ class InputDialog(QDialog):
     def get_inputs(self):
         return tuple(input.text() for input in self.inputs)
 
-def show_message(message: str) -> None:
+def show_message(message: str, parent = None) -> None:
     """
     Shows a message in a pop up window
 
@@ -35,13 +35,13 @@ def show_message(message: str) -> None:
     -----------
         None
     """
-    msg_box = QMessageBox()
+    msg_box = QMessageBox(parent = parent)
     msg_box.setIcon(QMessageBox.Information)
     msg_box.setText(message)
     msg_box.setWindowTitle("Éxito")
     msg_box.exec_()
 
-def show_error(message: str) -> None:
+def show_error(message: str, parent = None) -> None:
     """
     Shows an error message in a pop up window
 
@@ -54,7 +54,7 @@ def show_error(message: str) -> None:
     -----------
         None
     """
-    error_msg = QMessageBox()
+    error_msg = QMessageBox(parent = parent)
     error_msg.setIcon(QMessageBox.Critical)
     error_msg.setText(message)
     error_msg.setWindowTitle('Error')
@@ -62,7 +62,7 @@ def show_error(message: str) -> None:
 
 def open_file_dialog(parent = None) -> None:
     """
-    Shows the dialog to open files and loads the selected file
+    Shows the dialog to open files and returns the selected directory
 
     Returns
     -----------
@@ -72,6 +72,20 @@ def open_file_dialog(parent = None) -> None:
     res = 'Todos los Archivos (*.*);;Archivos CSV (*.csv);;Archivos Excel'
     res += ' (*.xlsx *.xls);;Base de datos SQLite (*.sqlite *.db)'
     file_path, _ = QFileDialog.getOpenFileName(parent, 'Seleccionar archivo',
+        '', res, options = options)
+    return file_path
+
+def save_file_dialog(parent = None) -> None:
+    """
+    Shows the dialog to save files and returns the selected directory
+
+    Returns
+    -----------
+        file_path: str
+    """
+    options = QFileDialog.Options()
+    res = 'Archivo joblib (*.joblib)'
+    file_path, _ = QFileDialog.getSaveFileName(parent, 'Guardar archivo',
         '', res, options = options)
     return file_path
 

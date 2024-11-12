@@ -1,0 +1,166 @@
+/* ==== Enhanced Matrix Theme Colors ==== */
+/* Principal: #39FF14 (Verde brillante)
+   Secundario: #00B140 (Verde)
+   Acento: #004D1C (Verde oscuro para fondos)
+   Fondo: #0A0E0A (Negro verdoso)
+   Elementos: #121812 (Negro más claro)
+   Bordes: #00FF41 (Verde neón) 
+   color = QColor(0, 177, 64, 100) if highlight else QColor("#121812")*/
+
+/* Configuración base para todos los widgets */
+QWidget {
+    background-color: #0A0E0A;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+/* Estilo de los botones */
+QPushButton {
+    background-color: #004D1C;
+    color: #39FF14;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 0px;
+    border: 1px solid #00FF41;
+}
+
+/* Efecto hover para botones */
+QPushButton:hover {
+    background-color: #00B140;
+    color: #000000;
+}
+
+/* Estilo base para etiquetas */
+QLabel {
+    font-size: 17px;
+    font-weight: 500;
+    color: #39FF14;
+}
+
+/* Estilo para tablas */
+QTableWidget {
+    background-color: #121812;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    font-size: 14px;
+    color: #39FF14;
+    gridline-color: #004D1C;
+}
+
+/* Cabeceras de las tablas */
+QHeaderView::section {
+    background-color: #004D1C;
+    color: #39FF14;
+    font-weight: 700;
+    border: 1px solid #00FF41;
+    padding: 6px;
+}
+
+/* Estilo para filas alternadas en la tabla */
+QTableWidget::item:alternate {
+    background-color: #0F130F;
+}
+
+/* Elemento seleccionado en tabla */
+QTableWidget::item:selected {
+    background-color: #00B140;
+    color: #000000;
+}
+
+/* Estilo para listas */
+QListWidget {
+    background-color: #121812;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    font-size: 16px;
+    padding: 8px;
+    color: #39FF14;
+}
+
+/* Elementos de las listas */
+QListWidget::item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #121812;
+}
+
+/* Elemento seleccionado en listas */
+QListWidget::item:selected {
+    background-color: #00B140;
+    color: #000000;
+}
+
+/* Estilo base para ComboBox */
+QComboBox {
+    background-color: #004D1C;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    font-size: 16px;
+    padding: 8px;
+    color: #39FF14;
+    selection-background-color: #00B140;
+}
+
+/* Lista desplegable del ComboBox */
+QComboBox QAbstractItemView {
+    background-color: #121812;
+    border: 1px solid #00FF41;
+    color: #39FF14;
+    selection-background-color: #00B140;
+    selection-color: #000000;
+}
+
+/* Checkbox */
+QCheckBox {
+    color: #39FF14;
+    spacing: 8px;
+}
+
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #00FF41;
+    background: #121812;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #00B140;
+    border: 1px solid #00FF41;
+}
+
+QCheckBox::indicator:hover {
+    border: 1px solid #39FF14;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    border: none;
+    background: #121812;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #00B140;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #39FF14;
+}
+
+QScrollBar:horizontal {
+    border: none;
+    background: #121812;
+    height: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #00B140;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #39FF14;
+}
