@@ -1,0 +1,304 @@
+/* Principal: #DB5B9A 
+   Hover: #E774AE 
+   Bordes: #C4447E 
+   Texto: #FFE4F0 
+   Fondos: 
+   - #1F1720 (fondo principal)
+   - #2A2226 (elementos)
+   - #3A2F33 (headers) 
+   data_table: 
+   color = QColor(219, 91, 154, 77) if highlight else QColor("#2A2226")*/
+
+/* Configuración base para todos los widgets */
+QWidget {
+    background-color: #1F1720;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Estilo de los botones */
+QPushButton {
+    background-color: #DB5B9A;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 2px solid #C4447E;
+}
+
+/* Efecto hover para botones */
+QPushButton:hover {
+    background-color: #E774AE;
+    border: 2px solid #DB5B9A;
+}
+
+/* Estilo base para etiquetas */
+QLabel {
+    font-size: 17px;
+    font-weight: 600;
+    color: #FFE4F0;
+}
+
+/* Estilo para tablas */
+QTableWidget {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #FFE4F0;
+    font-weight: 700;
+    gridline-color: #3A2F33;  /* Color de las líneas de la cuadrícula */
+}
+
+/* Cabeceras de las tablas */
+QHeaderView::section {
+    background-color: #3A2F33;
+    color: #FFE4F0;
+    font-weight: 700;
+    border: 1px solid #DB5B9A;
+    padding: 4px;
+}
+
+/* Estilo para listas */
+QListWidget {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 8px;
+    color: #FFE4F0;
+    font-weight: 600;
+}
+
+/* Elementos de las listas */
+QListWidget::item {
+    padding: 10px;
+    border: 1px solid #3A2F33;
+    border-radius: 4px;
+    margin: 5px 0;
+    color: #FFE4F0;
+}
+
+/* Elemento seleccionado en listas */
+QListWidget::item:selected {
+    background-color: rgba(219, 91, 154, 0.5);
+    color: #FFFFFF;
+}
+
+/* Estilo base para ComboBox (desplegable) */
+QComboBox {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 8px;
+    color: #FFE4F0;
+    font-weight: 600;
+}
+
+/* Botón desplegable del ComboBox */
+QComboBox::drop-down {
+    border: none;
+}
+
+/* Flecha del ComboBox */
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #DB5B9A;
+    margin-right: 10px;
+}
+
+/* Lista desplegable del ComboBox */
+QComboBox QAbstractItemView {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    color: #FFE4F0;
+    selection-background-color: #DB5B9A;
+    selection-color: #FFFFFF;
+    outline: 0px;
+}
+
+/* Elementos individuales en el ComboBox */
+QComboBox QAbstractItemView::item {
+    color: #FFE4F0;
+    padding: 6px;
+    min-height: 24px;
+}
+
+/* Hover sobre elementos del ComboBox */
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(219, 91, 154, 0.3);
+}
+
+/* Elemento seleccionado del ComboBox */
+QComboBox QAbstractItemView::item:selected {
+    background-color: #DB5B9A;
+    color: #FFFFFF;
+}
+
+/* Estilo para menús */
+QMenu {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 5px;
+    color: #FFE4F0;
+}
+
+/* Elemento seleccionado en menús */
+QMenu::item:selected {
+    background-color: rgba(219, 91, 154, 0.5);
+    color: #FFFFFF;
+}
+
+/* Esquina de las tablas */
+QTableView QTableCornerButton::section {
+    background: #3A2F33;
+    border: 1px solid #DB5B9A;
+    border-radius: 3px;
+}
+
+/* Panel de pestañas */
+QTabWidget::pane {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 5px;
+}
+
+/* Pestañas individuales */
+QTabBar::tab {
+    background-color: #3A2F33;
+    color: #FFE4F0;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 2px;
+    border: 2px solid #DB5B9A;
+    border-bottom: none;
+    min-width: 100px;
+}
+
+/* Pestaña seleccionada */
+QTabBar::tab:selected {
+    background-color: #DB5B9A;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+/* Hover sobre pestañas */
+QTabBar::tab:hover {
+    background-color: #E774AE;
+}
+
+/* === Estilos específicos para ModelDescription === */
+
+/* Etiqueta de visualización */
+QLabel#displayLabel {
+    color: #FFE4F0;
+    font-size: 15px;
+    padding: 2px;
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+/* Campo de entrada */
+QLineEdit#modelInput {
+    background-color: #2A2226;
+    border: 2px solid #DB5B9A;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 11px;
+    color: #FFE4F0;
+}
+
+/* Campo de entrada al tener foco */
+QLineEdit#modelInput:focus {
+    border: 2px solid #E774AE;
+    background-color: #3A2F33;
+}
+
+/* Placeholder del campo de entrada */
+QLineEdit#modelInput::placeholder {
+    color: #A66D89;
+    font-style: italic;
+}
+
+/* === Estilo de Checkboxes === */
+QCheckBox {
+    color: #FFE4F0;
+}
+
+/* Indicador del checkbox */
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #DB5B9A;
+    background-color: #2A2226;
+}
+
+/* Hover sobre checkbox sin marcar */
+QCheckBox::indicator:unchecked:hover {
+    border: 2px solid #E774AE;
+}
+
+/* Checkbox marcado */
+QCheckBox::indicator:checked {
+    background-color: #DB5B9A;
+    border: 2px solid #DB5B9A;
+}
+
+/* === Scrollbars === */
+
+/* Scrollbar vertical */
+QScrollBar:vertical {
+    border: none;
+    background: #1F1720;
+    width: 10px;
+    margin: 0px;
+}
+
+/* Manejador del scrollbar vertical */
+QScrollBar::handle:vertical {
+    background: #DB5B9A;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+/* Hover sobre el manejador vertical */
+QScrollBar::handle:vertical:hover {
+    background: #E774AE;
+}
+
+/* Ocultar botones adicionales del scrollbar vertical */
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* Scrollbar horizontal */
+QScrollBar:horizontal {
+    border: none;
+    background: #1F1720;
+    height: 10px;
+    margin: 0px;
+}
+
+/* Manejador del scrollbar horizontal */
+QScrollBar::handle:horizontal {
+    background: #DB5B9A;
+    min-width: 20px;
+    border-radius: 5px;
+}
+
+/* Hover sobre el manejador horizontal */
+QScrollBar::handle:horizontal:hover {
+    background: #E774AE;
+}
+
+/* Ocultar botones adicionales del scrollbar horizontal */
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}

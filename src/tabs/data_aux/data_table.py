@@ -85,6 +85,7 @@ class DataTable(QTableWidget):
         The highlight color is fixed. If `highlight` is True, a highlight color is applied,
         and if False, a neutral background color is used.
         """
-        color = QColor(255, 171, 170) if highlight else QColor(255, 243, 224) #Old color = B147
+        color = QColor(33, 150, 243, 130) if highlight else QColor("#1A1B1E")
         for row in range(self.rowCount()):
             self.item(row, column_index).setBackground(color)
+

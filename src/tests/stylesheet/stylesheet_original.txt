@@ -1,0 +1,237 @@
+/* ==== Original Orange Theme Colors ==== */
+/* Principal: #FF7043 (Naranja)
+   Secundario: #D84315 (Naranja oscuro)
+   Fondo claro: #FFF3E0 (Beige claro)
+   Fondo principal: #FFCC80 (Naranja claro)
+   Headers: #FFAB91 (Salmón)
+   Texto: #4E342E (Marrón oscuro) 
+   data_table: 
+        color = QColor(255, 112, 67, 77) if highlight else QColor("#FFF3E0") */
+
+/* Configuración base para todos los widgets */
+QWidget {
+    background-color: #FFCC80;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Estilo de los botones */
+QPushButton {
+    background-color: #FF7043;
+    color: #FFF3E0;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 2px solid #D84315;
+}
+
+/* Efecto hover para botones */
+QPushButton:hover {
+    background-color: #D84315;
+}
+
+/* Estilo base para etiquetas */
+QLabel {
+    font-size: 17px;
+    font-weight: 600;
+    color: #4E342E;
+}
+
+/* Estilo para tablas */
+QTableWidget {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #4E342E;
+    font-weight: 700;
+}
+
+/* Cabeceras de las tablas */
+QHeaderView::section {
+    background-color: #FFAB91;
+    color: #4E342E;
+    font-weight: 700;
+    border: 1px solid #FF7043;
+    padding: 4px;
+}
+
+/* Estilo para listas */
+QListWidget {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 8px;
+    color: #4E342E;
+    font-weight: 600;
+}
+
+/* Elementos de las listas */
+QListWidget::item {
+    padding: 10px;
+    border: 1px solid #FF7043;
+    border-radius: 4px;
+    margin: 5px 0;
+    color: #4E342E;
+}
+
+/* Estilo base para ComboBox */
+QComboBox {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 8px;
+    color: #4E342E;
+    font-weight: 600;
+}
+
+/* Botón desplegable del ComboBox */
+QComboBox::drop-down {
+    border: none;
+}
+
+/* Flecha del ComboBox */
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #FF7043;
+    margin-right: 10px;
+}
+
+/* Lista desplegable del ComboBox */
+QComboBox QAbstractItemView {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    color: #4E342E;
+    selection-background-color: #D84315;
+    selection-color: #FFF3E0;
+    outline: 0px;
+}
+
+/* Elementos individuales en el ComboBox */
+QComboBox QAbstractItemView::item {
+    color: #4E342E;
+    padding: 6px;
+    min-height: 24px;
+}
+
+/* Hover sobre elementos del ComboBox */
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(216, 67, 21, 0.3);
+}
+
+/* Elemento seleccionado del ComboBox */
+QComboBox QAbstractItemView::item:selected {
+    background-color: #D84315;
+    color: #FFF3E0;
+}
+
+/* Indicador de la lista */
+QListWidget::indicator {
+    width: 15px;
+    height: 15px;
+}
+
+/* Estilo para menús */
+QMenu {
+    background-color: #FFCC80;
+    border: 2px solid #D84315;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+}
+
+/* Elemento seleccionado en menús */
+QMenu::item:selected {
+    background-color: #D84315;
+}
+
+/* Esquina de las tablas */
+QTableView QTableCornerButton::section {
+    background: #FFAB91;
+    border: 1px solid #FF7043;
+    border-radius: 3px;
+}
+
+/* Panel de pestañas */
+QTabWidget::pane {
+    background-color: #FFF3E0;
+    border: 2px solid #FF7043;
+    border-radius: 5px;
+}
+
+/* Pestañas individuales */
+QTabBar::tab {
+    background-color: #FFAB91;
+    color: #4E342E;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 2px;
+    border: 2px solid #FF7043;
+    border-bottom: none;
+    min-width: 100px;
+}
+
+/* Pestaña seleccionada */
+QTabBar::tab:selected {
+    background-color: #FF7043;
+    color: #FFF3E0;
+    font-weight: bold;
+    border-color: #D84315;
+    border-bottom: 2px solid #FF7043;
+}
+
+/* Hover sobre pestañas */
+QTabBar::tab:hover {
+    background-color: #D84315;
+    color: #FFF3E0;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    border: none;
+    background: #FFCC80;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #FF7043;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #D84315;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    border: none;
+    background: #FFCC80;
+    height: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #FF7043;
+    min-width: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #D84315;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}

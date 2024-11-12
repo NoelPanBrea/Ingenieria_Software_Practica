@@ -16,25 +16,14 @@ class ModelDescription:
         Sets up the UI elements related to the description.
         """
         self.display_label = QLabel(self.DEFAULT_TEXT)
-        self.display_label.setStyleSheet("""
-            QLabel {
-                color: #4E342E;
-                font-size: 15px;
-                padding: 2px;
-            }
-        """)
+        self.display_label.setObjectName("displayLabel")
         self.display_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.display_label.setMouseTracking(True)
         self.display_label.setCursor(Qt.PointingHandCursor)
         
         self.input_field = QLineEdit()
+        self.input_field.setObjectName("modelInput")
         self.input_field.setPlaceholderText("Escribe aquí la descripción del modelo...")
-        self.input_field.setStyleSheet("""
-            QLineEdit {
-                font-size: 11px;
-                padding: 2px;
-            }
-        """)
         self.input_field.hide()
 
     def setup_events(self):
