@@ -164,15 +164,7 @@ class LinealModelTab(QWidget):
          
         except Exception as e:
             show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
-
-    def update_data(self, data, input_columns, output_column):
-        """
-        Updates the data, input columns, and output column of the model tab.
-        This is useful when refreshing the model after loading new data or modifying columns.
-        """
-        self.data = data
-        self.input_columns = input_columns
-        self.output_column = output_column
+            
 
     def make_prediction(self):
         """
@@ -198,9 +190,23 @@ class LinealModelTab(QWidget):
         constants = input_window.get_inputs()
         print(f"Constantes introducidas: {constants}")
 
+        # Si constants es una tupla, conviértelo en un diccionario
+        if isinstance(constants, tuple):
+            constants = {col: float(value) for col, value in zip(self.input_columns, constants)}
+            print(f"Diccionario constantes: {constants}")
+
         # Validar que todos los valores estén completos
         if not constants or any(value is None for value in constants.values()):
             QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
             return
 
-        
+        try:
+            # Preparar los datos para realizar la predicción
+            input_values = [constants[column] for column in self.input_columns]
+            prediction = self.model.predict([input_values])[0]
+
+            # Mostrar el resultado de la predicción
+            QMessageBox.information(self, "Predicción", f"La predicción del modelo es: {prediction:.4f}")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")
