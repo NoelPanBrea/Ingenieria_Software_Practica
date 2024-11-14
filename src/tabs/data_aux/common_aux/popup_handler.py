@@ -8,14 +8,59 @@ class InputDialog(QDialog):
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
         layout = QFormLayout(self)
         self.setWindowTitle(title)
-        self.setStyleSheet(stylesheet)
+        from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLineEdit, QFormLayout
+from PyQt5.QtCore import Qt, pyqtSlot
+
+class InputDialog(QDialog):
+    def __init__(self, labels: list[str], title: str = 'default title', stylesheet: str = None, parent=None):
+        super().__init__(parent, QtCore.Qt.WindowCloseButtonHint)
+        
+        # Configuración del botón de Aceptar y Cancelar
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        
+        layout = QFormLayout(self)
+        self.setWindowTitle(title)
+
+        # Si hay una hoja de estilo personalizada, aplicarla
+        if stylesheet:
+            self.setStyleSheet(stylesheet)
+        else:
+            # Aplicar estilo por defecto para el fondo y el texto
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: black;
+                    color: white;
+                }
+                QLabel {
+                    color: white;
+                }
+                QLineEdit {
+                    background-color: black;
+                    color: white;
+                    border: 1px solid white;
+                    padding: 5px;
+                }
+                QPushButton {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 10px;
+                    font-size: 16px;
+                }
+                QPushButton:hover {
+                    background-color: #45a049;
+                }
+            """)
+
         self.inputs = []
         for lab in labels:
-            self.inputs.append(QLineEdit(self))
-            layout.addRow(lab, self.inputs[-1])
+            line_edit = QLineEdit(self)
+            self.inputs.append(line_edit)
+            layout.addRow(lab, line_edit)
 
         layout.addWidget(buttonBox)
 
+        # Conectar los botones
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
