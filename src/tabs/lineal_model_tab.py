@@ -43,6 +43,7 @@ class LinealModelTab(QWidget):
 
         # Configurar etiqueta para mostrar la descripción
         self.model_description.add_to_layout(layout)
+
         # Contenedor para la gráfica
         self.graph_container = QWidget()
         self.graph_layout = QVBoxLayout(self.graph_container)
@@ -52,6 +53,12 @@ class LinealModelTab(QWidget):
         # Espaciador para empujar widgets hacia arriba
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer)
+
+        # Botón para realizar predicción (inicialmente oculto)
+        self.predict_button = QPushButton("Realizar Predicción")
+        self.predict_button.setVisible(False)  # Oculto inicialmente
+        self.predict_button.clicked.connect(self.make_prediction)
+        layout.addWidget(self.predict_button)
 
         self.save_button = QPushButton("💾 Guardar Modelo")
         self.save_button.clicked.connect(self.save_model)
@@ -86,6 +93,8 @@ class LinealModelTab(QWidget):
                     QMessageBox.information(self, 
                                             "Atención", "No se puede crear una gráfica, debido a que la regresión lineal es múltiple, no simple.")
 
+                # Mostrar el botón "Realizar Predicción"
+                self.predict_button.setVisible(True)
 
                 # Confirmación de éxito
                 QMessageBox.information(self, "Éxito", "El modelo de regresión lineal ha sido creado exitosamente.")
@@ -163,3 +172,14 @@ class LinealModelTab(QWidget):
         self.data = data
         self.input_columns = input_columns
         self.output_column = output_column
+
+    def make_prediction(self):
+        """
+        Method to make predictions with the model.
+        """
+        if self.model is None:
+            QMessageBox.warning(self, "Advertencia", "Primero debe crear un modelo antes de realizar predicciones.")
+            return
+        
+        # Ejemplo: aquí podría abrirse una ventana para ingresar datos y mostrar las predicciones
+        QMessageBox.information(self, "Predicción", "Funcionalidad de predicción por implementar.")
