@@ -9,6 +9,7 @@ from tabs.lineal_model_aux.description import *
 from tabs.data_aux.common_aux.popup_handler import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from tabs.data_aux.common_aux.popup_handler import InputDialog
 
 
 class LinealModelTab(QWidget):
@@ -177,9 +178,29 @@ class LinealModelTab(QWidget):
         """
         Method to make predictions with the model.
         """
-        if self.model is None:
-            QMessageBox.warning(self, "Advertencia", "Primero debe crear un modelo antes de realizar predicciones.")
+        if not self.model:
+            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
             return
+
+        if not self.input_columns:
+            QMessageBox.critical(self, "Error", "No se han definido columnas de entrada.")
+            return
+
+        # Crear ventana emergente usando InputDialog
+        input_window = InputDialog(
+            self.input_columns,  # Lista de nombres de columnas de entrada
+            "Introduzca los valores de las entradas",
+            parent=self
+        )
+        input_window.exec()
+
+        # Obtener los valores ingresados
+        constants = input_window.get_inputs()
+        print(f"Constantes introducidas: {constants}")
+
+        # Validar que todos los valores estén completos
+        if not constants or any(value is None for value in constants.values()):
+            QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
+            return
+
         
-        # Ejemplo: aquí podría abrirse una ventana para ingresar datos y mostrar las predicciones
-        QMessageBox.information(self, "Predicción", "Funcionalidad de predicción por implementar.")
