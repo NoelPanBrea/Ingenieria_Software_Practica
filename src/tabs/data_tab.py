@@ -328,7 +328,7 @@ class DataTab(QWidget):
         """
         if self.selected_input_columns:
             input_window = InputDialog(
-                self.selected_input_columns,
+                self.selected_input_columns + [self.selected_output_column],
                 'Introduzca las constantes',
                 parent = self
             )
