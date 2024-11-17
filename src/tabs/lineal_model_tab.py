@@ -164,7 +164,7 @@ class LinealModelTab(QWidget):
          
         except Exception as e:
             show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
-            
+
 
     def make_prediction(self):
         """
@@ -188,25 +188,24 @@ class LinealModelTab(QWidget):
 
         # Obtener los valores ingresados
         constants = input_window.get_inputs()
-        print(f"Constantes introducidas: {constants}")
 
-        # Si constants es una tupla, conviértelo en un diccionario
-        if isinstance(constants, tuple):
-            constants = {col: float(value) for col, value in zip(self.input_columns, constants)}
-            print(f"Diccionario constantes: {constants}")
-
-        # Validar que todos los valores estén completos
-        if not constants or any(value is None for value in constants.values()):
+        # Validar los valores ingresados
+        if not constants or any(value is None for value in constants):
             QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
             return
 
         try:
-            # Preparar los datos para realizar la predicción
-            input_values = [constants[column] for column in self.input_columns]
-            prediction = self.model.predict([input_values])[0]
+            # Convertir los valores ingresados a flotantes
+            numeric_data = [float(value) for value in constants]  # Conversión explícita
+            data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
+
+            # Realizar la predicción
+            prediction = self.model.predict(data_to_predict)[0]  # Obtener la predicción
 
             # Mostrar el resultado de la predicción
-            QMessageBox.information(self, "Predicción", f"La predicción del modelo es: {prediction:.4f}")
+            QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
 
+        except ValueError:
+            QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")
