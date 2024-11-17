@@ -23,7 +23,7 @@ class LinealModel:
         self.model = LinearRegression()
         self.coef_ = None
         self.intercept_ = None
-        self.y_pred = None
+        self.y_pred = None  # Inicializamos como None
         self.mse_ = None
         self.r2_ = None
         self.formula = None
@@ -33,17 +33,28 @@ class LinealModel:
         self.model.fit(self.x, self.y)
         self.coef_ = self.model.coef_
         self.intercept_ = self.model.intercept_
-        self.predict()
-        # self.plot()
+
+        # Aseguramos que se realice la predicción con los datos de entrenamiento
+        self.y_pred = self.predict(self.x)  # Usamos el método predict
         self.evaluate()
         self.calc_formula()
 
-    def predict(self):
-        self.y_pred = self.model.predict(self.x)
-        return self.y_pred
+    def predict(self, data_to_predict=None):
+        """
+        Predice valores usando el modelo ajustado.
+        Si no se proporciona `data_to_predict`, usa los datos de entrenamiento.
+        """
+        if data_to_predict is None:
+            data_to_predict = self.x  # Usa los datos de entrenamiento si no se especifican otros
+
+        # Realizamos la predicción
+        return self.model.predict(data_to_predict)
 
     # Calcula coeficientes de errores
     def evaluate(self):      
+        # Verificamos que self.y_pred esté correctamente definido como un array
+        if self.y_pred is None:
+            raise ValueError("Predicciones no generadas. Asegúrate de llamar a 'fit' antes de evaluar.")
         self.mse_ = mean_squared_error(self.y, self.y_pred)
         self.r2_ = r2_score(self.y, self.y_pred)
 
@@ -52,14 +63,3 @@ class LinealModel:
         self.formula = f"{self.output_column} = {self.intercept_:.2f}"
         for i, col in enumerate(self.input_columns):
             self.formula += f" + ({self.coef_[i]:.2f} * {col})"
-
-
-# Uso de la clase
-if __name__ == '__main__':
-    file_path = "C:\\Users\\Usuario\\Downloads\\housing.csv"
-    data = pd.read_csv(file_path)
-    input_columns = ['latitude', 'longitude']
-    output_column = 'population'
-    
-    model = LinealModel(data, input_columns, output_column)
-    model.fit()
