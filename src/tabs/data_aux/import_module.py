@@ -31,7 +31,14 @@ def load_file(file_path: str) -> pd.DataFrame:
         # Verify there was data in the file
         if data.empty:
             raise ValueError("En el archivo no hay tabla")
-        return data
+        
+         # Filter for numeric columns only
+        numeric_data = data.select_dtypes(include=['int64', 'float64'])
+        
+        if numeric_data.empty:
+            raise ValueError("El archivo no contiene columnas numéricas")
+            
+        return numeric_data
     # Error managing: File reading error
     except ValueError as e:
         raise ValueError(f"Error al leer el archivo de Excel: {e}")
