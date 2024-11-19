@@ -24,34 +24,7 @@ class InputDialog(QDialog):
         # Si hay una hoja de estilo personalizada, aplicarla
         if stylesheet:
             self.setStyleSheet(stylesheet)
-        else:
-            # Aplicar estilo por defecto para el fondo y el texto
-            self.setStyleSheet("""
-                QDialog {
-                    background-color: black;
-                    color: white;
-                }
-                QLabel {
-                    color: white;
-                }
-                QLineEdit {
-                    background-color: black;
-                    color: white;
-                    border: 1px solid white;
-                    padding: 5px;
-                }
-                QPushButton {
-                    background-color: #4CAF50;
-                    color: white;
-                    border: none;
-                    padding: 10px;
-                    font-size: 16px;
-                }
-                QPushButton:hover {
-                    background-color: #45a049;
-                }
-            """)
-
+        
         self.inputs = []
         for lab in labels:
             line_edit = QLineEdit(self)

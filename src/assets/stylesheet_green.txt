@@ -378,3 +378,78 @@ QToolButton:hover {
 QToolButton::menu-indicator {
     image: none;
 }
+
+
+/* === Estilos para Diálogos === */
+QDialog {
+    background-color: #0A0E0A;
+    color: #39FF14;
+}
+
+/* === Estilos para MessageBox === */
+QMessageBox {
+    background-color: #0A0E0A;
+}
+
+QMessageBox QLabel {
+    color: #39FF14;
+}
+
+/* === Estilos para FileDialog === */
+QFileDialog {
+    background-color: #0A0E0A;
+}
+
+QFileDialog QLabel {
+    color: #39FF14;
+}
+
+QFileDialog QTreeView {
+    background-color: #121812;
+    color: #39FF14;
+    border: 1px solid #00FF41;
+}
+
+QFileDialog QTreeView::item:selected {
+    background-color: #004D1C;
+}
+
+QFileDialog QTreeView::item:hover {
+    background-color: #00B140;
+}
+
+QFileDialog QLineEdit {
+    background-color: #121812;
+    color: #39FF14;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    padding: 5px;
+}
+
+/* === Estilos para DialogButtonBox === */
+QDialogButtonBox {
+    button-layout: 0;
+}
+
+QDialogButtonBox QPushButton {
+    min-width: 80px;
+}
+
+/* === Estilos para campos de entrada (QLineEdit) === */
+QLineEdit {
+    background-color: #121812;
+    color: #39FF14;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    padding: 5px;
+}
+
+QLineEdit:focus {
+    border: 1px solid #00B140;
+    background-color: #004D1C;
+}
+
+QLineEdit::placeholder {
+    color: #004D1C;
+    font-style: italic;
+}

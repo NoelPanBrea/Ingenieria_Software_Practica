@@ -48,7 +48,8 @@ class MainWindow(QMainWindow):
         self.style_sheets = {
             "Tema Rosa Oscuro": "src/assets/stylesheet_pink.txt",
             "Tema Rosa Claro": "src/assets/stylesheet_light_pink.txt",
-            "Tema Verde": "src/assets/stylesheet_green.txt"
+            "Tema Verde": "src/assets/stylesheet_green.txt",
+            "Tema Azul": "src/assets/stylesheet_blue.txt"
         }
 
         # Create settings button
