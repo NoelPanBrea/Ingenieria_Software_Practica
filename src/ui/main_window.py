@@ -1,14 +1,16 @@
-from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLabel, QTabBar
+from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout, 
+                            QLabel, QTabBar, QComboBox, QHBoxLayout, QToolButton, QMenu)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 import pandas as pd
 
 from tabs.data_tab import DataTab
 from tabs.lineal_model_tab import LinealModelTab
 
-class MainWindow(QTabWidget):
+class MainWindow(QMainWindow):
     """
     Main window of the application that manages the tabs.
     """
-
     def __init__(self):
         """
         Initializes the main window and sets its properties.
@@ -19,17 +21,81 @@ class MainWindow(QTabWidget):
         self.setWindowTitle('Linear Regression Model Maker')
         self.setGeometry(100, 100, 1200, 800)
 
-        # Load stylesheet
-        stylesheet_doc = 'src/assets/stylesheet.txt'
-        with open(stylesheet_doc) as stylesheet_doc:
-            self.setStyleSheet(stylesheet_doc.read())
+        # Create central widget
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        
+        # Create main layout
+        self.main_layout = QVBoxLayout(self.central_widget)
 
-        # Enable close button on all tabs initially
-        self.setTabsClosable(True)
-        self.tabCloseRequested.connect(self.close_tab)
+        # Create tab widget first
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setTabsClosable(True)
+        self.tab_widget.tabCloseRequested.connect(self.close_tab)
+        self.main_layout.addWidget(self.tab_widget)
+
+        # Load stylesheet
+        self.init_styles()
 
         # Initialize tabs
         self.init_tabs()
+
+    def init_styles(self):
+        """
+        Initialize the style system and selector.
+        """
+        # Define available styles
+        self.style_sheets = {
+            "Tema Rosa Oscuro": "src/assets/stylesheet_pink.txt",
+            "Tema Rosa Claro": "src/assets/stylesheet_light_pink.txt",
+            "Tema Verde": "src/assets/stylesheet_green.txt"
+        }
+
+        # Create settings button
+        self.settings_button = QToolButton()
+        self.settings_button.setText("⚙")
+        self.settings_button.setFixedSize(50, 50)  # Aseguramos que es cuadrado
+        
+        # Create menu for the button
+        self.style_menu = QMenu(self.settings_button)
+        self.style_menu.setObjectName("settingsMenu") # Agregamos un nombre de objeto para poder estilizarlo
+        
+        # Crear las acciones del menú con un estilo específico
+        for style_name in self.style_sheets.keys():
+            action = self.style_menu.addAction(style_name)
+            action.setObjectName("menuItem")  # Agregamos un nombre de objeto para los items
+            action.triggered.connect(
+                lambda checked, name=style_name: self.load_style(self.style_sheets[name]))
+        
+        self.settings_button.setMenu(self.style_menu)
+        self.settings_button.setPopupMode(QToolButton.InstantPopup)
+
+        # Create tab corner widget for left side
+        corner_widget = QWidget()
+        corner_layout = QHBoxLayout(corner_widget)
+        corner_layout.setContentsMargins(10, 0, 10, 0)
+        corner_layout.addWidget(self.settings_button)
+        
+        # Set corner widget in tab widget
+        self.tab_widget.setCornerWidget(corner_widget, Qt.TopLeftCorner)
+
+        # Load initial style
+        self.load_style(self.style_sheets["Tema Rosa Oscuro"])
+
+    def load_style(self, style_path):
+        """
+        Load a style sheet from a file.
+
+        Parameters
+        ----------
+        style_path : str
+            Path to the style sheet file
+        """
+        try:
+            with open(style_path, 'r', encoding='utf-8') as stylesheet_doc:
+                self.setStyleSheet(stylesheet_doc.read())
+        except Exception as e:
+            print(f"Error loading style: {e}")
 
     def init_tabs(self):
         """
@@ -39,10 +105,10 @@ class MainWindow(QTabWidget):
         self.data_tab = DataTab()
 
         # Agregar la pestaña de datos al QTabWidget
-        self.addTab(self.data_tab, "Datos")
+        self.tab_widget.addTab(self.data_tab, "Datos")
 
         # Desactivar el botón de cerrar solo en la pestaña "Datos" (índice 0)
-        self.tabBar().setTabButton(0, QTabBar.RightSide, None)
+        self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
         # Conectar la carga de datos para crear el modelo lineal después
         self.tabs_counter = 0
@@ -66,7 +132,7 @@ class MainWindow(QTabWidget):
         self.linear_model_tab_list[-1].model_description.clear_description()
         
         # Agregar la pestaña de modelo lineal con la "X" de cierre
-        self.addTab(self.linear_model_tab_list[-1],
+        self.tab_widget.addTab(self.linear_model_tab_list[-1],
                      f"Modelo {self.tabs_counter}")
         if len(self.linear_model_tab_list) > 1 and\
               self.linear_model_tab_list[-2].model is None:
@@ -87,5 +153,5 @@ class MainWindow(QTabWidget):
         """
         # Evita que la pestaña de datos se cierre
         if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
-            self.removeTab(index)
+            self.tab_widget.removeTab(index)
             del(self.linear_model_tab_list[index - 1])

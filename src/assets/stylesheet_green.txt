@@ -321,3 +321,60 @@ QScrollBar::handle:horizontal:hover {
 
 
 
+/* === Estilo para menús === */
+QMenu#settingsMenu {
+    background-color: #121812;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    padding: 5px;
+    margin: 0px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+QMenu#settingsMenu::item {
+    background-color: transparent;
+    color: #39FF14;
+    padding: 8px 25px 8px 20px;
+    margin: 2px;
+    border: none;
+    min-width: 150px;
+}
+
+QMenu#settingsMenu::item:selected {
+    background-color: #004D1C;
+    color: #39FF14;
+}
+
+QMenu#settingsMenu::item:hover {
+    background-color: #00B140;
+    color: #000000;
+}
+
+/* Separadores en el menú */
+QMenu#settingsMenu::separator {
+    height: 1px;
+    background-color: #00FF41;
+    margin: 5px 15px;
+}
+
+/* Estilo específico para el botón de configuración */
+QToolButton {
+    background-color: #004D1C;          
+    color: #39FF14;                
+    border: 1px solid #00FF41;                 
+    font-size: 24px;                 
+    padding-bottom: 8px;  /* Ajustamos el padding inferior para subir el emoji */
+    margin: 0px;
+    /* Aseguramos que se mantiene como bloque */
+    text-align: center;
+    vertical-align: middle;
+}
+        
+QToolButton:hover {
+    background-color: #00B140;
+    color: #000000;
+}
+        
+QToolButton::menu-indicator {
+    image: none;
+}
