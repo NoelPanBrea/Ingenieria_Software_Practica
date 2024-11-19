@@ -3,15 +3,13 @@
    Bordes: #B30067
    Texto: #3A2F33 
    Fondos: 
-   - #F0F1F4  (fondo principal)
-   - #E6E7EC  (elementos)
-   - #D8DAE2  (headers) 
-   data_table: 
-   color = QColor(198, 0, 125, 77) if highlight else QColor("#E6E7EC ")*/
+   - #E6E7E9   (fondo principal)
+   - #D1D3D7    (elementos)
+   - #BBBDC2    (headers) */
 
 /* Configuración base para todos los widgets */
 QWidget {
-    background-color: #F0F1F4 ;
+    background-color: #E6E7E9  ;
     font-family: 'Helvetica Neue', sans-serif;
 }
 
@@ -41,18 +39,19 @@ QLabel {
 
 /* Estilo para tablas */
 QTableWidget {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 8px;
     font-size: 14px;
     color: #3A2F33;
     font-weight: 700;
-    gridline-color: #D8DAE2 ;
+    gridline-color: #BBBDC2   ;
+    alternate-background-color: rgba(198, 0, 125, 0.3);
 }
 
 /* Cabeceras de las tablas */
 QHeaderView::section {
-    background-color: #D8DAE2 ;
+    background-color: #BBBDC2   ;
     color: #3A2F33;
     font-weight: 700;
     border: 1px solid #C6007D;
@@ -61,7 +60,7 @@ QHeaderView::section {
 
 /* Esquina de las tablas */
 QTableView QTableCornerButton::section {
-    background: #D8DAE2 ;
+    background: #BBBDC2   ;
     border: 1px solid #C6007D;
     border-radius: 3px;
 }
@@ -75,7 +74,7 @@ QTableWidget::item:selected {
 
 /* Estilo para listas */
 QListWidget {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 8px;
     font-size: 16px;
@@ -102,7 +101,7 @@ QListWidget::item:selected {
 
 /* Estilo base para ComboBox (desplegable) */
 QComboBox {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 8px;
     font-size: 16px;
@@ -127,7 +126,7 @@ QComboBox::down-arrow {
 
 /* Lista desplegable del ComboBox */
 QComboBox QAbstractItemView {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     color: #3A2F33;
     selection-background-color: #C6007D;
@@ -141,7 +140,7 @@ QComboBox QAbstractItemView {
 
 /* Panel principal de pestañas */
 QTabWidget::pane {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 5px;
     top: -1px; 
@@ -149,7 +148,7 @@ QTabWidget::pane {
 
 /* Pestañas individuales */
 QTabBar::tab {
-    background-color: #D8DAE2 ;
+    background-color: #BBBDC2   ;
     color: #3A2F33;
     font-size: 14px;
     font-weight: 600;
@@ -183,7 +182,7 @@ QTabBar::tab:hover {
 
 /* Contenedor principal de pestañas */
 QTabWidget {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: none;
 }
 
@@ -199,7 +198,7 @@ QTabBar::scroller {
 
 /* Botones de navegación */
 QTabBar QToolButton { 
-    background-color: #D8DAE2 ;
+    background-color: #BBBDC2   ;
     border: 2px solid #C6007D;
     color: #3A2F33;
     height: 20px;
@@ -228,8 +227,8 @@ QTabBar QToolButton::left-arrow:enabled {
 /* Botones deshabilitados */
 QTabBar QToolButton::right-arrow:disabled,
 QTabBar QToolButton::left-arrow:disabled {
-    color: #D8DAE2 ;
-    background-color: #E6E7EC ;
+    color: #BBBDC2   ;
+    background-color: #D1D3D7   ;
 }
 
 
@@ -247,7 +246,7 @@ QLabel#displayLabel {
 
 /* Campo de entrada */
 QLineEdit#modelInput {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 4px;
     padding: 5px;
@@ -258,7 +257,7 @@ QLineEdit#modelInput {
 /* Campo de entrada al tener foco */
 QLineEdit#modelInput:focus {
     border: 2px solid #E774AE;
-    background-color: #D8DAE2 ;
+    background-color: #BBBDC2   ;
 }
 
 /* Placeholder del campo de entrada */
@@ -304,7 +303,7 @@ QCheckBox::indicator:checked {
 /* Scrollbar vertical */
 QScrollBar:vertical {
     border: none;
-    background: #F0F1F4 ;
+    background: #E6E7E9  ;
     width: 10px;
     margin: 0px;
 }
@@ -329,7 +328,7 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
 /* Scrollbar horizontal */
 QScrollBar:horizontal {
     border: none;
-    background: #F0F1F4 ;
+    background: #E6E7E9  ;
     height: 10px;
     margin: 0px;
 }
@@ -356,7 +355,7 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
 
 /* === Estilo para menús === */
 QMenu#settingsMenu {
-    background-color: #E6E7EC ;
+    background-color: #D1D3D7   ;
     border: 2px solid #C6007D;
     border-radius: 8px;
     padding: 5px;

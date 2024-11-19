@@ -5,9 +5,7 @@
    Fondos: 
    - #1F1720 (fondo principal)
    - #2A2226 (elementos)
-   - #3A2F33 (headers) 
-   data_table: 
-   color = QColor(198, 0, 125, 77) if highlight else QColor("#2A2226")*/
+   - #3A2F33 (headers) */
 
 /* Configuración base para todos los widgets */
 QWidget {
@@ -48,6 +46,7 @@ QTableWidget {
     color: #FFE4F0;
     font-weight: 700;
     gridline-color: #3A2F33;
+    alternate-background-color: rgba(198, 0, 125, 0.3); 
 }
 
 /* Cabeceras de las tablas */
@@ -403,3 +402,4 @@ QToolButton:hover {
 QToolButton::menu-indicator {
     image: none;
 }
+

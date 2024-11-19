@@ -4,8 +4,7 @@
    Acento: #004D1C (Verde oscuro para fondos)
    Fondo: #0A0E0A (Negro verdoso)
    Elementos: #121812 (Negro más claro)
-   Bordes: #00FF41 (Verde neón) 
-   color = QColor(0, 177, 64, 100) if highlight else QColor("#121812")*/
+   Bordes: #00FF41 (Verde neón) */
 
 /* Configuración base para todos los widgets */
 QWidget {
@@ -45,6 +44,7 @@ QTableWidget {
     font-size: 14px;
     color: #39FF14;
     gridline-color: #004D1C;
+    alternate-background-color: rgba(0, 177, 64, 0.3);
 }
 
 /* Cabeceras de las tablas */

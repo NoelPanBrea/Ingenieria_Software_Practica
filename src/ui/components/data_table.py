@@ -1,6 +1,22 @@
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QAbstractScrollArea
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QAbstractScrollArea, QStyledItemDelegate
+from PyQt5.QtCore import Qt
 import pandas as pd
+
+class HighlightDelegate(QStyledItemDelegate):
+    """
+    Controls how cells are displayed in the table, particularly their highlighting.
+    
+    This delegate ensures that cell highlighting automatically adapts to the current
+    application theme, maintaining visual consistency across different color schemes.
+    """
+    def initStyleOption(self, option, index):
+        """
+        Determines the visual style of each cell, applying highlighting when needed.
+        Uses the application's current theme colors for consistency.
+        """
+        super().initStyleOption(option, index)
+        if index.data(Qt.UserRole + 1):  # Check if cell should be highlighted
+            option.backgroundBrush = option.palette.alternateBase()
 
 class DataTable(QTableWidget):
     """
@@ -37,6 +53,14 @@ class DataTable(QTableWidget):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setMinimumHeight(100)
+        
+        # Setup cell display handler
+        self.setItemDelegate(HighlightDelegate())
+        
+        # Configure highlight color from current theme
+        palette = self.palette()
+        palette.setColor(palette.AlternateBase, self.palette().color(palette.Highlight).lighter(170))
+        self.setPalette(palette)
 
     def update_data(self, data: pd.DataFrame, size: int):
         """
@@ -65,7 +89,9 @@ class DataTable(QTableWidget):
                 # Formate si el valor es un float
                 if isinstance(cell_value, float):
                     cell_value = f"{cell_value:.{float_precision}f}"
-                self.setItem(i, j, QTableWidgetItem(str(cell_value)))
+                item = QTableWidgetItem(str(cell_value))
+                item.setData(Qt.UserRole + 1, False)  # Initialize unhighlighted
+                self.setItem(i, j, item)
         
         self.resizeColumnsToContents()
 
@@ -82,10 +108,9 @@ class DataTable(QTableWidget):
 
         Notes
         -----
-        The highlight color is fixed. If `highlight` is True, a highlight color is applied,
-        and if False, a neutral background color is used.
+        Uses theme-aware colors for highlighting to maintain visual consistency
         """
-        color = QColor(198, 0, 125, 77) if highlight else QColor("#2A2226")
         for row in range(self.rowCount()):
-            self.item(row, column_index).setBackground(color)
-
+            if item := self.item(row, column_index):
+                item.setData(Qt.UserRole + 1, highlight)
+        self.viewport().update()
