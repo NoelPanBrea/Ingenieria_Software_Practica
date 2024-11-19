@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from typing import List, Optional
 import pandas as pd
 import joblib
+import numpy as np
 
 import tabs.data_aux.import_module as im
 from tabs.data_aux.common_aux.popup_handler import *
@@ -12,6 +13,7 @@ from tabs.data_aux.dataset_calc import *
 from tabs.data_aux.column_selector import ColumnSelector
 from tabs.data_aux.data_table import DataTable
 from tabs.data_aux.preprocess_toolbar import PreprocessToolbar
+from tabs.lineal_model_tab import LinealModelTab
 
 class DataTab(QWidget):
     """
@@ -184,6 +186,26 @@ class DataTab(QWidget):
                 else:
                     show_error("⚠ El modelo no contiene datos válidos ⚠")
                     return False
+                
+                # Agregar el botón de predicción si no existe
+                if not hasattr(self, "prediction_button"):
+                    self.prediction_button = QPushButton('🔮 Realizar Predicción')
+                    self.prediction_button.setFixedSize(200, 50)
+                    self.prediction_button.setStyleSheet("font-size: 14px;")
+
+                    # Asegurarse de que el botón "Realizar Predicción" sea visible
+                    self.prediction_button.setVisible(True)
+
+                    # Conectar el botón a un método de prueba
+                    self.prediction_button.clicked.connect(self.example)
+
+                    # Asegúrate de usar un layout válido
+                    if self.layout() is None:
+                        self.setLayout(QVBoxLayout())
+                    
+                    # Añade el botón al layout principal
+                    self.layout().addWidget(self.prediction_button)
+                
             else:
                 show_error("⚠ Formato de modelo no soportado ⚠")
                 return False
