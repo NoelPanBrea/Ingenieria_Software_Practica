@@ -59,7 +59,7 @@ class ModelDescription:
         self.input_field.hide()
         self.display_label.show()
 
-    def on_label_click(self, event):
+    def on_label_click(self):
         """
         Handles the click on the description label.
         """

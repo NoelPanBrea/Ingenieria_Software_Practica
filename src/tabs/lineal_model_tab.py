@@ -3,13 +3,13 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
 import joblib
-from tabs.lineal_model_aux.class_LinealModel import *
+from models.lineal_model import *
 from sklearn.metrics import mean_squared_error, r2_score
-from tabs.lineal_model_aux.description import *
-from tabs.data_aux.common_aux.popup_handler import *
+from models.description import *
+from ui.popup_handler import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from tabs.data_aux.common_aux.popup_handler import InputDialog
+from ui.popup_handler import InputDialog
 
 
 class LinealModelTab(QWidget):

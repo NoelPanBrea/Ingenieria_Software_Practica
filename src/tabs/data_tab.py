@@ -6,12 +6,12 @@ from typing import List, Optional
 import pandas as pd
 import joblib
 
-import tabs.data_aux.import_module as im
-from tabs.data_aux.common_aux.popup_handler import *
-from tabs.data_aux.dataset_calc import *
-from tabs.data_aux.column_selector import ColumnSelector
-from tabs.data_aux.data_table import DataTable
-from tabs.data_aux.preprocess_toolbar import PreprocessToolbar
+import data_processing.import_module as im
+from ui.popup_handler import *
+from data_processing.dataset_calc import *
+from ui.components.column_selector import ColumnSelector
+from ui.components.data_table import DataTable
+from ui.components.preprocess_toolbar import PreprocessToolbar
 
 class DataTab(QWidget):
     """
