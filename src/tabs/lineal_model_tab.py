@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
                             QSpacerItem, QMessageBox)
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
@@ -23,10 +23,9 @@ class LinealModelTab(QWidget):
         self.canvas = None  # Referencia para el gráfico
         self.setup_ui()
 
-
     def setup_ui(self):
         layout = QVBoxLayout()
-        
+
         # Botón para crear el modelo
         self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
         self.create_model_button.clicked.connect(self.create_model)
@@ -36,7 +35,7 @@ class LinealModelTab(QWidget):
         self.formula_label = QLabel("Fórmula del Modelo:")
         self.r2_label = QLabel("R²: ")
         self.mse_label = QLabel("ECM: ")
-        
+
         # Añadir al layout
         layout.addWidget(self.formula_label)
         layout.addWidget(self.r2_label)
@@ -50,23 +49,74 @@ class LinealModelTab(QWidget):
         self.graph_layout = QVBoxLayout(self.graph_container)
         self.graph_layout.setContentsMargins(0, 10, 0, 10)  # Margen para separar del resto
         layout.addWidget(self.graph_container)
-        
+
         # Espaciador para empujar widgets hacia arriba
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer)
+
+        # Crear un layout horizontal para los botones
+        button_layout = QHBoxLayout()
 
         # Botón para realizar predicción (inicialmente oculto)
         self.predict_button = QPushButton("Realizar Predicción")
         self.predict_button.setVisible(False)  # Oculto inicialmente
         self.predict_button.clicked.connect(self.make_prediction)
-        layout.addWidget(self.predict_button)
+        button_layout.addWidget(self.predict_button)
 
+        # Botón para guardar el modelo (inicialmente oculto)
         self.save_button = QPushButton("💾 Guardar Modelo")
         self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
-        layout.addWidget(self.save_button)
-        
+        button_layout.addWidget(self.save_button)
+
+        # Añadir el layout de los botones al layout principal
+        layout.addLayout(button_layout)
+
         self.setLayout(layout)
+
+    # def setup_ui(self):
+    #     layout = QVBoxLayout()
+        
+    #     # Botón para crear el modelo
+    #     self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
+    #     self.create_model_button.clicked.connect(self.create_model)
+    #     layout.addWidget(self.create_model_button)
+
+    #     # Etiquetas para mostrar fórmula y métricas
+    #     self.formula_label = QLabel("Fórmula del Modelo:")
+    #     self.r2_label = QLabel("R²: ")
+    #     self.mse_label = QLabel("ECM: ")
+        
+    #     # Añadir al layout
+    #     layout.addWidget(self.formula_label)
+    #     layout.addWidget(self.r2_label)
+    #     layout.addWidget(self.mse_label)
+
+    #     # Configurar etiqueta para mostrar la descripción
+    #     self.model_description.add_to_layout(layout)
+
+    #     # Contenedor para la gráfica
+    #     self.graph_container = QWidget()
+    #     self.graph_layout = QVBoxLayout(self.graph_container)
+    #     self.graph_layout.setContentsMargins(0, 10, 0, 10)  # Margen para separar del resto
+    #     layout.addWidget(self.graph_container)
+        
+    #     # Espaciador para empujar widgets hacia arriba
+    #     spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+    #     layout.addItem(spacer)
+
+    #     # Botón para realizar predicción (inicialmente oculto)
+    #     self.predict_button = QPushButton("Realizar Predicción")
+    #     self.predict_button.setVisible(False)  # Oculto inicialmente
+    #     self.predict_button.clicked.connect(self.make_prediction)
+    #     layout.addWidget(self.predict_button)
+
+    #     self.save_button = QPushButton("💾 Guardar Modelo")
+    #     self.save_button.clicked.connect(self.save_model)
+    #     self.save_button.setVisible(False)
+    #     layout.addWidget(self.save_button)
+        
+    #     self.setLayout(layout)
     
     def create_model(self):
         # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
