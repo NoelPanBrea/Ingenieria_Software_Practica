@@ -1,114 +1,104 @@
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QAbstractScrollArea, QStyledItemDelegate
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import pandas as pd
+
 
 class HighlightDelegate(QStyledItemDelegate):
     """
     Controls how cells are displayed in the table, particularly their highlighting.
-    
-    This delegate ensures that cell highlighting automatically adapts to the current
-    application theme, maintaining visual consistency across different color schemes.
     """
     def initStyleOption(self, option, index):
-        """
-        Determines the visual style of each cell, applying highlighting when needed.
-        Uses the application's current theme colors for consistency.
-        """
         super().initStyleOption(option, index)
         if index.data(Qt.UserRole + 1):  # Check if cell should be highlighted
             option.backgroundBrush = option.palette.alternateBase()
 
+
 class DataTable(QTableWidget):
     """
-    Data table to display a subset of a `DataFrame` in a QTableWidget widget.
-
-    This class provides functionalities to update and highlight columns based on 
-    selected criteria.
-
-    Parameters
-    ----------
-    parent : QWidget, optional
-        The main widget containing the table, default is None.
-
-    Attributes
-    ----------
-    table_data : pd.DataFrame
-        DataFrame containing the data currently loaded into the table.
-
-    Notes
-    -----
-    This widget does not allow direct data editing and automatically adjusts 
-    column sizes to fit the content.
+    Data table with lazy loading for large DataFrames.
     """
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
+        self.data = None  # Full DataFrame
+        self.loaded_rows = 0  # Rows currently loaded
+        self.batch_size = 100  # Number of rows to load at a time
 
     def init_ui(self):
         """
-        Sets up the initial properties of the table, such as size adjustment 
-        and disabling direct editing.
+        Sets up initial table properties and connects scroll events.
         """
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setMinimumHeight(100)
-        
+
         # Setup cell display handler
         self.setItemDelegate(HighlightDelegate())
-        
-        # Configure highlight color from current theme
-        palette = self.palette()
-        palette.setColor(palette.AlternateBase, self.palette().color(palette.Highlight).lighter(170))
-        self.setPalette(palette)
+        self.verticalScrollBar().valueChanged.connect(self.on_scroll)
 
-    def update_data(self, data: pd.DataFrame, size: int):
+    def load_data(self, data: pd.DataFrame, batch_size: int = 100):
         """
-        Updates the table data with a subset of rows from the DataFrame.
+        Initializes the table with data for lazy loading.
 
         Parameters
         ----------
         data : pd.DataFrame
-            The DataFrame containing the data to be displayed in the table.
-
-        Notes
-        -----
-        Only half of the original DataFrame's rows are displayed to improve 
-        efficiency and reduce visual load on the interface.
+            The DataFrame to be loaded lazily.
+        batch_size : int
+            Number of rows to load per batch.
         """
-        self.setRowCount(size)
+        self.data = data
+        self.batch_size = batch_size
+        self.loaded_rows = 0
+
+        # Setup table headers
         self.setColumnCount(data.shape[1])
         self.setHorizontalHeaderLabels(data.columns)
-        
-        #Definir precisión general para floats
+
+        # Load initial rows
+        self.load_more_rows()
+
+    def load_more_rows(self):
+        """
+        Loads the next batch of rows into the table.
+        """
+        if self.data is None:
+            return
+
+        # Determine the next range of rows to load
+        start_row = self.loaded_rows
+        end_row = min(self.loaded_rows + self.batch_size, len(self.data))
+
+        if start_row >= end_row:  # No more rows to load
+            return
+
+        self.setRowCount(end_row)  # Extend the table to accommodate new rows
+
+        # Load rows into the table
         float_precision = 4
-        
-        for i in range(size):
-            for j in range(data.shape[1]):
-                cell_value = data.iat[i, j]
-                # Formate si el valor es un float
+        for i in range(start_row, end_row):
+            for j in range(self.data.shape[1]):
+                cell_value = self.data.iat[i, j]
+                # Format float values
                 if isinstance(cell_value, float):
                     cell_value = f"{cell_value:.{float_precision}f}"
                 item = QTableWidgetItem(str(cell_value))
                 item.setData(Qt.UserRole + 1, False)  # Initialize unhighlighted
                 self.setItem(i, j, item)
-        
+
+        self.loaded_rows = end_row
         self.resizeColumnsToContents()
+    def on_scroll(self):
+        """
+        Checks if the user has scrolled near the bottom to load more rows.
+        """
+        scroll_bar = self.verticalScrollBar()
+        if scroll_bar.value() > scroll_bar.maximum() - 50:  # Threshold for loading
+            QTimer.singleShot(50, self.load_more_rows)
 
     def highlight_column(self, column_index: int, highlight: bool):
         """
-        Changes the background color of a specific column to highlight it.
-
-        Parameters
-        ----------
-        column_index : int
-            Index of the column to be highlighted.
-        highlight : bool
-            Indicates whether to apply or remove the highlight from the column.
-
-        Notes
-        -----
-        Uses theme-aware colors for highlighting to maintain visual consistency
+        Highlights a specific column in the table.
         """
         for row in range(self.rowCount()):
             if item := self.item(row, column_index):

@@ -102,11 +102,13 @@ class MainWindow(QMainWindow):
         """
         Initializes the tabs of the main window.
         """
-        # Crear la pestaña de datos
         self.data_tab = DataTab()
 
-        # Agregar la pestaña de datos al QTabWidget
         self.tab_widget.addTab(self.data_tab, "Datos")
+
+        # Load only a part of the data (100 rows)
+        if self.data_tab.data is not None: 
+            self.data_tab.data_table.load_data(self.data_tab.data, batch_size=100)
 
         # Desactivar el botón de cerrar solo en la pestaña "Datos" (índice 0)
         self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
@@ -116,8 +118,6 @@ class MainWindow(QMainWindow):
         self.linear_model_tab_list = []
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
-        #Crear pestana al cargar modelo
-        #self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
     def create_linear_model_tab(self):
         """
         Creates the linear model tab if the data is available.
