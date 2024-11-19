@@ -180,7 +180,7 @@ class DataTab(QWidget):
 
                 # Llama a update_data solo si el DataFrame tiene datos
                 if model_data_df is not None and not model_data_df.empty:
-                    self.table.update_data(model_data_df, model_data_df.shape[0])
+                    self.table.load_data(model_data_df, batch_size=100)
                 else:
                     show_error("⚠ El modelo no contiene datos válidos ⚠")
                     return False

@@ -106,10 +106,6 @@ class MainWindow(QMainWindow):
 
         self.tab_widget.addTab(self.data_tab, "Datos")
 
-        # Load only a part of the data (100 rows)
-        if self.data_tab.data is not None: 
-            self.data_tab.data_table.load_data(self.data_tab.data, batch_size=100)
-
         # Desactivar el botón de cerrar solo en la pestaña "Datos" (índice 0)
         self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
