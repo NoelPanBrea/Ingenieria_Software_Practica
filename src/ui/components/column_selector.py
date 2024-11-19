@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QListWidget, 
     QGridLayout, QListWidgetItem
 )
-from tabs.data_aux.combo_box import ComboBox
+from ui.components.combo_box import ComboBox
 from PyQt5.QtCore import Qt
 from typing import List
 
