@@ -14,6 +14,7 @@ from tabs.data_aux.column_selector import ColumnSelector
 from tabs.data_aux.data_table import DataTable
 from tabs.data_aux.preprocess_toolbar import PreprocessToolbar
 from tabs.lineal_model_tab import LinealModelTab
+from tabs.lineal_model_aux.class_LinealModel import LinealModel
 
 class DataTab(QWidget):
     """
@@ -146,9 +147,9 @@ class DataTab(QWidget):
             self.path_label.setText(
                 f'📄 Ruta del modelo cargado: {model_path}')
             show_message('✅ ¡Modelo cargado exitosamente! 😃')
-            
+
             self.display_model_data()
-            
+
             return True
         
         except Exception as e:
@@ -197,7 +198,7 @@ class DataTab(QWidget):
                     self.prediction_button.setVisible(True)
 
                     # Conectar el botón a un método de prueba
-                    self.prediction_button.clicked.connect(self.example)
+                    self.prediction_button.clicked.connect(self.make_a_prediction)
 
                     # Asegúrate de usar un layout válido
                     if self.layout() is None:
@@ -396,3 +397,29 @@ class DataTab(QWidget):
             show_message('✅ ¡Preprocesado aplicado exitosamente!')
         except Exception as e:
             show_error(f'Error al aplicar el preprocesado: {str(e)}')
+
+
+    def make_a_prediction(self):
+        # Verificar si los datos están cargados correctamente
+        if self.data is None:
+            show_error('⚠ Los datos no están cargados. Por favor, cargue un archivo primero. ⚠')
+            return
+        
+        # Obtener las columnas de entrada y salida del modelo cargado
+        input_columns = self.model.get("columns", {}).get("input", [])
+        output_column = self.model.get("columns", {}).get("output", "N/A")
+
+        # Crear el objeto LinealModel si todo está bien
+        try:
+            self.lineal_model = LinealModel(self.data, input_columns, output_column)
+
+            # Crear el objeto LinealModelTab
+            self.lineal_model_tab = LinealModelTab(None, None, None)
+            self.lineal_model_tab.model = self.lineal_model
+
+            # Realizar la predicción
+            self.lineal_model_tab.make_prediction()
+            show_message('Predicción realizada con éxito!')
+        
+        except Exception as e:
+            show_error(f'Error al realizar la predicción: {str(e)}')
