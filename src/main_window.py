@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLabel, QTabBar
 import pandas as pd
-
+from PyQt5 import QtCore
 from tabs.data_tab import DataTab
 from tabs.lineal_model_tab import LinealModelTab
 
@@ -27,9 +27,26 @@ class MainWindow(QTabWidget):
         # Enable close button on all tabs initially
         self.setTabsClosable(True)
         self.tabCloseRequested.connect(self.close_tab)
-
         # Initialize tabs
         self.init_tabs()
+
+    def resizeEvent(self, event):
+        QTabWidget.resizeEvent(self, event)
+        if hasattr(self, 'data_tab'):
+            self.data_tab.column_selector.input_column_selector.setFixedWidth(self.width() // 2 - 25)
+            if self.data_tab.data is not None:
+                w = 0
+                for i in range(self.data_tab.data.shape[1]):
+                    w += self.data_tab.table.columnWidth(i)
+                if w < self.width():
+                    for i in range(self.data_tab.data.shape[1]):
+                        self.data_tab.table.setColumnWidth(i, self.width() // self.data_tab.data.shape[1])
+
+
+    def closeEvent(self, event):
+        #TODO Aquí podríamos añadir una ventana que recuerde al usuario que tiene modelos sin guardar 
+        event.accept()
+
 
     def init_tabs(self):
         """
