@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
 from ui.components.combo_box import ComboBox
 from PyQt5.QtCore import Qt
 from typing import List
+import pandas as pd
 
 class ColumnSelector(QWidget):
     """
@@ -45,6 +46,7 @@ class ColumnSelector(QWidget):
         self.input_column_selector = QListWidget()
         self.output_column_selector = ComboBox()
         self.confirm_button = QPushButton('Confirmar selección')
+        self.data = None
         self.init_ui()
 
     def init_ui(self):
@@ -73,7 +75,7 @@ class ColumnSelector(QWidget):
 
         self.setLayout(layout)
 
-    def populate_columns(self, columns: List[str]):
+    def populate_columns(self, data: pd.DataFrame):
         """
         Populates the column selector with the dataset's column names.
 
@@ -87,16 +89,20 @@ class ColumnSelector(QWidget):
         Call this method after loading the data to ensure that the column selector 
         shows the correct options.
         """
+        self.data = data
         self.input_column_selector.clear()
         self.output_column_selector.clear()
+        
+        numeric_columns = data.select_dtypes(include=['int64', 'float64']).columns
+        numeric_columns = [col for col in data.columns if col in numeric_columns]
 
-        for column in columns:
+        for column in numeric_columns:
             item = QListWidgetItem(column)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Unchecked)
             self.input_column_selector.addItem(item)
 
-        self.output_column_selector.addItems(columns)
+        self.output_column_selector.addItems(numeric_columns)
         self.output_column_selector.setCurrentIndex(-1)
 
     def get_selected_columns(self) -> tuple:

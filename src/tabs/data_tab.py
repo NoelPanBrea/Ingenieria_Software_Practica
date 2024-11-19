@@ -211,7 +211,7 @@ class DataTab(QWidget):
             self.path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
             self.table.load_data(self.data, batch_size=100)
-            self.column_selector.populate_columns(self.data.columns)
+            self.column_selector.populate_columns(self.data)
             self.column_selector.setVisible(True)
             show_message('✅ ¡Archivo cargado exitosamente! 😃')
                 
