@@ -152,3 +152,15 @@ class MainWindow(QMainWindow):
         if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
             self.tab_widget.removeTab(index)
             del(self.linear_model_tab_list[index - 1])
+    
+    def resizeEvent(self, event):
+        QMainWindow.resizeEvent(self, event)
+        if hasattr(self, 'data_tab'):
+            self.data_tab.column_selector.input_column_selector.setFixedWidth(self.width() // 2 - 25)
+            if self.data_tab.data is not None:
+                w = 0
+                for i in range(self.data_tab.data.shape[1]):
+                    w += self.data_tab.table.columnWidth(i)
+                if w < self.width():
+                    for i in range(self.data_tab.data.shape[1]):
+                        self.data_tab.table.setColumnWidth(i, self.width() // self.data_tab.data.shape[1])
