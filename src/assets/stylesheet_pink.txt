@@ -67,7 +67,7 @@ QTableView QTableCornerButton::section {
 
 /* Elemento seleccionado en tabla */
 QTableWidget::item:selected {
-    background-color: #00B140;
+    background-color: #C6007D;
     color: #000000;
 }
 

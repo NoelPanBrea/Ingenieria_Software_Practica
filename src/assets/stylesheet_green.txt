@@ -70,7 +70,7 @@ QTableWidget::item:alternate {
 /* Elemento seleccionado en tabla */
 QTableWidget::item:selected {
     background-color: #004D1C;
-    color: #000000;
+    color: #39FF14;
 }
 
 
