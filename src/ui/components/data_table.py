@@ -87,7 +87,8 @@ class DataTable(QTableWidget):
                 self.setItem(i, j, item)
 
         self.loaded_rows = end_row
-        self.resizeColumnsToContents()
+        self.fill_area(self.data.shape[1])
+
     def on_scroll(self):
         """
         Checks if the user has scrolled near the bottom to load more rows.
@@ -104,3 +105,14 @@ class DataTable(QTableWidget):
             if item := self.item(row, column_index):
                 item.setData(Qt.UserRole + 1, highlight)
         self.viewport().update()
+
+    def fill_area(self, shape):
+        """
+        Adjusts the column width to the table's width
+        """
+        w = 0
+        for i in range(shape):
+            w += self.columnWidth(i)
+        if w < self.width():
+            for i in range(shape):
+                self.setColumnWidth(i, self.width() // shape)
