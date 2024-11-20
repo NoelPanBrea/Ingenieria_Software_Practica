@@ -354,10 +354,10 @@ class DataTab(QWidget):
             )
 
             # Actualizar la tabla después de aplicar el preprocesado
-            self.table.update_data(self.data, self.data.shape[0])
+            self.table.load_data(self.data, self.data.shape[0])
 
             # Repoblar el selector de columnas por si hay cambios en la estructura
-            self.column_selector.populate_columns(self.data.columns)
+            self.column_selector.populate_columns(self.data)
 
             # Vuelve a seleccionar las columnas previamente seleccionadas
             for i in range(self.column_selector.input_column_selector.count()):
