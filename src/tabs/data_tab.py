@@ -198,7 +198,7 @@ class DataTab(QWidget):
                     self.prediction_button.setVisible(True)
 
                     # Conectar el botón a un método de prueba
-                    self.prediction_button.clicked.connect(self.make_a_prediction)
+                    self.prediction_button.clicked.connect(self.make_prediction)
 
                     # Asegúrate de usar un layout válido
                     if self.layout() is None:
@@ -399,27 +399,47 @@ class DataTab(QWidget):
             show_error(f'Error al aplicar el preprocesado: {str(e)}')
 
 
-    def make_a_prediction(self):
-        # Verificar si los datos están cargados correctamente
-        if self.data is None:
-            show_error('⚠ Los datos no están cargados. Por favor, cargue un archivo primero. ⚠')
+    def make_prediction(self):
+        """
+        Method to make predictions with the model.
+        """
+        if not self.model:
+            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
             return
-        
-        # Obtener las columnas de entrada y salida del modelo cargado
+
         input_columns = self.model.get("columns", {}).get("input", [])
         output_column = self.model.get("columns", {}).get("output", "N/A")
 
-        # Crear el objeto LinealModel si todo está bien
-        try:
-            self.lineal_model = LinealModel(self.data, input_columns, output_column)
+        # Crear ventana emergente usando InputDialog
+        input_window = InputDialog(
+            input_columns,  # Lista de nombres de columnas de entrada
+            "Introduzca los valores de las entradas",
+            parent=self
+        )
+        input_window.exec()
 
-            # Crear el objeto LinealModelTab
-            self.lineal_model_tab = LinealModelTab(None, None, None)
-            self.lineal_model_tab.model = self.lineal_model
+        # Obtener los valores ingresados
+        constants = input_window.get_inputs()
+
+        # Validar los valores ingresados
+        if not constants or any(value is None for value in constants):
+            QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
+            return
+
+        try:
+            # Convertir los valores ingresados a flotantes
+            numeric_data = [float(value) for value in constants]  # Conversión explícita
+            data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
 
             # Realizar la predicción
-            self.lineal_model_tab.make_prediction()
-            show_message('Predicción realizada con éxito!')
-        
+            prediction = float(self.model.get("intercept", "N/A"))
+            for i in range (len(data_to_predict)):
+                prediction += + float(self.model.get("coefficients", [])[i]) * float(data_to_predict[i])
+
+            # Mostrar el resultado de la predicción
+            QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{output_column} = {prediction:.4f}")
+
+        except ValueError:
+            QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
         except Exception as e:
-            show_error(f'Error al realizar la predicción: {str(e)}')
+            QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")

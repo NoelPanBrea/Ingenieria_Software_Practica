@@ -224,10 +224,6 @@ class LinealModelTab(QWidget):
             QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
             return
 
-        if not self.input_columns:
-            QMessageBox.critical(self, "Error", "No se han definido columnas de entrada.")
-            return
-
         # Crear ventana emergente usando InputDialog
         input_window = InputDialog(
             self.input_columns,  # Lista de nombres de columnas de entrada
@@ -250,7 +246,9 @@ class LinealModelTab(QWidget):
             data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
 
             # Realizar la predicción
-            prediction = self.model.predict(data_to_predict)[0]  # Obtener la predicción
+            prediction = float(self.model.intercept_)
+            for i in range (len(data_to_predict)):
+                prediction += + float(self.model.coef_) * float(data_to_predict[i])
 
             # Mostrar el resultado de la predicción
             QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
