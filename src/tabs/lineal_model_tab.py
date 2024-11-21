@@ -54,6 +54,35 @@ class LinealModelTab(QWidget):
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer)
 
+        # Contenedor para los campos de entrada (QLabel y QLineEdit, inicialmente ocultos)
+        self.input_container = QWidget()
+        self.input_layout = QVBoxLayout(self.input_container)
+
+        self.input_widgets = []  # Lista para almacenar pares (QLabel, QLineEdit)
+        for column in self.input_columns:
+            # Crear QLabel
+            label = QLabel(f"{column}:")
+            label.setVisible(False)  # Ocultar inicialmente
+            label.setStyleSheet("color: white;")  # Asegurar que el texto sea visible si el fondo es oscuro
+
+            # Crear QLineEdit con estilos y tamaño personalizado
+            line_edit = QLineEdit()
+            line_edit.setVisible(False)  # Ocultar inicialmente
+            line_edit.setStyleSheet("""
+                color: white;
+                background-color: black;
+                border: 1px solid white;
+                padding: 5px;
+            """)
+            line_edit.setFixedWidth(300)  # Ajustar ancho del QLineEdit
+            line_edit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)  # Restringir ancho pero permitir ajuste vertical
+
+            self.input_widgets.append((label, line_edit))
+            self.input_layout.addWidget(label)
+            self.input_layout.addWidget(line_edit)
+
+        layout.addWidget(self.input_container)
+
         # Crear un layout horizontal para los botones
         button_layout = QHBoxLayout()
 
@@ -224,31 +253,33 @@ class LinealModelTab(QWidget):
             QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
             return
 
-        # Crear ventana emergente usando InputDialog
-        input_window = InputDialog(
-            self.input_columns,  # Lista de nombres de columnas de entrada
-            "Introduzca los valores de las entradas",
-            parent=self
-        )
-        input_window.exec()
+        # Mostrar todos los QLabel y QLineEdit asociados
+        for label, line_edit in self.input_widgets:
+            label.setVisible(True)
+            line_edit.setVisible(True)
 
-        # Obtener los valores ingresados
-        constants = input_window.get_inputs()
+        # Actualizar el layout para reflejar la visibilidad de los campos
+        self.layout().update()
 
-        # Validar los valores ingresados
-        if not constants or any(value is None for value in constants):
-            QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
-            return
+        # Obtener los valores ingresados en los QLineEdits
+        input_values = []
+        for label, line_edit in self.input_widgets:
+            value = line_edit.text()
+            if not value:
+                QMessageBox.warning(self, "", f"Debe rellenar todos las celdas para realizar predicción.")
+                return
+            try:
+                input_values.append(float(value))
+            except ValueError:
+                QMessageBox.critical(self, "Error", f"El valor para {label.text()} debe ser numérico.")
+                return
 
         try:
-            # Convertir los valores ingresados a flotantes
-            numeric_data = [float(value) for value in constants]  # Conversión explícita
-            data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
-
             # Realizar la predicción
-            prediction = float(self.model.intercept_)
-            for i in range (len(data_to_predict)):
-                prediction += + float(self.model.coef_) * float(data_to_predict[i])
+            prediction = self.model.intercept_
+            for i in range(len(input_values)):
+                prediction += self.model.coef_[i] * input_values[i]
+        
 
             # Mostrar el resultado de la predicción
             QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
