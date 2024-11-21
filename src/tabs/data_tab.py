@@ -1,14 +1,13 @@
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout
 )
-from PyQt5.QtCore import Qt
 from typing import List, Optional
-import pandas as pd
 import joblib
 
-import data_processing.import_module as im
-from ui.popup_handler import *
-from data_processing.dataset_calc import *
+from data_processing.import_module import DataFrame, load_file
+from ui.popup_handler import (InputDialog, open_file_dialog,
+    show_error, show_message, QtCore)
+from data_processing.dataset_calc import PreprocessApplier, none_count
 from ui.components.column_selector import ColumnSelector
 from ui.components.data_table import DataTable
 from ui.components.preprocess_toolbar import PreprocessToolbar
@@ -22,7 +21,7 @@ class DataTab(QWidget):
 
     Attributes
     ----------
-    data : pd.DataFrame, optional
+    data : DataFrame, optional
         The DataFrame containing the loaded data.
     selected_input_columns : List[str], optional
         List of columns selected as inputs for analysis.
@@ -46,7 +45,7 @@ class DataTab(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.data: Optional[pd.DataFrame] = None
+        self.data: Optional[DataFrame] = None
         self.selected_input_columns: Optional[List[str]] = None
         self.selected_output_column: Optional[str] = None
         self.preprocess_applier = PreprocessApplier()
@@ -176,7 +175,7 @@ class DataTab(QWidget):
                         self.model.get("columns", {}).get("output", "N/A")
                     ]
                 }
-                model_data_df = pd.DataFrame(data_dict)
+                model_data_df = DataFrame(data_dict)
 
                 # Llama a update_data solo si el DataFrame tiene datos
                 if model_data_df is not None and not model_data_df.empty:
@@ -207,7 +206,7 @@ class DataTab(QWidget):
             return
 
         try:
-            self.data = im.load_file(file_path)
+            self.data = load_file(file_path)
             self.path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
             self.table.load_data(self.data, batch_size=100)
@@ -363,9 +362,9 @@ class DataTab(QWidget):
             for i in range(self.column_selector.input_column_selector.count()):
                 item = self.column_selector.input_column_selector.item(i)
                 if item.text() in self.selected_input_columns:
-                    item.setCheckState(Qt.Checked)
+                    item.setCheckState(QtCore.Qt.Checked)
                 else:
-                    item.setCheckState(Qt.Unchecked)
+                    item.setCheckState(QtCore.Qt.Unchecked)
 
             last_selected = self.column_selector.output_column_selector.current_selection
             self.column_selector.output_column_selector.setCurrentIndex(last_selected)
