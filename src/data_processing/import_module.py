@@ -1,8 +1,8 @@
-import pandas as pd
+from pandas import DataFrame, read_csv, read_excel, read_sql
 import sqlite3
 
 
-def load_file(file_path: str) -> pd.DataFrame:
+def load_file(file_path: str) -> DataFrame:
     """
     Loads a .sql, .db, .csv, .xls, or .xlsx file.
 
@@ -14,7 +14,7 @@ def load_file(file_path: str) -> pd.DataFrame:
     Returns
     -----------
      data: DataFrame
-        Data in a pd.DataFrame.
+        Data in a DataFrame.
     """
 
     # Obtain the file's extension
@@ -31,6 +31,7 @@ def load_file(file_path: str) -> pd.DataFrame:
         # Verify there was data in the file
         if data.empty:
             raise ValueError("En el archivo no hay tabla")
+
         return data
     # Error managing: File reading error
     except ValueError as e:
@@ -43,7 +44,7 @@ def load_file(file_path: str) -> pd.DataFrame:
         print(f"Se produjo un error inesperado: {e}")
 
 
-def __import_sql(file_path: str) -> pd.DataFrame:
+def __import_sql(file_path: str) -> DataFrame:
     """
     Loads data from the first table of a SQL file.
 
@@ -55,7 +56,7 @@ def __import_sql(file_path: str) -> pd.DataFrame:
     Returns
     -----------
      data: DataFrame
-        Data in a pd.DataFrame.
+        Data in a DataFrame.
     """
     try:
         conn = sqlite3.connect(file_path)
@@ -67,7 +68,7 @@ def __import_sql(file_path: str) -> pd.DataFrame:
 
         # Load the data from the table to the DataFrame
         query = f"SELECT * FROM {table_name}"
-        data = pd.read_sql(query, conn)
+        data = read_sql(query, conn)
 
         conn.close()
         return data
@@ -75,7 +76,7 @@ def __import_sql(file_path: str) -> pd.DataFrame:
         raise ValueError(f"Error al cargar la base de datos SQLite: {e}")
 
 
-def __import_excel(file_path: str) -> pd.DataFrame:
+def __import_excel(file_path: str) -> DataFrame:
     """
     Loads data from an Excel file.
 
@@ -87,18 +88,18 @@ def __import_excel(file_path: str) -> pd.DataFrame:
     Returns
     -----------
      data: DataFrame
-        Data in a pd.DataFrame.
+        Data in a DataFrame.
     """
     try:
         # Read excel file
-        data = pd.read_excel(file_path)
+        data = read_excel(file_path)
         return data
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo excel: {e}")
     # Needed in order to work: pip install pandas openpyxl xlrd
 
 
-def __import_csv(file_path: str) -> pd.DataFrame:
+def __import_csv(file_path: str) -> DataFrame:
     """
     Loads data from a CSV file.
 
@@ -110,11 +111,11 @@ def __import_csv(file_path: str) -> pd.DataFrame:
     Returns
     -----------
      data: DataFrame
-        Data in a pd.DataFrame.
+        Data in a DataFrame.
     """
     try:
         # Read csv file
-        data = pd.read_csv(file_path)
+        data = read_csv(file_path)
         return data
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo excel: {e}")

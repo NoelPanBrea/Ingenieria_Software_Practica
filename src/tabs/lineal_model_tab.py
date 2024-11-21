@@ -3,12 +3,13 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
 from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
 import joblib
-from tabs.lineal_model_aux.class_LinealModel import *
+from models.lineal_model import *
 from sklearn.metrics import mean_squared_error, r2_score
-from tabs.lineal_model_aux.description import *
-from tabs.data_aux.common_aux.popup_handler import *
+from models.description import *
+from ui.popup_handler import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from ui.popup_handler import InputDialog
 
 
 class LinealModelTab(QWidget):
@@ -43,6 +44,7 @@ class LinealModelTab(QWidget):
 
         # Configurar etiqueta para mostrar la descripción
         self.model_description.add_to_layout(layout)
+
         # Contenedor para la gráfica
         self.graph_container = QWidget()
         self.graph_layout = QVBoxLayout(self.graph_container)
@@ -52,6 +54,12 @@ class LinealModelTab(QWidget):
         # Espaciador para empujar widgets hacia arriba
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer)
+
+        # Botón para realizar predicción (inicialmente oculto)
+        self.predict_button = QPushButton("Realizar Predicción")
+        self.predict_button.setVisible(False)  # Oculto inicialmente
+        self.predict_button.clicked.connect(self.make_prediction)
+        layout.addWidget(self.predict_button)
 
         self.save_button = QPushButton("💾 Guardar Modelo")
         self.save_button.clicked.connect(self.save_model)
@@ -86,6 +94,8 @@ class LinealModelTab(QWidget):
                     QMessageBox.information(self, 
                                             "Atención", "No se puede crear una gráfica, debido a que la regresión lineal es múltiple, no simple.")
 
+                # Mostrar el botón "Realizar Predicción"
+                self.predict_button.setVisible(True)
 
                 # Confirmación de éxito
                 QMessageBox.information(self, "Éxito", "El modelo de regresión lineal ha sido creado exitosamente.")
@@ -155,11 +165,47 @@ class LinealModelTab(QWidget):
         except Exception as e:
             show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
 
-    def update_data(self, data, input_columns, output_column):
+
+    def make_prediction(self):
         """
-        Updates the data, input columns, and output column of the model tab.
-        This is useful when refreshing the model after loading new data or modifying columns.
+        Method to make predictions with the model.
         """
-        self.data = data
-        self.input_columns = input_columns
-        self.output_column = output_column
+        if not self.model:
+            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
+            return
+
+        if not self.input_columns:
+            QMessageBox.critical(self, "Error", "No se han definido columnas de entrada.")
+            return
+
+        # Crear ventana emergente usando InputDialog
+        input_window = InputDialog(
+            self.input_columns,  # Lista de nombres de columnas de entrada
+            "Introduzca los valores de las entradas",
+            parent=self
+        )
+        input_window.exec()
+
+        # Obtener los valores ingresados
+        constants = input_window.get_inputs()
+
+        # Validar los valores ingresados
+        if not constants or any(value is None for value in constants):
+            QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
+            return
+
+        try:
+            # Convertir los valores ingresados a flotantes
+            numeric_data = [float(value) for value in constants]  # Conversión explícita
+            data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
+
+            # Realizar la predicción
+            prediction = self.model.predict(data_to_predict)[0]  # Obtener la predicción
+
+            # Mostrar el resultado de la predicción
+            QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
+
+        except ValueError:
+            QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")

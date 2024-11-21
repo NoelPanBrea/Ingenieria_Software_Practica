@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, 'src')
 from tkinter import filedialog
-from tabs.data_aux.import_module import *
+from data_processing.import_module import *
 
 if __name__ == '__main__':
     path = filedialog.askopenfilename(title='elige el archivo que quieres abrir', 

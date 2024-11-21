@@ -5,9 +5,7 @@
    Fondos: 
    - #1F1720 (fondo principal)
    - #2A2226 (elementos)
-   - #3A2F33 (headers) 
-   data_table: 
-   color = QColor(198, 0, 125, 77) if highlight else QColor("#2A2226")*/
+   - #3A2F33 (headers) */
 
 /* Configuración base para todos los widgets */
 QWidget {
@@ -48,6 +46,7 @@ QTableWidget {
     color: #FFE4F0;
     font-weight: 700;
     gridline-color: #3A2F33;
+    alternate-background-color: rgba(198, 0, 125, 0.3); 
 }
 
 /* Cabeceras de las tablas */
@@ -68,7 +67,7 @@ QTableView QTableCornerButton::section {
 
 /* Elemento seleccionado en tabla */
 QTableWidget::item:selected {
-    background-color: #00B140;
+    background-color: #C6007D;
     color: #000000;
 }
 
@@ -133,21 +132,6 @@ QComboBox QAbstractItemView {
     selection-background-color: #C6007D;
     selection-color: #FFFFFF;
     outline: 0px;
-}
-
-
-/* Estilo para menús */
-QMenu {
-    background-color: #2A2226;
-    border: 2px solid #C6007D;
-    border-radius: 5px;
-    color: #FFE4F0;
-}
-
-/* Elemento seleccionado en menús */
-QMenu::item:selected {
-    background-color: rgba(219, 91, 154, 0.5);
-    color: #FFFFFF;
 }
 
 
@@ -364,4 +348,132 @@ QScrollBar::handle:horizontal:hover {
 /* Ocultar botones adicionales del scrollbar horizontal */
 QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
     width: 0px;
+}
+
+
+
+
+/* === Estilo para menús === */
+QMenu#settingsMenu {
+    background-color: #2A2226;
+    border: 2px solid #C6007D;
+    border-radius: 8px;
+    padding: 5px;
+    margin: 0px;
+}
+
+QMenu#settingsMenu::item {
+    background-color: transparent;
+    color: #FFE4F0;
+    padding: 8px 25px 8px 20px;
+    margin: 2px;
+    border: none;
+    border-radius: 4px;
+    min-width: 150px;
+}
+
+QMenu#settingsMenu::item:selected {
+    background-color: #C6007D;
+    color: #FFFFFF;
+}
+
+QMenu#settingsMenu::item:hover {
+    background-color: #E774AE;
+    color: #FFFFFF;
+}
+
+/* Estilo específico para el botón de configuración */
+QToolButton {
+    background-color: #C6007D;
+    color: #FFFFFF;
+    border: 2px solid #C6007D;
+    border-radius: 8px;
+    font-size: 24px;
+    padding-bottom: 8px;
+    margin: 0px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+QToolButton:hover {
+    background-color: #E774AE;
+}
+
+QToolButton::menu-indicator {
+    image: none;
+}
+
+
+/* === Estilos para Diálogos === */
+QDialog {
+    background-color: #1F1720;
+    color: #FFE4F0;
+}
+
+/* === Estilos para MessageBox === */
+QMessageBox {
+    background-color: #1F1720;
+}
+
+QMessageBox QLabel {
+    color: #FFE4F0;
+}
+
+/* === Estilos para FileDialog === */
+QFileDialog {
+    background-color: #1F1720;
+}
+
+QFileDialog QLabel {
+    color: #FFE4F0;
+}
+
+QFileDialog QTreeView {
+    background-color: #2A2226;
+    color: #FFE4F0;
+    border: 1px solid #C6007D;
+}
+
+QFileDialog QTreeView::item:selected {
+    background-color: #C6007D;
+}
+
+QFileDialog QTreeView::item:hover {
+    background-color: #E774AE;
+}
+
+QFileDialog QLineEdit {
+    background-color: #2A2226;
+    color: #FFE4F0;
+    border: 1px solid #C6007D;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+/* === Estilos para DialogButtonBox === */
+QDialogButtonBox {
+    button-layout: 0;
+}
+
+QDialogButtonBox QPushButton {
+    min-width: 80px;
+}
+
+/* === Estilos para campos de entrada (QLineEdit) === */
+QLineEdit {
+    background-color: #2A2226;
+    color: #FFE4F0;
+    border: 1px solid #C6007D;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #E774AE;
+    background-color: #3A2F33;
+}
+
+QLineEdit::placeholder {
+    color: #A66D89;
+    font-style: italic;
 }
