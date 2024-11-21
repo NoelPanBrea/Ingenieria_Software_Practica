@@ -1,9 +1,6 @@
 from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout, 
-                            QLabel, QTabBar, QComboBox, QHBoxLayout, QToolButton, QMenu)
+    QTabBar, QHBoxLayout, QToolButton, QMenu)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-import pandas as pd
-
 from tabs.data_tab import DataTab
 from tabs.lineal_model_tab import LinealModelTab
 
