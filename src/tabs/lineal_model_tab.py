@@ -83,6 +83,12 @@ class LinealModelTab(QWidget):
 
         layout.addWidget(self.input_container)
 
+        # Etiqueta para mostrar el resultado de la predicción (inicialmente oculta)
+        self.prediction_label = QLabel()
+        self.prediction_label.setVisible(False)  # Ocultar inicialmente
+        self.prediction_label.setStyleSheet("font-size: 16px; font-weight: bold; color: white;")
+        layout.addWidget(self.prediction_label)
+
         # Crear un layout horizontal para los botones
         button_layout = QHBoxLayout()
 
@@ -281,8 +287,9 @@ class LinealModelTab(QWidget):
                 prediction += self.model.coef_[i] * input_values[i]
         
 
-            # Mostrar el resultado de la predicción
-            QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
+            # Actualizar QLabel para mostrar el resultado
+            self.prediction_label.setText(f"Resultado de la Predicción:\n{self.output_column} = {prediction:.4f}")
+            self.prediction_label.setVisible(True)  # Mostrar el QLabel
 
         except ValueError:
             QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
