@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QListWidget, 
     QGridLayout, QListWidgetItem
@@ -126,3 +127,8 @@ class ColumnSelector(QWidget):
         ]
         output_column = self.output_column_selector.currentText()
         return input_columns, output_column
+
+    def resizeEvent(self, a0: QResizeEvent | None) -> None:
+        super().resizeEvent(a0)
+        self.input_column_selector.setFixedWidth(self.width() // 2 - 25)
+

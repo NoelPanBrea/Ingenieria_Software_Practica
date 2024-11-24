@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QAbstractScrollArea, QStyledItemDelegate
 from PyQt5.QtCore import Qt, QTimer
-import pandas as pd
+from pandas import DataFrame
 
 
 class HighlightDelegate(QStyledItemDelegate):
@@ -15,14 +15,26 @@ class HighlightDelegate(QStyledItemDelegate):
 
 class DataTable(QTableWidget):
     """
-    Data table with lazy loading for large DataFrames.
+    _data table with lazy loading for large DataFrames.
     """
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
-        self.data = None  # Full DataFrame
+        self._data = None  # Full DataFrame
         self.loaded_rows = 0  # Rows currently loaded
         self.batch_size = 100  # Number of rows to load at a time
+
+    @property
+    def data(self) -> DataFrame:
+        """
+        Returns the DataFrame with the table data
+
+        Returns
+        ----------
+        self._data : DataFrame
+                DataFrame with the current table data 
+        """
+        return self._data
 
     def init_ui(self):
         """
@@ -36,24 +48,24 @@ class DataTable(QTableWidget):
         self.setItemDelegate(HighlightDelegate())
         self.verticalScrollBar().valueChanged.connect(self.on_scroll)
 
-    def load_data(self, data: pd.DataFrame, batch_size: int = 100):
+    def load_data(self, data: DataFrame, batch_size: int = 100):
         """
-        Initializes the table with data for lazy loading.
+        Initializes the table with _data for lazy loading.
 
         Parameters
         ----------
-        data : pd.DataFrame
+        _data : DataFrame
             The DataFrame to be loaded lazily.
         batch_size : int
             Number of rows to load per batch.
         """
-        self.data = data
+        self._data = data
         self.batch_size = batch_size
         self.loaded_rows = 0
 
         # Setup table headers
-        self.setColumnCount(data.shape[1])
-        self.setHorizontalHeaderLabels(data.columns)
+        self.setColumnCount(self._data.shape[1])
+        self.setHorizontalHeaderLabels(self._data.columns)
 
         # Load initial rows
         self.load_more_rows()
@@ -62,12 +74,12 @@ class DataTable(QTableWidget):
         """
         Loads the next batch of rows into the table.
         """
-        if self.data is None:
+        if self._data is None:
             return
 
         # Determine the next range of rows to load
         start_row = self.loaded_rows
-        end_row = min(self.loaded_rows + self.batch_size, len(self.data))
+        end_row = min(self.loaded_rows + self.batch_size, len(self._data))
 
         if start_row >= end_row:  # No more rows to load
             return
@@ -77,8 +89,8 @@ class DataTable(QTableWidget):
         # Load rows into the table
         float_precision = 4
         for i in range(start_row, end_row):
-            for j in range(self.data.shape[1]):
-                cell_value = self.data.iat[i, j]
+            for j in range(self._data.shape[1]):
+                cell_value = self._data.iat[i, j]
                 # Format float values
                 if isinstance(cell_value, float):
                     cell_value = f"{cell_value:.{float_precision}f}"
@@ -87,7 +99,8 @@ class DataTable(QTableWidget):
                 self.setItem(i, j, item)
 
         self.loaded_rows = end_row
-        self.fill_area(self.data.shape[1])
+        self.resizeColumnsToContents()
+        self.fill_area(self._data.shape[1])
 
     def on_scroll(self):
         """
@@ -106,13 +119,17 @@ class DataTable(QTableWidget):
                 item.setData(Qt.UserRole + 1, highlight)
         self.viewport().update()
 
-    def fill_area(self, shape):
+    def columns_width(self) -> int:
+        """
+        Returns the sum of the column's width
+        """
+        return sum([self.columnWidth(i) for i in range(self.data.shape[1])])
+
+    def fill_area(self, shape) -> None:
         """
         Adjusts the column width to the table's width
         """
-        w = 0
-        for i in range(shape):
-            w += self.columnWidth(i)
-        if w < self.width():
+        width = self.width()
+        if self.columns_width() < width:
             for i in range(shape):
-                self.setColumnWidth(i, self.width() // shape)
+                self.setColumnWidth(i, width // shape)

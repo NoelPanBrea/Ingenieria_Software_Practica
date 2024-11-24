@@ -152,12 +152,5 @@ class MainWindow(QMainWindow):
     
     def resizeEvent(self, event):
         QMainWindow.resizeEvent(self, event)
-        if hasattr(self, 'data_tab'):
-            self.data_tab.column_selector.input_column_selector.setFixedWidth(self.width() // 2 - 25)
-            if self.data_tab.data is not None:
-                w = 0
-                for i in range(self.data_tab.data.shape[1]):
-                    w += self.data_tab.table.columnWidth(i)
-                if w < self.width():
-                    for i in range(self.data_tab.data.shape[1]):
-                        self.data_tab.table.setColumnWidth(i, self.width() // self.data_tab.data.shape[1])
+        if hasattr(self, 'data_tab') and self.data_tab.data is not None:
+            self.data_tab.table.fill_area(self.data_tab.data.shape[1])
