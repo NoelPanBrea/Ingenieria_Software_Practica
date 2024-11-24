@@ -108,7 +108,6 @@ class MainWindow(QMainWindow):
 
         # Conectar la carga de datos para crear el modelo lineal después
         self.tabs_counter = 0
-        self.linear_model_tab_list = []
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
 
     def create_linear_model_tab(self):
@@ -118,20 +117,19 @@ class MainWindow(QMainWindow):
 
         self.tabs_counter += 1
         # Crear la pestaña de modelo lineal
-        self.linear_model_tab_list.append(LinealModelTab(self.data_tab.data, 
-                                        self.data_tab.selected_input_columns, 
-                                    self.data_tab.selected_output_column))
+        LinealModelTab(self.data_tab.data,
+             self.data_tab.selected_input_columns,
+             self.data_tab.selected_output_column)
 
         # Limpiar la descripción al crear una nueva pestaña
-        self.linear_model_tab_list[-1].model_description.clear_description()
+        LinealModelTab.tab_list[-1].model_description.clear_description()
         
         # Agregar la pestaña de modelo lineal con la "X" de cierre
-        self.tab_widget.addTab(self.linear_model_tab_list[-1],
+        self.tab_widget.addTab(LinealModelTab.tab_list[-1],
                      f"Modelo {self.tabs_counter}")
-        if len(self.linear_model_tab_list) > 1 and\
-              self.linear_model_tab_list[-2].model is None:
-            self.close_tab(len(self.linear_model_tab_list) - 1)
-
+        if len(LinealModelTab.tab_list) > 1 and\
+              LinealModelTab.tab_list[-2].model is None:
+            self.close_tab(len(LinealModelTab.tab_list) - 1)
 
     def load_model_open_tab(self):
         """    
@@ -148,7 +146,7 @@ class MainWindow(QMainWindow):
         # Evita que la pestaña de datos se cierre
         if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
             self.tab_widget.removeTab(index)
-            del(self.linear_model_tab_list[index - 1])
+            del(LinealModelTab.tab_list[index - 1])
     
     def resizeEvent(self, event):
         QMainWindow.resizeEvent(self, event)

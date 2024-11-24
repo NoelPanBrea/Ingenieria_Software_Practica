@@ -11,8 +11,11 @@ from matplotlib.figure import Figure
 
 
 class LinealModelTab(QWidget):
+    tab_list = []
+
     def __init__(self, data, input_columns, output_column, parent=None):
         super().__init__(parent)
+        LinealModelTab.tab_list.append(self)
         self.model_description = ModelDescription(self)
         self.data = data
         self.input_columns = input_columns
@@ -20,7 +23,6 @@ class LinealModelTab(QWidget):
         self.model = None
         self.canvas = None  # Referencia para el gráfico
         self.setup_ui()
-
 
     def setup_ui(self):
         layout = QVBoxLayout()
