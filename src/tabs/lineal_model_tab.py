@@ -168,8 +168,19 @@ class LinealModelTab(QWidget):
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
 
+    def make_prediction(self):
+        """
+        Method to make predictions with the model.
+        """
+        if not self.model:
+            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
+            return
 
-    
+        # Mostrar todos los QLabel y QLineEdit asociados
+        for label, line_edit in self.input_widgets:
+            label.setVisible(True)
+            line_edit.setVisible(True)
+        
     def save_model(self):
         """
         Saves the trained linear regression model to a file.
