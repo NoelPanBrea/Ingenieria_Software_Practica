@@ -1,7 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
-                            QSpacerItem, QMessageBox)
-from PyQt5.QtCore import Qt
-import matplotlib.pyplot as plt
+                            QSpacerItem, QMessageBox, QHBoxLayout)
 import joblib
 from models.lineal_model import *
 from sklearn.metrics import mean_squared_error, r2_score
@@ -55,19 +53,61 @@ class LinealModelTab(QWidget):
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer)
 
+        # Contenedor para los campos de entrada (QLabel y QLineEdit, inicialmente ocultos)
+        self.input_container = QWidget()
+        self.input_layout = QVBoxLayout(self.input_container)
+
+        self.input_widgets = []  # Lista para almacenar pares (QLabel, QLineEdit)
+        for column in self.input_columns:
+            # Crear QLabel
+            label = QLabel(f"{column}:")
+            label.setVisible(False)  # Ocultar inicialmente
+            label.setStyleSheet("color: white;")  # Asegurar que el texto sea visible si el fondo es oscuro
+
+            # Crear QLineEdit con estilos y tamaño personalizado
+            line_edit = QLineEdit()
+            line_edit.setVisible(False)  # Ocultar inicialmente
+            line_edit.setStyleSheet("""
+                color: white;
+                background-color: black;
+                border: 1px solid white;
+                padding: 5px;
+            """)
+            line_edit.setFixedWidth(300)  # Ajustar ancho del QLineEdit
+            line_edit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)  # Restringir ancho pero permitir ajuste vertical
+
+            self.input_widgets.append((label, line_edit))
+            self.input_layout.addWidget(label)
+            self.input_layout.addWidget(line_edit)
+
+        layout.addWidget(self.input_container)
+
+        # Etiqueta para mostrar el resultado de la predicción (inicialmente oculta)
+        self.prediction_label = QLabel()
+        self.prediction_label.setVisible(False)  # Ocultar inicialmente
+        self.prediction_label.setStyleSheet("font-size: 16px; font-weight: bold; color: white;")
+        layout.addWidget(self.prediction_label)
+
+        # Crear un layout horizontal para los botones
+        button_layout = QHBoxLayout()
+
         # Botón para realizar predicción (inicialmente oculto)
         self.predict_button = QPushButton("Realizar Predicción")
         self.predict_button.setVisible(False)  # Oculto inicialmente
         self.predict_button.clicked.connect(self.make_prediction)
-        layout.addWidget(self.predict_button)
+        button_layout.addWidget(self.predict_button)
 
+        # Botón para guardar el modelo (inicialmente oculto)
         self.save_button = QPushButton("💾 Guardar Modelo")
         self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
-        layout.addWidget(self.save_button)
-        
+        button_layout.addWidget(self.save_button)
+
+        # Añadir el layout de los botones al layout principal
+        layout.addLayout(button_layout)
+
         self.setLayout(layout)
-    
+
     def create_model(self):
         # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
         self.save_button.setVisible(True)
