@@ -103,9 +103,6 @@ class LinealModelTab(QWidget):
         self.setLayout(layout)
 
     def create_model(self):
-        # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
-        self.save_button.setVisible(True)
-        self.clear_previous_graph()
         try:
             self.canvas = None  # Restablecer la referencia a None
             # Crear y ajustar el modelo
@@ -125,22 +122,15 @@ class LinealModelTab(QWidget):
                 res += " regresión lineal es múltiple, no simple."
                 show_message(res, self)
 
-            # Mostrar el botón "Realizar Predicción"
+            # Mostrar el botón "Realizar Predicción y "Guardar Modelo"
             self.predict_button.setVisible(True)
-
+            self.save_button.setVisible(True)
             # Confirmación de éxito
             res = "El modelo de regresión lineal ha sido creado exitosamente."
             show_message(res, self)
 
         except Exception as e:
             show_error(f"Error al crear el modelo lineal: {str(e)}", self)
-
-    def clear_previous_graph(self):
-        # Verificar si existe una gráfica previa y eliminarla
-        if self.canvas:
-            self.canvas.setParent(None)
-            self.canvas.deleteLater()
-            self.canvas = None  # Restablecer la referencia a None
 
     def plot_graph(self):
         
