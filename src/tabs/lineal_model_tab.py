@@ -167,20 +167,7 @@ class LinealModelTab(QWidget):
         # Añadir el canvas al contenedor de la gráfica
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
-
-    def make_prediction(self):
-        """
-        Method to make predictions with the model.
-        """
-        if not self.model:
-            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
-            return
-
-        # Mostrar todos los QLabel y QLineEdit asociados
-        for label, line_edit in self.input_widgets:
-            label.setVisible(True)
-            line_edit.setVisible(True)
-        
+     
     def save_model(self):
         """
         Saves the trained linear regression model to a file.
@@ -223,40 +210,40 @@ class LinealModelTab(QWidget):
         """
         if not self.model:
             QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
-            return
 
-        if not self.input_columns:
-            QMessageBox.critical(self, "Error", "No se han definido columnas de entrada.")
-            return
+        # Mostrar todos los QLabel y QLineEdit asociados
+        for label, line_edit in self.input_widgets:
+            label.setVisible(True)
+            line_edit.setVisible(True)
 
-        # Crear ventana emergente usando InputDialog
-        input_window = InputDialog(
-            self.input_columns,  # Lista de nombres de columnas de entrada
-            "Introduzca los valores de las entradas",
-            parent=self
-        )
-        input_window.exec()
+        # Actualizar el layout para reflejar la visibilidad de los campos
+            self.layout().update()
 
-        # Obtener los valores ingresados
-        constants = input_window.get_inputs()
+            # Obtener los valores ingresados en los QLineEdits
+            input_values = []
+            for label, line_edit in self.input_widgets:
+                value = line_edit.text()
+                if not value:
+                    QMessageBox.warning(self, "", f"Debe rellenar todos las celdas para realizar predicción.")
+                    return
+                try:
+                    input_values.append(float(value))
+                except ValueError:
+                    QMessageBox.critical(self, "Error", f"El valor para {label.text()} debe ser numérico.")
+                    return
 
-        # Validar los valores ingresados
-        if not constants or any(value is None for value in constants):
-            QMessageBox.warning(self, "Advertencia", "Debe proporcionar valores para todas las entradas.")
-            return
+            try:
+                # Realizar la predicción
+                prediction = self.model.intercept_
+                for i in range(len(input_values)):
+                    prediction += self.model.coef_[i] * input_values[i]
+            
 
-        try:
-            # Convertir los valores ingresados a flotantes
-            numeric_data = [float(value) for value in constants]  # Conversión explícita
-            data_to_predict = np.array([numeric_data])  # Convertir a un array NumPy con forma adecuada
+                # Actualizar QLabel para mostrar el resultado
+                self.prediction_label.setText(f"Resultado de la Predicción:\n{self.output_column} = {prediction:.4f}")
+                self.prediction_label.setVisible(True)  # Mostrar el QLabel
 
-            # Realizar la predicción
-            prediction = self.model.predict(data_to_predict)[0]  # Obtener la predicción
-
-            # Mostrar el resultado de la predicción
-            QMessageBox.information(self, "Predicción", f"La predicción del modelo es:\n{self.output_column} = {prediction:.4f}")
-
-        except ValueError:
-            QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")
+            except ValueError:
+                QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")
