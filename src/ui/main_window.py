@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout, 
-    QTabBar, QHBoxLayout, QToolButton, QMenu)
+    QApplication, QTabBar, QHBoxLayout, QToolButton, QMenu)
 from PyQt5.QtCore import Qt
 from tabs.data_tab import DataTab
 from tabs.lineal_model_tab import LinealModelTab
+from ui.popup_handler import show_error
 
 class MainWindow(QMainWindow):
     """
@@ -110,7 +111,8 @@ class MainWindow(QMainWindow):
         self.tabs_counter = 0
         self.linear_model_tab_list = []
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
-
+        # Conectar el botón de cargar modelo
+        self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
     def create_linear_model_tab(self):
         """
         Creates the linear model tab if the data is available.
@@ -118,9 +120,11 @@ class MainWindow(QMainWindow):
 
         self.tabs_counter += 1
         # Crear la pestaña de modelo lineal
-        self.linear_model_tab_list.append(LinealModelTab(self.data_tab.data, 
-                                        self.data_tab.selected_input_columns, 
-                                    self.data_tab.selected_output_column))
+        self.linear_model_tab_list.append(LinealModelTab(
+            data=self.data_tab.data, 
+            input_columns=self.data_tab.selected_input_columns, 
+            output_column=self.data_tab.selected_output_column,
+            loaded_model=None))
 
         # Limpiar la descripción al crear una nueva pestaña
         self.linear_model_tab_list[-1].model_description.clear_description()
@@ -137,10 +141,31 @@ class MainWindow(QMainWindow):
         """    
         Loads a model and opens a LinealModelTab.
         """
-        model_loaded = self.data_tab.load_model()
-        if model_loaded:
-            self.create_linear_model_tab() #Abrir pestaña de modelo lineal
+        model_data = self.data_tab.load_model()
+        if model_data:
+            try:
+                # Incrementar el contador de pestañas
+                self.tabs_counter += 1
+                # Crear nueva pestaña con el modelo cargado
+                new_tab = LinealModelTab(loaded_model=model_data)
+                # Agregar la pestaña al widget de pestañas
+                tab_index = self.tab_widget.addTab(new_tab, f"Modelo Cargado {self.tabs_counter}")
+                # Agregar a la lista de pestañas
+                self.linear_model_tab_list.append(new_tab)
+                # Cambiar a la nueva pestaña
+                self.tab_widget.setCurrentIndex(tab_index)                
+                # Forzar actualización de la UI
+                self.tab_widget.update()
+                QApplication.processEvents()
+                
+                return True
+                
+            except Exception as e:
+                show_error(f"Error al crear la pestaña del modelo: {str(e)}", self)
+                return False
         
+        return False
+    
     def close_tab(self, index):
         """
         Closes the tab at the given index.

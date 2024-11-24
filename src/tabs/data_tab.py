@@ -111,7 +111,6 @@ class DataTab(QWidget):
     def connect_buttons(self):
         # Conectar botón de carga
         self.file_button.clicked.connect(self.load_data)
-        self.model_button.clicked.connect(self.load_model)
         
         # Conectar botones de preprocesado
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
@@ -126,13 +125,22 @@ class DataTab(QWidget):
             self.apply_preprocessing)
 
     def load_model(self):
+        """    
+        Loads a model and returns it if successful.
+        """
         model_path = open_file_dialog(self)
         if not model_path:
-            return False
+            return None
 
         try:
             #Cargar el modelo
-            self.model = joblib.load(model_path)
+            model_data = joblib.load(model_path)
+
+            # Verificar que el modelo tenga la estructura correcta
+            required_keys = ['formula', 'coefficients', 'intercept', 'metrics', 'columns']
+            if not all(key in model_data for key in required_keys):
+                show_error("⚠ El archivo no contiene un modelo válido ⚠", self)
+                return None
             
             #Ocultar la tabla y el selector de columnas
             self.column_selector.setVisible(False)
@@ -144,54 +152,11 @@ class DataTab(QWidget):
                 f'📄 Ruta del modelo cargado: {model_path}')
             show_message('✅ ¡Modelo cargado exitosamente! 😃', self)
             
-            self.display_model_data()
-            
-            return True
-        
+            return model_data
         except Exception as e:
             show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠', self)
-            return False
-        
-    def display_model_data(self):
-        """
-        Displays the loaded model's data in the table.
-        """
-        try:
-            if isinstance(self.model, dict):
-                # Extraer y construir DataFrame con los datos del modelo
-                data_dict = {
-                    "Descripción": [
-                        "Fórmula", "Intercepto", "Coeficientes", "Descripción",
-                        "R²", "RMSE", "Columnas de Entrada", "Columna de Salida"
-                    ],
-                    "Valor": [
-                        self.model.get("formula", "N/A"),
-                        self.model.get("intercept", "N/A"),
-                        ", ".join(map(str, self.model.get("coefficients", []))),
-                        self.model.get("description", "Sin descripción"),
-                        self.model.get("metrics", {}).get("r2_score", "N/A"),
-                        self.model.get("metrics", {}).get("rmse", "N/A"),
-                        ", ".join(self.model.get("columns", {}).get("input", [])),
-                        self.model.get("columns", {}).get("output", "N/A")
-                    ]
-                }
-                model_data_df = DataFrame(data_dict)
-
-                # Llama a update_data solo si el DataFrame tiene datos
-                if model_data_df is not None and not model_data_df.empty:
-                    self.table.load_data(model_data_df, batch_size=100)
-                else:
-                    show_error("⚠ El modelo no contiene datos válidos ⚠", self)
-                    return False
-            else:
-                show_error("⚠ Formato de modelo no soportado ⚠", self)
-                return False
-            
-            return True
-        except Exception as e:
-            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠', self)
-            return False
-
+            return None
+    
     def load_data(self):
         """
         Loads a data file selected by the user, updating the table and column selector.
