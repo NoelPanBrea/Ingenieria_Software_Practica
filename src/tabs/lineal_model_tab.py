@@ -120,7 +120,7 @@ class LinealModelTab(QWidget):
                 self.plot_graph()
             else:
                 res = "No se puede crear una gráfica, debido a que la"
-                res += "regresión lineal es múltiple, no simple."
+                res += " regresión lineal es múltiple, no simple."
                 show_message(res, self)
 
             # Mostrar el botón "Realizar Predicción"
@@ -205,35 +205,35 @@ class LinealModelTab(QWidget):
             line_edit.setVisible(True)
 
         # Actualizar el layout para reflejar la visibilidad de los campos
-            self.layout().update()
+        self.layout().update()
 
-            # Obtener los valores ingresados en los QLineEdits
-            input_values = []
-            for label, line_edit in self.input_widgets:
-                value = line_edit.text()
-                if not value:
-                    res = "Debe rellenar todos las"
-                    res += "celdas para realizar predicción."
-                    show_warning(res, self)
-                    return None
-                try:
-                    input_values.append(float(value))
-                except ValueError:
-                   res = f"El valor para {label.text()} debe ser numérico."
-                   show_error(res, self)
-
+        # Obtener los valores ingresados en los QLineEdits
+        input_values = []
+        for label, line_edit in self.input_widgets:
+            value = line_edit.text()
+            if not value:
+                res = "Debe rellenar todos las"
+                res += " celdas para realizar predicción."
+                show_warning(res, self)
+                return None
             try:
-                # Realizar la predicción
-                prediction = self.model.intercept_
-                for i in range(len(input_values)):
-                    prediction += self.model.coef_[i] * input_values[i]
-            
-
-                # Actualizar QLabel para mostrar el resultado
-                self.prediction_label.setText(f"Resultado de la Predicción:\n{self.output_column} = {prediction:.4f}")
-                self.prediction_label.setVisible(True)  # Mostrar el QLabel
-
+                input_values.append(float(value))
             except ValueError:
-                show_error("Por favor, introduzca solo valores numéricos.", self)
-            except Exception as e:
-                show_error("Error", f"Error al realizar la predicción: {str(e)}", self)
+                res = f"El valor para {label.text()} debe ser numérico."
+                show_error(res, self)
+
+        try:
+            # Realizar la predicción
+            prediction = self.model.intercept_
+            for i in range(len(input_values)):
+                prediction += self.model.coef_[i] * input_values[i]
+        
+
+            # Actualizar QLabel para mostrar el resultado
+            self.prediction_label.setText(f"Resultado de la Predicción:\n{self.output_column} = {prediction:.4f}")
+            self.prediction_label.setVisible(True)  # Mostrar el QLabel
+
+        except ValueError:
+            show_error("Por favor, introduzca solo valores numéricos.", self)
+        except Exception as e:
+            show_error("Error", f"Error al realizar la predicción: {str(e)}", self)
