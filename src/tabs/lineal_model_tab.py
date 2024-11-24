@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
-                            QSpacerItem, QMessageBox, QHBoxLayout)
+    QSpacerItem, QHBoxLayout)
 import joblib
 from models.lineal_model import *
 from sklearn.metrics import mean_squared_error, r2_score
 from models.description import *
-from ui.popup_handler import *
+from ui.popup_handler import (show_error, show_message, 
+    show_warning, save_file_dialog)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from ui.popup_handler import InputDialog
 
 
 class LinealModelTab(QWidget):
@@ -62,17 +62,10 @@ class LinealModelTab(QWidget):
             # Crear QLabel
             label = QLabel(f"{column}:")
             label.setVisible(False)  # Ocultar inicialmente
-            label.setStyleSheet("color: white;")  # Asegurar que el texto sea visible si el fondo es oscuro
 
             # Crear QLineEdit con estilos y tamaño personalizado
             line_edit = QLineEdit()
             line_edit.setVisible(False)  # Ocultar inicialmente
-            line_edit.setStyleSheet("""
-                color: white;
-                background-color: black;
-                border: 1px solid white;
-                padding: 5px;
-            """)
             line_edit.setFixedWidth(300)  # Ajustar ancho del QLineEdit
             line_edit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)  # Restringir ancho pero permitir ajuste vertical
 
@@ -85,7 +78,6 @@ class LinealModelTab(QWidget):
         # Etiqueta para mostrar el resultado de la predicción (inicialmente oculta)
         self.prediction_label = QLabel()
         self.prediction_label.setVisible(False)  # Ocultar inicialmente
-        self.prediction_label.setStyleSheet("font-size: 16px; font-weight: bold; color: white;")
         layout.addWidget(self.prediction_label)
 
         # Crear un layout horizontal para los botones
@@ -112,36 +104,34 @@ class LinealModelTab(QWidget):
         # Eliminar cualquier gráfico existente, incluso si no se va a crear uno nuevo
         self.save_button.setVisible(True)
         self.clear_previous_graph()
+        try:
+            self.canvas = None  # Restablecer la referencia a None
+            # Crear y ajustar el modelo
+            self.model = LinealModel(self.data, self.input_columns, self.output_column)
+            self.model.fit()
 
-        if self.data is None or self.input_columns is None or self.output_column is None:
-            QMessageBox.critical(self, "Error", "ERROR")
-        else:
-            try:
-                self.canvas = None  # Restablecer la referencia a None
-                # Crear y ajustar el modelo
-                self.model = LinealModel(self.data, self.input_columns, self.output_column)
-                self.model.fit()
+            # Actualizar la interfaz con la fórmula y métricas
+            self.formula_label.setText(f"Fórmula del Modelo: {self.model.formula}")
+            self.r2_label.setText(f"R²: {self.model.r2_:.4f}")
+            self.mse_label.setText(f"ECM: {self.model.mse_:.4f}")
 
-                # Actualizar la interfaz con la fórmula y métricas
-                self.formula_label.setText(f"Fórmula del Modelo: {self.model.formula}")
-                self.r2_label.setText(f"R²: {self.model.r2_:.4f}")
-                self.mse_label.setText(f"ECM: {self.model.mse_:.4f}")
+            # Graficar si es posible
+            if len(self.model.input_columns) == 1:
+                self.plot_graph()
+            else:
+                res = "No se puede crear una gráfica, debido a que la"
+                res += "regresión lineal es múltiple, no simple."
+                show_message(res, self)
 
-                # Graficar si es posible
-                if len(self.model.input_columns) == 1:
-                    self.plot_graph()
-                else:
-                    QMessageBox.information(self, 
-                                            "Atención", "No se puede crear una gráfica, debido a que la regresión lineal es múltiple, no simple.")
+            # Mostrar el botón "Realizar Predicción"
+            self.predict_button.setVisible(True)
 
-                # Mostrar el botón "Realizar Predicción"
-                self.predict_button.setVisible(True)
+            # Confirmación de éxito
+            res = "El modelo de regresión lineal ha sido creado exitosamente."
+            show_message(res, self)
 
-                # Confirmación de éxito
-                QMessageBox.information(self, "Éxito", "El modelo de regresión lineal ha sido creado exitosamente.")
-            
-            except Exception as e:
-                QMessageBox.critical(self, "Error", f"Error al crear el modelo lineal: {str(e)}")
+        except Exception as e:
+            show_error(f"Error al crear el modelo lineal: {str(e)}", self)
 
     def clear_previous_graph(self):
         # Verificar si existe una gráfica previa y eliminarla
@@ -208,8 +198,6 @@ class LinealModelTab(QWidget):
         """
         Method to make predictions with the model.
         """
-        if not self.model:
-            QMessageBox.critical(self, "Error", "No se ha entrenado ningún modelo.")
 
         # Mostrar todos los QLabel y QLineEdit asociados
         for label, line_edit in self.input_widgets:
@@ -224,13 +212,15 @@ class LinealModelTab(QWidget):
             for label, line_edit in self.input_widgets:
                 value = line_edit.text()
                 if not value:
-                    QMessageBox.warning(self, "", f"Debe rellenar todos las celdas para realizar predicción.")
-                    return
+                    res = "Debe rellenar todos las"
+                    res += "celdas para realizar predicción."
+                    show_warning(res, self)
+                    return None
                 try:
                     input_values.append(float(value))
                 except ValueError:
-                    QMessageBox.critical(self, "Error", f"El valor para {label.text()} debe ser numérico.")
-                    return
+                   res = f"El valor para {label.text()} debe ser numérico."
+                   show_error(res, self)
 
             try:
                 # Realizar la predicción
@@ -244,6 +234,6 @@ class LinealModelTab(QWidget):
                 self.prediction_label.setVisible(True)  # Mostrar el QLabel
 
             except ValueError:
-                QMessageBox.critical(self, "Error", "Por favor, introduzca solo valores numéricos.")
+                show_error("Por favor, introduzca solo valores numéricos.", self)
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Error al realizar la predicción: {str(e)}")
+                show_error("Error", f"Error al realizar la predicción: {str(e)}", self)

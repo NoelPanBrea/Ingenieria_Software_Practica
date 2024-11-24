@@ -142,14 +142,14 @@ class DataTab(QWidget):
             #Mostrar la ruta del modelo cargado Y confirmación de la carga
             self.path_label.setText(
                 f'📄 Ruta del modelo cargado: {model_path}')
-            show_message('✅ ¡Modelo cargado exitosamente! 😃')
+            show_message('✅ ¡Modelo cargado exitosamente! 😃', self)
             
             self.display_model_data()
             
             return True
         
         except Exception as e:
-            show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠')
+            show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠', self)
             return False
         
     def display_model_data(self):
@@ -181,15 +181,15 @@ class DataTab(QWidget):
                 if model_data_df is not None and not model_data_df.empty:
                     self.table.load_data(model_data_df, batch_size=100)
                 else:
-                    show_error("⚠ El modelo no contiene datos válidos ⚠")
+                    show_error("⚠ El modelo no contiene datos válidos ⚠", self)
                     return False
             else:
-                show_error("⚠ Formato de modelo no soportado ⚠")
+                show_error("⚠ Formato de modelo no soportado ⚠", self)
                 return False
             
             return True
         except Exception as e:
-            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠')
+            show_error(f'⚠ Error al mostrar los datos del modelo: {str(e)} ⚠', self)
             return False
 
     def load_data(self):
@@ -212,10 +212,10 @@ class DataTab(QWidget):
             self.table.load_data(self.data, batch_size=100)
             self.column_selector.populate_columns(self.data)
             self.column_selector.setVisible(True)
-            show_message('✅ ¡Archivo cargado exitosamente! 😃')
+            show_message('✅ ¡Archivo cargado exitosamente! 😃', self)
                 
         except Exception as e:
-            show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠')
+            show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠', self)
 
     def on_input_column_selection_changed(self, item):
         """
@@ -267,10 +267,10 @@ class DataTab(QWidget):
         input_columns, output_column = self.column_selector.get_selected_columns()
 
         if not input_columns:
-            show_error('⚠ Debe seleccionar al menos una columna de entrada. ⚠')
+            show_error('⚠ Debe seleccionar al menos una columna de entrada. ⚠', self)
             return
         elif not output_column:
-            show_error('⚠ Debe seleccionar una columna de salida. ⚠')
+            show_error('⚠ Debe seleccionar una columna de salida. ⚠', self)
             return
 
         self.selected_input_columns = input_columns
@@ -306,7 +306,7 @@ class DataTab(QWidget):
             f'Valores nulos: {", ".join(map(str, none_count(self.data, input_columns + [output_column])))}\n'
             f'Columna de salida: {output_column}'
         )
-        show_message(summary)
+        show_message(summary, self)
 
     def enable_preprocessing(self):
         """
@@ -370,6 +370,6 @@ class DataTab(QWidget):
             self.column_selector.output_column_selector.setCurrentIndex(last_selected)
             self.on_output_column_selection_changed()
 
-            show_message('✅ ¡Preprocesado aplicado exitosamente!')
+            show_message('✅ ¡Preprocesado aplicado exitosamente!', self)
         except Exception as e:
-            show_error(f'Error al aplicar el preprocesado: {str(e)}')
+            show_error(f'Error al aplicar el preprocesado: {str(e)}', self)

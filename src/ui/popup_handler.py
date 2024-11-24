@@ -56,6 +56,26 @@ def show_message(message: str, parent=None) -> None:
     msg_box.exec_()
 
 
+def show_warning(message: str, parent=None) -> None:
+    """
+    Shows an error message in a pop up window
+
+    Parameters 
+    -----------
+    message : str
+        Error string to show in the pop up
+
+    Returns
+    -----------
+        None
+    """
+    error_msg = QMessageBox(parent=parent)
+    error_msg.setIcon(QMessageBox.Warning)
+    error_msg.setText(message)
+    error_msg.setWindowTitle('Atención')
+    error_msg.exec_()
+
+
 def show_error(message: str, parent=None) -> None:
     """
     Shows an error message in a pop up window
