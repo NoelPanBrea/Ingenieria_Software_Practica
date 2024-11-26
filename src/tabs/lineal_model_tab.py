@@ -56,6 +56,24 @@ class LinealModelTab(QWidget):
         # Configurar etiqueta para mostrar la descripción
         self.model_description.add_to_layout(layout)
 
+        # Etiquetas ocultas inicialmente para intercepto y coeficientes
+        self.intercept_label = QLabel("Intercepto: ")
+        self.intercept_label.setVisible(False)
+        layout.addWidget(self.intercept_label)
+
+        self.coefficients_label = QLabel("Coeficientes: ")
+        self.coefficients_label.setVisible(False)
+        layout.addWidget(self.coefficients_label)
+
+        # Etiquetas ocultas inicialmente para columnas de entrada y salida
+        self.input_columns_label = QLabel("Columnas de Entrada: ")
+        self.input_columns_label.setVisible(False)
+        layout.addWidget(self.input_columns_label)
+
+        self.output_column_label = QLabel("Columna de Salida: ")
+        self.output_column_label.setVisible(False)
+        layout.addWidget(self.output_column_label)
+
         # Contenedor para la gráfica
         self.graph_container = QWidget()
         self.graph_layout = QVBoxLayout(self.graph_container)
@@ -110,6 +128,25 @@ class LinealModelTab(QWidget):
             # Configurar descripción si existe
             if 'description' in model_data:
                 self.model_description.set_description(model_data['description'])
+
+            # Mostrar intercepto y coeficientes
+            intercept = model_data['intercept']
+            coefficients = model_data['coefficients']
+            if intercept is not None:
+                self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
+                self.intercept_label.setVisible(True)
+            if coefficients is not None:
+                coefficients_text = ", ".join(f"{coef:.4f}" for coef in coefficients)
+                self.coefficients_label.setText(f"Coeficientes: [{coefficients_text}]")
+                self.coefficients_label.setVisible(True)
+
+            # Mostrar columnas de entrada y salida
+            self.input_columns = model_data['columns']['input']
+            self.output_column = model_data['columns']['output']
+            self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
+            self.input_columns_label.setVisible(True)
+            self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
+            self.output_column_label.setVisible(True)
             
             # Configurar campos de entrada para predicción
             self.input_columns = model_data['columns']['input']
@@ -144,8 +181,10 @@ class LinealModelTab(QWidget):
                 'formula': loaded_model['formula'],
                 'metrics': loaded_model['metrics'],
                 'description': loaded_model['description'],
-                'columns': loaded_model['columns']
-            })
+                'columns': loaded_model['columns'],
+                'intercept': loaded_model['intercept'],
+                'coefficients': loaded_model['coefficients']
+                })
             
         except Exception as e:
             show_error(f"Error al inicializar el modelo cargado: {str(e)}", self)
@@ -198,7 +237,9 @@ class LinealModelTab(QWidget):
                 'columns': {
                     'input': self.input_columns,
                     'output': self.output_column
-                }
+                },
+                'intercept': self.model.intercept_,
+                'coefficients': self.model.coef_
             })
 
             # Graficar si es posible
@@ -326,7 +367,7 @@ class LinealModelTab(QWidget):
         
 
             # Actualizar QLabel para mostrar el resultado
-            self.prediction_label.setText(f"Resultado de la Predicción:\n{self.output_column} = {prediction:.4f}")
+            self.prediction_label.setText(f"Resultado de la predicción:\n{self.output_column} = {prediction:.4f}")
             self.prediction_label.setVisible(True)  # Mostrar el QLabel
 
         except ValueError:
