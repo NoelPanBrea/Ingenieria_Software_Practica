@@ -62,8 +62,8 @@ class ColumnSelector(QWidget):
         self.input_label = QLabel('Seleccione columnas de entrada (features):')
         self.output_label = QLabel('Seleccione columna de salida (target):')
         self.input_column_selector.setMinimumHeight(150)
-        self.input_column_selector.setMaximumHeight(250)
-        self.confirm_button.setMinimumHeight(150)
+        self.input_column_selector.setMaximumHeight(200)
+        self.confirm_button.setFixedSize(225, 50)
 
         layout.addWidget(self.input_label, 0, 0,
                          alignment=Qt.AlignmentFlag.AlignBottom)

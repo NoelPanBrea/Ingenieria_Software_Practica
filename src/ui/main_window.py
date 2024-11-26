@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
                 # Crear nueva pestaña con el modelo cargado
                 new_tab = LinealModelTab(loaded_model=model_data)
                 # Agregar la pestaña al widget de pestañas
-                tab_index = self.tab_widget.addTab(new_tab, f"Modelo Cargado {self.tabs_counter}")
+                tab_index = self.tab_widget.addTab(new_tab, f"Modelo {self.tabs_counter}")
                 # Cambiar a la nueva pestaña
                 self.tab_widget.setCurrentIndex(tab_index)                
                 # Forzar actualización de la UI

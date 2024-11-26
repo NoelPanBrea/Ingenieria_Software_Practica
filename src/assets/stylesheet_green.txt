@@ -453,3 +453,43 @@ QLineEdit::placeholder {
     color: #004D1C;
     font-style: italic;
 }
+
+/* Específicamente para los GroupBox */
+QGroupBox {
+    color: #39FF14;
+    border: 1px solid #00FF41;
+    border-radius: 0px;
+    margin-top: 1em;
+    padding: 5px;
+}
+
+QGroupBox::title {
+    color: #39FF14;
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QGroupBox[title="Predicción"] QLabel {
+    font-size: 18px;
+    margin: 0px;
+    padding: 0px;
+}
+
+QLineEdit {
+    margin: 0px;
+    padding: 5px;
+    margin-bottom: 2px;
+}
+
+QGroupBox[title="Predicción"] {
+    padding-top: 25px;
+}
+
+/* Para el botón específico de crear modelo */
+QPushButton#create_model_button {
+    min-width: 350px;    /* Ancho mínimo específico para este botón */
+    white-space: nowrap; /* Evitar que el texto se corte */
+}
