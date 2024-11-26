@@ -232,28 +232,39 @@ class LinealModelTab(QWidget):
         self.create_prediction_inputs()
 
     def create_prediction_inputs(self):
-        """Crea los campos de entrada para predicciones"""
-        # Limpiar widgets existentes
+        """Crea los campos de entrada para predicciones con espaciado mínimo"""
         for widget in self.input_widgets:
             widget[0].setParent(None)
             widget[1].setParent(None)
         self.input_widgets.clear()
         
-        # Crear campos para cada columna de entrada
         if self.input_columns:
             for column in self.input_columns:
+                # Crear un widget contenedor para cada par label-input
+                container = QWidget()
+                container_layout = QVBoxLayout(container)
+                container_layout.setContentsMargins(0, 0, 0, 0)  # Sin márgenes
+                container_layout.setSpacing(0)  # Sin espacio entre elementos
+                
                 label = QLabel(f"{column}:")
+                label.setFixedHeight(25)  # Altura fija para el label
+                
                 line_edit = QLineEdit()
+                line_edit.setFixedHeight(30)  # Altura fija para el input
                 line_edit.setFixedWidth(300)
-                line_edit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+                
+                container_layout.addWidget(label)
+                container_layout.addWidget(line_edit)
                 
                 self.input_widgets.append((label, line_edit))
-                self.input_layout.addWidget(label)
-                self.input_layout.addWidget(line_edit)
+                self.input_layout.addWidget(container)
                 
-                # Los campos están ocultos hasta que el modelo esté listo
+                # Establecer visibilidad
                 label.setVisible(self.model is not None)
                 line_edit.setVisible(self.model is not None)
+                
+            # Añadir un espaciador al final
+            self.input_layout.addStretch()
 
     def create_model(self):
         """Crea un nuevo modelo de regresión lineal"""
