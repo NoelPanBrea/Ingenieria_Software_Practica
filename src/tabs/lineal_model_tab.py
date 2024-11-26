@@ -254,7 +254,7 @@ class LinealModelTab(QWidget):
 
         try:
             # Para modelos cargados, usar las métricas existentes
-            if hasattr(self, 'loaded_model'):
+            if hasattr(self, 'loaded_model') and self.loaded_model is not None:
                 metrics = self.loaded_model['metrics']
             else:
                 # Para modelos nuevos, calcular métricas
