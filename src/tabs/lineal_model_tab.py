@@ -166,29 +166,29 @@ class LinealModelTab(QWidget):
             if 'description' in model_data:
                 self.model_description.set_description(model_data['description'])
 
-            # Mostrar intercepto y coeficientes
-            intercept = model_data['intercept']
-            coefficients = model_data['coefficients']
-            if intercept is not None:
-                self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
-                self.intercept_label.setVisible(True)
-            if coefficients is not None:
-                coefficients_text = ", ".join(f"{coef:.4f}" for coef in coefficients)
-                self.coefficients_label.setText(f"Coeficientes: [{coefficients_text}]")
-                self.coefficients_label.setVisible(True)
+            # # Mostrar intercepto y coeficientes
+            # intercept = model_data['intercept']
+            # coefficients = model_data['coefficients']
+            # if intercept is not None:
+            #     self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
+            #     self.intercept_label.setVisible(True)
+            # if coefficients is not None:
+            #     coefficients_text = ", ".join(f"{coef:.4f}" for coef in coefficients)
+            #     self.coefficients_label.setText(f"Coeficientes: [{coefficients_text}]")
+            #     self.coefficients_label.setVisible(True)
 
-            # Mostrar columnas de entrada y salida
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
-            self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
-            self.input_columns_label.setVisible(True)
-            self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
-            self.output_column_label.setVisible(True)
+            # # Mostrar columnas de entrada y salida
+            # self.input_columns = model_data['columns']['input']
+            # self.output_column = model_data['columns']['output']
+            # self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
+            # self.input_columns_label.setVisible(True)
+            # self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
+            # self.output_column_label.setVisible(True)
             
-            # Configurar campos de entrada para predicción
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
-            self.create_prediction_inputs()
+            # # Configurar campos de entrada para predicción
+            # self.input_columns = model_data['columns']['input']
+            # self.output_column = model_data['columns']['output']
+            # self.create_prediction_inputs()
             
             # Mostrar botones de predicción y guardado
             self.predict_button.setVisible(True)
