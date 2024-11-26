@@ -7,8 +7,11 @@ from sklearn.metrics import mean_squared_error, r2_score
 from models.description import *
 from ui.popup_handler import (show_error, show_message, 
     show_warning, save_file_dialog)
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
+from matplotlib import style
+style.use('fivethirtyeight')
+
 
 
 class LinealModelTab(QWidget):
@@ -242,14 +245,16 @@ class LinealModelTab(QWidget):
                 'coefficients': self.model.coef_
             })
 
-            # Graficar si es posible
             if len(self.model.input_columns) == 1:
-                self.plot_graph()
+                self.plot2d_graph()
+                self.layout.addWidget(NavigationToolbar2QT(self, self.canvas))
+            elif len(self.model.input_columns) == 2:
+                self.plot3d_graph()
+                self.layout.addWidget(NavigationToolbar2QT(self, self.canvas))
             else:
-                show_message(
-                    "No se puede crear una gráfica, debido a que la regresión lineal es múltiple, no simple.",
-                    self
-                )
+                res = "No se puede crear una gráfica, debido a que la"
+                res += " regresión lineal es múltiple, no simple."
+                show_message(res, self)
 
             show_message("El modelo de regresión lineal ha sido creado exitosamente.", self)
 
@@ -263,14 +268,16 @@ class LinealModelTab(QWidget):
             self.canvas.deleteLater()
             self.canvas = None  # Restablecer la referencia a None
             
-    def plot_graph(self):
+    def plot2d_graph(self):
         """Crea y muestra la gráfica del modelo"""
         if not hasattr(self.model, 'x') or not hasattr(self.model, 'y'):
             return      
         # Crear la figura y el canvas
         fig = Figure(figsize=(5, 4), dpi=100)
-        self.canvas = FigureCanvas(fig)
+        fig.patch.set_facecolor('none')
+        self.canvas = FigureCanvasQTAgg(fig)
         ax = fig.add_subplot(111)
+        ax.set_facecolor('none')
 
         # Dibujar la gráfica de dispersión y la línea de regresión
         ax.scatter(self.model.x, self.model.y, label="Datos Reales")
@@ -281,8 +288,36 @@ class LinealModelTab(QWidget):
 
         # Añadir el canvas al contenedor de la gráfica
         self.graph_layout.addWidget(self.canvas)
+        self.canvass.draw()
+
+    def plot3d_graph(self):
+        fig = Figure(figsize=(5, 4), dpi=100)
+        self.canvas = FigureCanvasQTAgg(fig)
+        fig.patch.set_facecolor('none')
+        ax = fig.add_subplot(111, projection = "3d")
+        ax.set_facecolor('none')
+        var1 = [x[0] for x in self.model.x]
+        var2 = [x[1] for x in self.model.x]
+        min1 , max1 = self.minmax(var1)
+        min2, max2 = self.minmax(var2)
+        ax.plot(var1, var2, self.model.y, 'o', markersize = 2, alpha = 0.5, label = "Datos Reales")
+        x, y = np.meshgrid(np.linspace(min1,  max1, 20), np.linspace(min2, max2, 20))
+        z = self.model.intercept_ + self.model.coef_[0] * x + self.model.coef_[1] * y
+        ax.plot_surface(x, y, z, color = "red", alpha = 0.5, label = "Plano de Regresion")
+        ax.legend()
+        self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
-     
+
+    def minmax(self, v) -> tuple[int]:
+        mn = v[0]
+        mx = v[0]
+        for x in v[1:]:
+            if x < mn:
+                mn = x
+            if x > mx:
+                mx = x
+        return (mn, mx)
+
     def save_model(self):
         """
         Saves the trained linear regression model to a file.
