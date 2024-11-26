@@ -1,1 +1,0 @@
-Test Folder is meant to contain test files, it must be deleted once everything works and the develop process is completed.
