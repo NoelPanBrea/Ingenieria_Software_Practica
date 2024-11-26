@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:                     # Definimos un trabajo llamado "test"
-    runs-on: ubuntu-latest  # Usaremos un contenedor Linux (Ubuntu)
+    runs-on: windows-latest  # Usaremos un contenedor Linux (Ubuntu)
 
     steps:                  # Pasos para ejecutar la aplicacion
     - name: Check out code
