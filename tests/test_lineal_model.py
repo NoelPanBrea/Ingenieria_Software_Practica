@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.models.lineal_model import LinealModel, create_graphic
+from models.lineal_model import LinealModel, create_graphic
 
 # Datos de ejemplo para las pruebas
 @pytest.fixture

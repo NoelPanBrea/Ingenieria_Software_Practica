@@ -1,7 +1,7 @@
 import pytest
 import sqlite3
 from pandas import DataFrame
-from src.data_processing.import_module import load_file, __import_csv, __import_excel, __import_sql
+from data_processing.import_module import load_file, __import_csv, __import_excel, __import_sql
 import os
 
 # Fixtures para datos de prueba

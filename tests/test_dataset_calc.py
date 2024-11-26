@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from pandas import DataFrame
-from src.data_processing.dataset_calc import PreprocessApplier, none_count 
+from data_processing.dataset_calc import PreprocessApplier, none_count 
 
 # Datos de prueba
 @pytest.fixture

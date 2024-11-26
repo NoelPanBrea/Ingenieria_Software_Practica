@@ -1,7 +1,7 @@
 import pytest
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QApplication
-from src.models.description import ModelDescription
+from models.description import ModelDescription
 
 @pytest.fixture
 def app(qtbot):

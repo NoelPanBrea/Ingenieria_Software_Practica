@@ -1,9 +1,9 @@
 import pytest
 from PyQt5.QtWidgets import (QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QApplication)
 from unittest.mock import MagicMock
-from src.models.lineal_model import LinealModel
-from src.tabs.lineal_model_tab import LinealModelTab
-from src.ui.popup_handler import show_error, show_message
+from models.lineal_model import LinealModel
+from tabs.lineal_model_tab import LinealModelTab
+from ui.popup_handler import show_error, show_message
 import numpy as np
 import joblib
 
