@@ -1,7 +1,7 @@
 import pytest
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
-from src.tabs.data_tab import DataTab  
+from tabs.data_tab import DataTab  
 from unittest.mock import MagicMock
 
 
