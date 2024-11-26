@@ -477,3 +477,37 @@ QLineEdit::placeholder {
     color: #A66D89;
     font-style: italic;
 }
+
+/* Específicamente para los GroupBox */
+QGroupBox {
+    color: #3A2F33;
+    border: 2px solid #C6007D;
+    border-radius: 8px;
+    margin-top: 1em;
+    padding: 5px;
+}
+
+QGroupBox::title {
+    color: #3A2F33;
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QGroupBox[title="Predicción"] QLabel {
+    font-size: 18px;
+    margin: 0px;
+    padding: 0px;
+}
+
+QLineEdit {
+    margin: 0px;
+    padding: 5px;
+    margin-bottom: 2px;
+}
+
+QGroupBox[title="Predicción"] {
+    padding-top: 25px;
+}
