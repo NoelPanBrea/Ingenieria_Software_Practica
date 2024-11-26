@@ -36,87 +36,121 @@ class LinealModelTab(QWidget):
             self.initialize_for_new_model()
 
     def setup_ui(self):
-        """Configura la interfaz de usuario base"""
-        layout = QVBoxLayout()
+        """Configura la interfaz de usuario con una mejor organización"""
+        main_layout = QVBoxLayout()
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Botón para crear el modelo
-        self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
-        self.create_model_button.clicked.connect(self.create_model)
-        # Solo agregar el botón si no es un modelo cargado
+        # 1. Grupo superior - Creación del modelo
         if not self.loaded_model:
-            layout.addWidget(self.create_model_button)
+            model_creation_group = QGroupBox("Creación del Modelo")
+            model_creation_group.setFixedHeight(100)
+            model_creation_layout = QHBoxLayout()
+            model_creation_layout.setContentsMargins(0, 0, 0, 0)
+            
+            self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
+            self.create_model_button.setObjectName("create_model_button")
+            self.create_model_button.setFixedSize(350, 50)
+            self.create_model_button.clicked.connect(self.create_model)
+            
+            
+            model_creation_layout.addWidget(self.create_model_button, Qt.AlignCenter)
+            model_creation_group.setLayout(model_creation_layout)
+            main_layout.addWidget(model_creation_group)
+
+        # 2. Grupo de información del modelo
+        model_info_group = QGroupBox("Información del Modelo")
+        model_info_layout = QVBoxLayout()
+        model_info_layout.setSpacing(5)
+        model_info_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Etiquetas para mostrar fórmula y métricas
         self.formula_label = QLabel("Fórmula del Modelo:")
+        self.formula_label.setObjectName("formula_label")
         self.r2_label = QLabel("R²: ")
+        self.r2_label.setObjectName("r2_label")
         self.mse_label = QLabel("ECM: ")
+        self.mse_label.setObjectName("mse_label")
         
-        # Añadir al layout
-        layout.addWidget(self.formula_label)
-        layout.addWidget(self.r2_label)
-        layout.addWidget(self.mse_label)
-
-        # Configurar etiqueta para mostrar la descripción
-        self.model_description.add_to_layout(layout)
-
-        # Etiquetas ocultas inicialmente para intercepto y coeficientes
-        self.intercept_label = QLabel("Intercepto: ")
-        self.intercept_label.setVisible(False)
-        layout.addWidget(self.intercept_label)
-
-        self.coefficients_label = QLabel("Coeficientes: ")
-        self.coefficients_label.setVisible(False)
-        layout.addWidget(self.coefficients_label)
-
-        # Etiquetas ocultas inicialmente para columnas de entrada y salida
-        self.input_columns_label = QLabel("Columnas de Entrada: ")
-        self.input_columns_label.setVisible(False)
-        layout.addWidget(self.input_columns_label)
-
-        self.output_column_label = QLabel("Columna de Salida: ")
-        self.output_column_label.setVisible(False)
-        layout.addWidget(self.output_column_label)
-
-        # Contenedor para la gráfica
-        self.graph_container = QWidget()
-        self.graph_layout = QVBoxLayout(self.graph_container)
-        self.graph_layout.setContentsMargins(0, 10, 0, 10)  # Margen para separar del resto
-        layout.addWidget(self.graph_container)
+        model_info_layout.addWidget(self.formula_label)
+        model_info_layout.addWidget(self.r2_label)
+        model_info_layout.addWidget(self.mse_label)
         
-        # Espaciador para empujar widgets hacia arriba
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        layout.addItem(spacer)
+        self.model_description.add_to_layout(model_info_layout)
+        model_info_group.setLayout(model_info_layout)
+        main_layout.addWidget(model_info_group)
 
-        # Contenedor para los campos de entrada (QLabel y QLineEdit, inicialmente ocultos)
+        # 3. Layout horizontal para contener visualización y predicción lado a lado
+        bottom_layout = QHBoxLayout()
+        bottom_layout.setSpacing(10)
+
+        # Contenedor izquierdo para predicción y botón guardar
+        left_container = QVBoxLayout()
+        left_container.setSpacing(5)
+
+        # Grupo de predicción
+        prediction_group = QGroupBox("Predicción")
+        prediction_group.setMaximumWidth(400)
+        prediction_layout = QVBoxLayout()
+        prediction_layout.setSpacing(0)
+        prediction_layout.setContentsMargins(10, 5, 10, 10)
+        
         self.input_container = QWidget()
         self.input_layout = QVBoxLayout(self.input_container)
+        self.input_layout.setContentsMargins(0, 0, 0, 0)
+        self.input_layout.setSpacing(0)
         self.input_widgets = []
-        layout.addWidget(self.input_container)
-
-        # Etiqueta para mostrar el resultado de la predicción (inicialmente oculta)
+        prediction_layout.addWidget(self.input_container)
+        
         self.prediction_label = QLabel()
-        self.prediction_label.setVisible(False)  # Ocultar inicialmente
-        layout.addWidget(self.prediction_label)
-
-        # Crear un layout horizontal para los botones
-        button_layout = QHBoxLayout()
-
-        # Botón para realizar predicción (inicialmente oculto)
+        self.prediction_label.setObjectName("prediction_label")
+        self.prediction_label.setVisible(False)
+        prediction_layout.addWidget(self.prediction_label)
+        
+        # Botón de predicción
+        predict_button_container = QHBoxLayout()
+        predict_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.predict_button = QPushButton("Realizar Predicción")
-        self.predict_button.setVisible(False)  # Oculto inicialmente
+        self.predict_button.setFixedHeight(50)
+        self.predict_button.setVisible(False)
         self.predict_button.clicked.connect(self.make_prediction)
-        button_layout.addWidget(self.predict_button)
+        predict_button_container.addWidget(self.predict_button)
+        prediction_layout.addLayout(predict_button_container)
 
-        # Botón para guardar el modelo (inicialmente oculto)
+        prediction_group.setLayout(prediction_layout)
+        left_container.addWidget(prediction_group)
+        
+        # Botón guardar debajo del grupo de predicción
+        save_button_container = QHBoxLayout()
+        save_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.save_button = QPushButton("💾 Guardar Modelo")
+        self.save_button.setFixedHeight(50)
         self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
-        button_layout.addWidget(self.save_button)
+        save_button_container.addWidget(self.save_button)
+        left_container.addLayout(save_button_container)
+        
+        # Añadir contenedor izquierdo al layout horizontal
+        bottom_layout.addLayout(left_container)
 
-        # Añadir el layout de los botones al layout principal
-        layout.addLayout(button_layout)
+        # Grupo de visualización (derecha)
+        visualization_group = QGroupBox("Visualización")
+        visualization_layout = QVBoxLayout()
+        visualization_layout.setContentsMargins(10, 10, 10, 10)
+        self.graph_container = QWidget()
+        self.graph_layout = QVBoxLayout(self.graph_container)
+        self.graph_layout.setContentsMargins(0, 0, 0, 0)
+        visualization_layout.addWidget(self.graph_container)
+        visualization_group.setLayout(visualization_layout)
+        bottom_layout.addWidget(visualization_group)
 
-        self.setLayout(layout)
+        # Ajustar proporciones del espacio
+        prediction_group.setMinimumWidth(300)
+        visualization_group.setMinimumWidth(500)
+
+        # Añadir el layout horizontal al layout principal
+        main_layout.addLayout(bottom_layout)
+
+        self.setLayout(main_layout)
 
     def setup_model_display(self, model_data):
         """
