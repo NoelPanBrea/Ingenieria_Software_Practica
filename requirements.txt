@@ -5,5 +5,7 @@ numpy
 matplotlib
 joblib
 pytest
+pytest-qt
+pytest-mock
 openpyxl
 xlrd

@@ -58,5 +58,6 @@ def test_missing_cte(sample_dataframe):
         preprocessor.apply_preprocess(sample_dataframe, ["col1", "col2"])
 
 def test_none_count(sample_dataframe):
+    
     result = none_count(sample_dataframe, ["col1", "col2", "col3"])
     assert result == [2, 1, 2]
