@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
-    QSpacerItem, QHBoxLayout, QApplication)
+    QSpacerItem, QHBoxLayout, QApplication, QGroupBox)
 import joblib
 import numpy as np
 from models.lineal_model import LinealModel
