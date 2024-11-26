@@ -18,8 +18,8 @@ class LinealModel:
         self.data = data
         self.input_columns = input_columns
         self.output_column = output_column
-        self.x = self.data[input_columns].values
-        self.y = self.data[output_column].values
+        self.x = None if data is None else self.data[input_columns].values
+        self.y = None if data is None else self.data[output_column].values
         self.model = LinearRegression()
         self.coef_ = None
         self.intercept_ = None
@@ -27,6 +27,13 @@ class LinealModel:
         self.mse_ = None
         self.r2_ = None
         self.formula = None
+
+    def set_model_params(self, coefficients, intercept, formula):
+        """Método nuevo para establecer parámetros de un modelo cargado"""
+        self.coef_ = coefficients
+        self.intercept_ = intercept
+        self.formula = formula
+        return self
 
     # Ajusta el modelo lineal
     def fit(self):
