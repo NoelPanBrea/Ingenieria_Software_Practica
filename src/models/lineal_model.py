@@ -91,6 +91,17 @@ class LinealModel:
         self.y_pred = self.predict(self.x)  # Use the predict method
         self.evaluate()
         self.calc_formula()
+    
+    def predict(self, data_to_predict=None):
+        """
+        Predice valores usando el modelo ajustado.
+        Si no se proporciona `data_to_predict`, usa los datos de entrenamiento.
+        """
+        if data_to_predict is None:
+            data_to_predict = self.x  # Usa los datos de entrenamiento si no se especifican otros
+
+        # Realizamos la predicción
+        return self.model.predict(data_to_predict)
 
     def evaluate(self):      
         """
