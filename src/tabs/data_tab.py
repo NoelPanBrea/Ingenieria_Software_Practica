@@ -260,11 +260,14 @@ class DataTab(QWidget):
         # Store the selected columns and display a summary
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
+        self.none_columns = none_count(self.data, input_columns + [output_column])
         self.show_selection_summary(input_columns, output_column)
         
         # Enable preprocessing if there are null values
         if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
-            self.enable_preprocessing() 
+            self.enable_preprocessing()
+        else:
+            self.disable_preprocessing()
 
     def set_preprocessing_method(self, method: str):
         """
@@ -303,6 +306,14 @@ class DataTab(QWidget):
         self.preprocess_label.show()
         self.preprocess_toolbar.show_buttons()
 
+    def disable_preprocessing(self):
+        """
+        Hides the preprocessing section in the interface, not allowing the user
+        to select and apply a preprocessing method.
+        """
+        self.preprocess_label.hide()
+        self.preprocess_toolbar.hide_buttons()
+
     def handle_constant_method(self):
         """
         Shows an input dialog to define constant values by column
@@ -317,8 +328,7 @@ class DataTab(QWidget):
             input_window = InputDialog(
                 self.selected_input_columns + [self.selected_output_column],
                 'Introduzca las constantes',
-                parent = self
-            )
+                parent = self)
             input_window.exec()
 
             # Retrieve the constants entered by the user
@@ -339,25 +349,11 @@ class DataTab(QWidget):
             # Apply the preprocessing method to the selected columns
             self.preprocess_applier.apply_preprocess(
                 self.data,
-                self.selected_input_columns + [self.selected_output_column]
-            )
+                self.selected_input_columns + [self.selected_output_column])
 
             # Update the data table with the preprocessed data
-            self.table.load_data(self.data, self.data.shape[0])
+            self.table.load_more_rows()
 
-            # Reinitialize the column selector to reflect any changes
-            self.column_selector.populate_columns(self.data)
-
-            # Restore the previous column selections
-            for i in range(self.column_selector.input_column_selector.count()):
-                item = self.column_selector.input_column_selector.item(i)
-                if item.text() in self.selected_input_columns:
-                    item.setCheckState(QtCore.Qt.Checked)
-                else:
-                    item.setCheckState(QtCore.Qt.Unchecked)
-
-            last_selected = self.column_selector.output_column_selector.current_selection
-            self.column_selector.output_column_selector.setCurrentIndex(last_selected)
             self.on_output_column_selection_changed()
 
             show_message('✅ ¡Preprocesado aplicado exitosamente!', self)
