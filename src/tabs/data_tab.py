@@ -240,9 +240,12 @@ class DataTab(QWidget):
 
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
+        self.none_columns = none_count(self.data, input_columns + [output_column])
         self.show_selection_summary(input_columns, output_column)
         if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
-            self.enable_preprocessing() 
+            self.enable_preprocessing()
+        else:
+            self.disable_preprocessing()
 
     def set_preprocessing_method(self, method: str):
         """
@@ -280,6 +283,14 @@ class DataTab(QWidget):
         """
         self.preprocess_label.show()
         self.preprocess_toolbar.show_buttons()
+    
+    def disable_preprocessing(self):
+        """
+        Hides the preprocessing section in the interface, not allowing the user
+        to select and apply a preprocessing method.
+        """
+        self.preprocess_label.hide()
+        self.preprocess_toolbar.hide_buttons()
 
     def handle_constant_method(self):
         """
@@ -294,8 +305,7 @@ class DataTab(QWidget):
             input_window = InputDialog(
                 self.selected_input_columns + [self.selected_output_column],
                 'Introduzca las constantes',
-                parent = self
-            )
+                parent = self)
             input_window.exec()
             constants = input_window.get_inputs()
             self.preprocess_applier.set_current_method('constant', constants)
@@ -314,26 +324,11 @@ class DataTab(QWidget):
             # Aplica el método de preprocesado y actualiza los datos
             self.preprocess_applier.apply_preprocess(
                 self.data,
-                self.selected_input_columns + [self.selected_output_column]
-            )
+                self.selected_input_columns + [self.selected_output_column])
 
             # Actualizar la tabla después de aplicar el preprocesado
-            self.table.load_data(self.data, self.data.shape[0])
-
-            # Repoblar el selector de columnas por si hay cambios en la estructura
-            self.column_selector.populate_columns(self.data)
-
-            # Vuelve a seleccionar las columnas previamente seleccionadas
-            for i in range(self.column_selector.input_column_selector.count()):
-                item = self.column_selector.input_column_selector.item(i)
-                if item.text() in self.selected_input_columns:
-                    item.setCheckState(QtCore.Qt.Checked)
-                else:
-                    item.setCheckState(QtCore.Qt.Unchecked)
-
-            last_selected = self.column_selector.output_column_selector.current_selection
-            self.column_selector.output_column_selector.setCurrentIndex(last_selected)
-            self.on_output_column_selection_changed()
+            self.table.load_more_rows()
+            #self.on_output_column_selection_changed()
 
             show_message('✅ ¡Preprocesado aplicado exitosamente!', self)
         except Exception as e:

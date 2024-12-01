@@ -29,7 +29,7 @@ class LinealModel:
         self.formula = None
 
     def set_model_params(self, coefficients, intercept, formula):
-        """Método nuevo para establecer parámetros de un modelo cargado"""
+        """Método para establecer parámetros de un modelo cargado"""
         self.coef_ = coefficients
         self.intercept_ = intercept
         self.formula = formula

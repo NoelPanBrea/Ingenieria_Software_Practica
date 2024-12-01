@@ -99,6 +99,7 @@ class DataTable(QTableWidget):
                 self.setItem(i, j, item)
 
         self.loaded_rows = end_row
+        self.highlight_check()
         self.resizeColumnsToContents()
         self.fill_area(self._data.shape[1])
 
@@ -109,6 +110,11 @@ class DataTable(QTableWidget):
         scroll_bar = self.verticalScrollBar()
         if scroll_bar.value() > scroll_bar.maximum() - 50:  # Threshold for loading
             QTimer.singleShot(50, self.load_more_rows)
+
+    def highlight_check(self):
+        for col in range(self.columnCount()):
+            if self.item(0, col).data(Qt.UserRole + 1):
+                self.highlight_column(col, True)
 
     def highlight_column(self, column_index: int, highlight: bool):
         """
@@ -130,6 +136,7 @@ class DataTable(QTableWidget):
         Adjusts the column width to the table's width
         """
         width = self.width()
+        shape = self.data.shape[1]
         if self.columns_width() < width:
             for i in range(shape):
                 self.setColumnWidth(i, width // shape)
