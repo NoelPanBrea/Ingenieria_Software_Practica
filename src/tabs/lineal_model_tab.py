@@ -481,6 +481,24 @@ class LinealModelTab(QWidget):
             show_error('⚠ Debe primero entrenar o cargar un modelo ⚠')
             return
 
+        # Check if model has description and show recommendation dialog if not
+        description = self.model_description.get_description()
+        if not description:
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("Recomendación")
+            msg_box.setText("El modelo no tiene una descripción.")
+            msg_box.setInformativeText("Se recomienda añadir una descripción para mejor documentación. ¿Desea continuar sin descripción?")
+            
+            # Create custom button
+            si_button = msg_box.addButton("Sí", QMessageBox.YesRole)
+            no_button = msg_box.addButton("No", QMessageBox.NoRole)
+            msg_box.setDefaultButton(no_button)
+            
+            msg_box.exec_()
+            if msg_box.clickedButton() == no_button:
+                return
+        
         try:
             # Use existing metrics for loaded models, or compute metrics for new ones
             if hasattr(self, 'loaded_model') and self.loaded_model is not None:
