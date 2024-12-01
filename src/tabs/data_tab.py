@@ -44,6 +44,9 @@ class DataTab(QWidget):
 
 
     def __init__(self):
+        """
+        Initializes the DataTab class and sets up the user interface components.
+        """
         super().__init__()
         self.data: Optional[DataFrame] = None
         self.selected_input_columns: Optional[List[str]] = None
@@ -58,30 +61,33 @@ class DataTab(QWidget):
         """
         layout = QVBoxLayout()
 
-        # Sección de carga de archivo
+        # Section for loading files
         self.load_widget = QWidget()
         load_bar = QHBoxLayout(self.load_widget)
         
+        # File and model loading buttons
         self.file_button = QPushButton('📂 Abrir Archivo')
         self.file_button.setFixedSize(200, 50)
         self.model_button = QPushButton('🗃️ Cargar Modelo')
         self.model_button.setFixedSize(200, 50)
         self.path_label = QLabel('Ruta del archivo cargado:')
 
-        # Tabla de datos
+        # Data preview table
         self.table = DataTable()
 
-        #Iniciamos el selector de columnas y la seccion de preprocesado
+        # Initialize column selector and preprocessing section
         self.init_selector()
         self.init_preprocess()
         
+        # Connect buttons to their respective actions
         self.connect_buttons()
         
+        # Add widgets to the loading bar layout
         load_bar.addWidget(self.file_button)
         load_bar.addWidget(self.model_button)
         load_bar.addWidget(self.path_label)
         
-        # Añadir todos los componentes al diseño principal
+        # Add components to the main layout
         layout.addWidget(self.load_widget)
         layout.addWidget(self.table)
         layout.addWidget(self.column_selector)
@@ -91,9 +97,14 @@ class DataTab(QWidget):
         self.setLayout(layout)
 
     def init_selector(self):
-        # Selector de columnas (inicialmente oculto)
+        """
+        Initializes the column selector component and connects its signals.
+        """
+        # The column selector is initially hidden
         self.column_selector = ColumnSelector()
         self.column_selector.setVisible(False)
+
+        # Connect signals for column selection changes and confirmation
         self.column_selector.confirm_button.clicked.connect(
             self.on_selection_confirmed)
         self.column_selector.input_column_selector.itemChanged.connect(
@@ -109,10 +120,10 @@ class DataTab(QWidget):
         self.preprocess_toolbar = PreprocessToolbar()
 
     def connect_buttons(self):
-        # Conectar botón de carga
+        # Connect file loading button
         self.file_button.clicked.connect(self.load_data)
         
-        # Conectar botones de preprocesado
+        # Connect preprocessing toolbar buttons
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
             lambda: self.set_preprocessing_method('delete'))
         self.preprocess_toolbar.buttons['mean'].clicked.connect(
@@ -133,21 +144,21 @@ class DataTab(QWidget):
             return None
 
         try:
-            #Cargar el modelo
+            # Load the model from the file
             model_data = joblib.load(model_path)
 
-            # Verificar que el modelo tenga la estructura correcta
+            # Ensure the model has the required keys
             required_keys = ['formula', 'coefficients', 'intercept', 'metrics', 'columns']
             if not all(key in model_data for key in required_keys):
                 show_error("⚠ El archivo no contiene un modelo válido ⚠", self)
                 return None
             
-            #Ocultar la tabla y el selector de columnas
+            # Hide table and column selector for clarity
             self.column_selector.setVisible(False)
             self.preprocess_label.hide()
             self.preprocess_toolbar.hide_buttons()
             
-            #Mostrar la ruta del modelo cargado Y confirmación de la carga
+            # Display the loaded file path and confirmation message
             self.path_label.setText(
                 f'📄 Ruta del modelo cargado: {model_path}')
             show_message('✅ ¡Modelo cargado exitosamente! 😃', self)
@@ -171,6 +182,7 @@ class DataTab(QWidget):
             return
 
         try:
+            # Load the dataset into the table and initialize column selection
             self.data = load_file(file_path)
             self.path_label.setText(
                 f'📄 Ruta del archivo cargado: {file_path}')
@@ -192,9 +204,11 @@ class DataTab(QWidget):
         item : QListWidgetItem
             List item in `input_column_selector` that has changed state.
         """
+        # Get the index of the column and its selection state
         column_index = self.column_selector.input_column_selector.row(item)
         state = item.checkState()
 
+        # Highlight the selected column in the table
         if column_index !=\
             self.column_selector.output_column_selector.currentIndex() or state:
             self.table.highlight_column(column_index, state)
@@ -209,10 +223,14 @@ class DataTab(QWidget):
         item : QListWidgetItem
             List item in `input_column_selector` that has changed state.
         """
+        # Get the current and previously selected output column indices
         current_column_index = self.column_selector.output_column_selector.currentIndex()
         last_column_index = self.column_selector.output_column_selector.last_selected
+        
+        # Highlight the current output column
         self.table.highlight_column(current_column_index, True)
 
+        # Unhighlight the last column if it is no longer selected
         if not self.column_selector.input_column_selector.item(
             last_column_index).checkState() and\
                 last_column_index != current_column_index:
@@ -229,6 +247,7 @@ class DataTab(QWidget):
         ValueError
             If no input columns or an output column are selected.
         """
+        # Retrieve the selected input and output columns
         input_columns, output_column = self.column_selector.get_selected_columns()
 
         if not input_columns:
@@ -238,9 +257,12 @@ class DataTab(QWidget):
             show_error('⚠ Debe seleccionar una columna de salida. ⚠', self)
             return
 
+        # Store the selected columns and display a summary
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
         self.show_selection_summary(input_columns, output_column)
+        
+        # Enable preprocessing if there are null values
         if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
             self.enable_preprocessing() 
 
@@ -291,12 +313,15 @@ class DataTab(QWidget):
         This method only activates if input columns are selected.
         """
         if self.selected_input_columns:
+            # Create and display the input dialog for constants
             input_window = InputDialog(
                 self.selected_input_columns + [self.selected_output_column],
                 'Introduzca las constantes',
                 parent = self
             )
             input_window.exec()
+
+            # Retrieve the constants entered by the user
             constants = input_window.get_inputs()
             self.preprocess_applier.set_current_method('constant', constants)
 
@@ -311,19 +336,19 @@ class DataTab(QWidget):
             If an error occurs during data preprocessing.
         """
         try:
-            # Aplica el método de preprocesado y actualiza los datos
+            # Apply the preprocessing method to the selected columns
             self.preprocess_applier.apply_preprocess(
                 self.data,
                 self.selected_input_columns + [self.selected_output_column]
             )
 
-            # Actualizar la tabla después de aplicar el preprocesado
+            # Update the data table with the preprocessed data
             self.table.load_data(self.data, self.data.shape[0])
 
-            # Repoblar el selector de columnas por si hay cambios en la estructura
+            # Reinitialize the column selector to reflect any changes
             self.column_selector.populate_columns(self.data)
 
-            # Vuelve a seleccionar las columnas previamente seleccionadas
+            # Restore the previous column selections
             for i in range(self.column_selector.input_column_selector.count()):
                 item = self.column_selector.input_column_selector.item(i)
                 if item.text() in self.selected_input_columns:
