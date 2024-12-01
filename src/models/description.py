@@ -36,6 +36,12 @@ class ModelDescription:
         self.display_label.mousePressEvent = self.on_label_click
 
     def show_edit_mode(self):
+        """
+        Enables the edit mode, showing the input field and hiding the label.
+
+        If the current label text is the default placeholder text,
+        the input field will be empty. Otherwise, it will contain the label's text.
+        """
         current_text = self.display_label.text()
         self.display_label.hide()
         
@@ -48,6 +54,12 @@ class ModelDescription:
         self.input_field.setFocus()
 
     def update_description(self):
+        """
+        Updates the description based on the input field's content.
+
+        If the input field is empty, the default placeholder text is set.
+        Otherwise, the description is updated with the input text.
+        """
         description = self.input_field.text()
         
         if not description:
