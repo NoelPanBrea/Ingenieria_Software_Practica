@@ -43,12 +43,15 @@ class LinealModel:
         self.data = data
         self.input_columns = input_columns
         self.output_column = output_column
+        # Extract input (x) and output (y) data from the dataset
         self.x = None if data is None else self.data[input_columns].values
         self.y = None if data is None else self.data[output_column].values
+        # Initialize the linear regression model
         self.model = LinearRegression()
+        # Initialize placeholders for model parameters and metrics
         self.coef_ = None
         self.intercept_ = None
-        self.y_pred = None  # Initialize as None
+        self.y_pred = None
         self.mse_ = None
         self.r2_ = None
         self.formula = None
@@ -83,7 +86,10 @@ class LinealModel:
         The method also calculates predictions, evaluates the model's 
         performance, and generates the regression formula.
         """
+        # Fit the model using sklearn's LinearRegression
         self.model.fit(self.x, self.y)
+
+        # Store the coefficients and intercept
         self.coef_ = self.model.coef_
         self.intercept_ = self.model.intercept_
 
@@ -92,15 +98,26 @@ class LinealModel:
         self.evaluate()
         self.calc_formula()
     
-    def predict(self, data_to_predict=None):
+    def predict(self, data_to_predict: np.ndarray = None) -> np.ndarray:
         """
-        Predice valores usando el modelo ajustado.
-        Si no se proporciona `data_to_predict`, usa los datos de entrenamiento.
+        Makes predictions using the fitted model.
+
+        If `data_to_predict` is not provided, it defaults to the training data.
+
+        Parameters
+        ----------
+        data_to_predict : np.ndarray, optional
+            Data for which predictions are required.
+
+        Returns
+        -------
+        np.ndarray
+            Predicted values.
         """
         if data_to_predict is None:
             data_to_predict = self.x  # Usa los datos de entrenamiento si no se especifican otros
 
-        # Realizamos la predicción
+        # Return predictions for the input data
         return self.model.predict(data_to_predict)
 
     def evaluate(self):      
@@ -117,6 +134,8 @@ class LinealModel:
         """
         if self.y_pred is None:
             raise ValueError("Predicciones no generadas. Asegúrate de llamar a 'fit' antes de evaluar.")
+        
+        # Calculate MSE and R² score
         self.mse_ = mean_squared_error(self.y, self.y_pred)
         self.r2_ = r2_score(self.y, self.y_pred)
 
@@ -127,6 +146,9 @@ class LinealModel:
         The formula represents the regression equation with the calculated
         coefficients and intercept.
         """
+        # Start the formula with the intercept
         self.formula = f"{self.output_column} = {self.intercept_:.2f}"
+        
+        # Add terms for each input column and its corresponding coefficient
         for i, col in enumerate(self.input_columns):
             self.formula += f" + ({self.coef_[i]:.2f} * {col})"

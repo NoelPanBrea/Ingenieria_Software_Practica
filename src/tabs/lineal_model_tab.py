@@ -15,9 +15,51 @@ style.use('fivethirtyeight')
 
 
 class LinealModelTab(QWidget):
+    """
+    UI Tab for managing linear regression models.
+
+    Handles the creation, visualization, saving, and prediction of linear regression models.
+    Allows users to load a pre-trained model or create a new one from input data.
+
+    Attributes
+    ----------
+    tab_list : list
+        Keeps track of all instances of this class.
+    model_description : ModelDescription
+        Handles the description of the model.
+    data : Optional[np.ndarray]
+        Input dataset.
+    input_columns : Optional[list[str]]
+        Names of the input columns.
+    output_column : Optional[str]
+        Name of the output column.
+    model : Optional[LinealModel]
+        Instance of the trained linear regression model.
+    canvas : Optional[FigureCanvasQTAgg]
+        Canvas for displaying plots.
+    loaded_model : Optional[dict]
+        Dictionary containing the loaded model's information.
+    """
+
     tab_list = []
 
     def __init__(self, data=None, input_columns=None, output_column=None, loaded_model=None, parent=None):
+        """
+        Initializes the LinealModelTab.
+
+        Parameters
+        ----------
+        data : Optional[np.ndarray]
+            The input dataset.
+        input_columns : Optional[list[str]]
+            Names of the input columns.
+        output_column : Optional[str]
+            Name of the output column.
+        loaded_model : Optional[dict]
+            Pre-trained model to be loaded into the tab.
+        parent : QWidget, optional
+            Parent widget.
+        """
         super().__init__(parent)
         LinealModelTab.tab_list.append(self)
         self.model_description = ModelDescription(self)
@@ -25,29 +67,32 @@ class LinealModelTab(QWidget):
         self.input_columns = input_columns
         self.output_column = output_column
         self.model = None
-        self.canvas = None  # Referencia para el gráfico
+        self.canvas = None  # Graph canvas reference
         self.loaded_model = loaded_model
         self.setup_ui()
 
-        # Si hay un modelo cargado, inicializarlo
+        # Initialize based on whether a model is loaded or a new one is being created
         if loaded_model:
             self.initialize_from_loaded_model(loaded_model)
         else:
             self.initialize_for_new_model()
 
     def setup_ui(self):
-        """Configura la interfaz de usuario con una mejor organización"""
+        """
+        Sets up the UI components for the tab, including buttons, labels, and layouts.
+        """
         main_layout = QVBoxLayout()
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(10, 10, 10, 10)
         
-        # 1. Grupo superior - Creación del modelo
+        # Group 1: Model creation (only shown if no model is loaded)
         if not self.loaded_model:
             model_creation_group = QGroupBox("Creación del Modelo")
             model_creation_group.setFixedHeight(100)
             model_creation_layout = QHBoxLayout()
             model_creation_layout.setContentsMargins(0, 0, 0, 0)
             
+            # Button to create a new model
             self.create_model_button = QPushButton("Crear Modelo de Regresión Lineal")
             self.create_model_button.setObjectName("create_model_button")
             self.create_model_button.setFixedSize(350, 50)
@@ -58,47 +103,46 @@ class LinealModelTab(QWidget):
             model_creation_group.setLayout(model_creation_layout)
             main_layout.addWidget(model_creation_group)
 
-        # 2. Grupo de información del modelo
+        # Group 2: Model information
         model_info_group = QGroupBox("Información del Modelo")
         model_info_layout = QVBoxLayout()
         model_info_layout.setSpacing(5)
         model_info_layout.setContentsMargins(10, 10, 10, 10)
         
+        # Labels for formula and metrics
         self.formula_label = QLabel("Fórmula del Modelo:")
+        self.formula_label.setObjectName("formula_label")
         self.r2_label = QLabel("R²: ")
+        self.r2_label.setObjectName("r2_label")
         self.mse_label = QLabel("ECM: ")
-        self.intercept_label = QLabel("Intercepto: ")
-        self.coefficients_label = QLabel("Coeficiente: ")
-        self.input_columns_label = QLabel("Columnas de entrada:")
-        self.output_column_label = QLabel("Columnas de salida:")
-
+        self.mse_label.setObjectName("mse_label")
+        
+        # Add widgets to the layout
         model_info_layout.addWidget(self.formula_label)
         model_info_layout.addWidget(self.r2_label)
         model_info_layout.addWidget(self.mse_label)
-        model_info_layout.addWidget(self.intercept_label)
-        model_info_layout.addWidget(self.coefficients_label)
-        model_info_layout.addWidget(self.input_columns_label)
-        model_info_layout.addWidget(self.output_column_label)
         
+        # Add model description functionality
         self.model_description.add_to_layout(model_info_layout)
         model_info_group.setLayout(model_info_layout)
         main_layout.addWidget(model_info_group)
 
-        # 3. Layout horizontal para contener visualización y predicción lado a lado
+        # Group 3: Prediction and visualization
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
 
-        # Contenedor izquierdo para predicción y botón guardar
+        # Left container: Prediction and save button
         left_container = QVBoxLayout()
         left_container.setSpacing(5)
 
-        # Grupo de predicción
+        # Prediction group
         prediction_group = QGroupBox("Predicción")
         prediction_group.setMaximumWidth(400)
         prediction_layout = QVBoxLayout()
         prediction_layout.setSpacing(0)
         prediction_layout.setContentsMargins(10, 5, 10, 10)
         
+        # Container for prediction inputs
         self.input_container = QWidget()
         self.input_layout = QVBoxLayout(self.input_container)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
@@ -106,12 +150,13 @@ class LinealModelTab(QWidget):
         self.input_widgets = []
         prediction_layout.addWidget(self.input_container)
         
+        # Prediction label (hidden initially)
         self.prediction_label = QLabel()
         self.prediction_label.setObjectName("prediction_label")
         self.prediction_label.setVisible(False)
         prediction_layout.addWidget(self.prediction_label)
         
-        # Botón de predicción
+        # Prediction button
         predict_button_container = QHBoxLayout()
         predict_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.predict_button = QPushButton("Realizar Predicción")
@@ -121,10 +166,11 @@ class LinealModelTab(QWidget):
         predict_button_container.addWidget(self.predict_button)
         prediction_layout.addLayout(predict_button_container)
 
+        # Set layout for prediction group
         prediction_group.setLayout(prediction_layout)
         left_container.addWidget(prediction_group)
         
-        # Botón guardar debajo del grupo de predicción
+        # Save button below the prediction group
         save_button_container = QHBoxLayout()
         save_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.save_button = QPushButton("💾 Guardar Modelo")
@@ -134,13 +180,15 @@ class LinealModelTab(QWidget):
         save_button_container.addWidget(self.save_button)
         left_container.addLayout(save_button_container)
         
-        # Añadir contenedor izquierdo al layout horizontal
+        # Add left container to the bottom layout
         bottom_layout.addLayout(left_container)
 
-        # Grupo de visualización (derecha)
+        # Visualization group (right)
         visualization_group = QGroupBox("Visualización")
         visualization_layout = QVBoxLayout()
         visualization_layout.setContentsMargins(10, 10, 10, 10)
+        
+        # Graph container
         self.graph_container = QWidget()
         self.graph_layout = QVBoxLayout(self.graph_container)
         self.graph_layout.setContentsMargins(0, 0, 0, 0)
@@ -148,59 +196,63 @@ class LinealModelTab(QWidget):
         visualization_group.setLayout(visualization_layout)
         bottom_layout.addWidget(visualization_group)
 
-        # Ajustar proporciones del espacio
+        # Adjust proportions for prediction and visualization
         prediction_group.setMinimumWidth(300)
         visualization_group.setMinimumWidth(500)
 
-        # Añadir el layout horizontal al layout principal
+        # Add bottom layout to the main layout
         main_layout.addLayout(bottom_layout)
 
         self.setLayout(main_layout)
 
-    def setup_model_display(self, model_data):
+    def setup_model_display(self, model_data: dict):
         """
-        Método unificado para mostrar datos del modelo, ya sea nuevo o cargado
+        Displays the information of a model (new or loaded) on the UI.
+
+        Parameters
+        ----------
+        model_data : dict
+            A dictionary containing model details like formula, metrics, description, and columns.
         """
         try:
-            # Configurar fórmula y métricas
+            # Update UI labels with model formula and metrics
             self.formula_label.setText(f"Fórmula del Modelo: {model_data['formula']}")
             self.r2_label.setText(f"R²: {float(model_data['metrics']['r2_score']):.4f}")
             self.mse_label.setText(f"ECM: {float(model_data['metrics']['rmse']):.4f}")
             
-            # Configurar descripción si existe
+            # Update the model description if provided
             if 'description' in model_data:
                 self.model_description.set_description(model_data['description'])
 
-            # Mostrar intercepto y coeficientes
-            intercept = model_data['intercept']
-            coefficients = model_data['coefficients']
-            if intercept is not None:
-                self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
-                self.intercept_label.setVisible(True)
-            if coefficients is not None:
-                coefficients_text = ", ".join(f"{coef:.4f}" for coef in coefficients)
-                self.coefficients_label.setText(f"Coeficientes: [{coefficients_text}]")
-                self.coefficients_label.setVisible(True)
+            # # Mostrar intercepto y coeficientes
+            # intercept = model_data['intercept']
+            # coefficients = model_data['coefficients']
+            # if intercept is not None:
+            #     self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
+            #     self.intercept_label.setVisible(True)
+            # if coefficients is not None:
+            #     coefficients_text = ", ".join(f"{coef:.4f}" for coef in coefficients)
+            #     self.coefficients_label.setText(f"Coeficientes: [{coefficients_text}]")
+            #     self.coefficients_label.setVisible(True)
 
-            # Mostrar columnas de entrada y salida
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
-            self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
-            self.input_columns_label.setVisible(True)
-            self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
-            self.output_column_label.setVisible(True)
+            # # Mostrar columnas de entrada y salida
+            # self.input_columns = model_data['columns']['input']
+            # self.output_column = model_data['columns']['output']
+            # self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
+            # self.input_columns_label.setVisible(True)
+            # self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
+            # self.output_column_label.setVisible(True)
             
-            # Configurar campos de entrada para predicción
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
-            self.create_prediction_inputs()
+            # # Configurar campos de entrada para predicción
+            # self.input_columns = model_data['columns']['input']
+            # self.output_column = model_data['columns']['output']
+            # self.create_prediction_inputs()
             
-            # Mostrar botones de predicción y guardado
+            # Show prediction and save buttons
             self.predict_button.setVisible(True)
             self.save_button.setVisible(True)
-            self.enable_line_edits()
 
-            # Actualizar UI
+            # Refresh the UI after updates
             self.update()
             QApplication.processEvents()
 
@@ -208,10 +260,10 @@ class LinealModelTab(QWidget):
             show_error(f"Error al mostrar datos del modelo: {str(e)}", self)
             raise
 
-    def initialize_from_loaded_model(self, loaded_model):
-        """Inicializa la pestaña con un modelo cargado"""
+    def initialize_from_loaded_model(self, loaded_model: dict):
+        """Initializes the tab with details from a pre-loaded model."""
         try:
-            # Configurar modelo
+            # Reconstruct the model using its coefficients and intercept
             self.model = LinealModel(None, 
                                 loaded_model['columns']['input'],
                                 loaded_model['columns']['output'])
@@ -219,7 +271,7 @@ class LinealModelTab(QWidget):
             self.model.intercept_ = float(loaded_model['intercept'])
             self.model.formula = loaded_model['formula']
             
-            # Mostrar datos usando el método unificado
+            # Display the loaded model's details on the UI
             self.setup_model_display({
                 'formula': loaded_model['formula'],
                 'metrics': loaded_model['metrics'],
@@ -228,59 +280,70 @@ class LinealModelTab(QWidget):
                 'intercept': loaded_model['intercept'],
                 'coefficients': loaded_model['coefficients']
                 })
-
+            
         except Exception as e:
             show_error(f"Error al inicializar el modelo cargado: {str(e)}", self)
             raise
 
     def initialize_for_new_model(self):
-        """Inicializa la pestaña para un nuevo modelo"""
+        """
+        Prepares the tab for a new model, enabling prediction input fields.
+        """
         self.create_prediction_inputs()
 
     def create_prediction_inputs(self):
-        """Crea los campos de entrada para predicciones con espaciado mínimo"""
+        """
+        Dynamically creates input fields for prediction based on input columns.
+        """
         for widget in self.input_widgets:
             widget[0].setParent(None)
             widget[1].setParent(None)
         self.input_widgets.clear()
         
         if self.input_columns:
+            # Dynamically create label and input field pairs for each input column
             for column in self.input_columns:
-                # Crear un widget contenedor para cada par label-input
                 container = QWidget()
                 container_layout = QVBoxLayout(container)
                 container_layout.setContentsMargins(0, 0, 0, 0)  # Sin márgenes
                 container_layout.setSpacing(0)  # Sin espacio entre elementos
                 
+                # Label for the input column
                 label = QLabel(f"{column}:")
                 label.setFixedHeight(25)  # Altura fija para el label
                 
+                # Input field for the column
                 line_edit = QLineEdit()
                 line_edit.setFixedHeight(30)  # Altura fija para el input
                 line_edit.setFixedWidth(300)
                 
+                # Add label and input field to the container
                 container_layout.addWidget(label)
                 container_layout.addWidget(line_edit)
                 
+                # Track the label and input field for later use
                 self.input_widgets.append((label, line_edit))
                 self.input_layout.addWidget(container)
                 
-                # Establecer visibilidad
+                # Set visibility based on whether a model is loaded
                 label.setVisible(self.model is not None)
                 line_edit.setVisible(self.model is not None)
                 
-            # Añadir un espaciador al final
+            # Add spacing at the end of the inputs
             self.input_layout.addStretch()
 
     def create_model(self):
-        """Crea un nuevo modelo de regresión lineal"""
+        """
+        Creates a new linear regression model using the provided data and columns.
+        """
+        # Clear any existing graphs
         self.clear_previous_graph()
         try:
-            # Crear y ajustar el modelo
+            # Initialize and fit the model
             self.model = LinealModel(self.data, self.input_columns, self.output_column)
             self.model.fit()
 
-            # Mostrar datos
+            # Display the model's details on the UI
             self.setup_model_display({
                 'formula': self.model.formula,
                 'metrics': {
@@ -296,12 +359,13 @@ class LinealModelTab(QWidget):
                 'coefficients': self.model.coef_
             })
 
+            # Create a visualization based on the number of input columns
             if len(self.model.input_columns) == 1:
                 self.plot2d_graph()
-                self.graph_layout.addWidget(NavigationToolbar2QT(self.canvas, self))
+                self.layout.addWidget(NavigationToolbar2QT(self, self.canvas))
             elif len(self.model.input_columns) == 2:
                 self.plot3d_graph()
-                self.graph_layout.addWidget(NavigationToolbar2QT(self.canvas, self))
+                self.layout.addWidget(NavigationToolbar2QT(self, self.canvas))
             else:
                 res = "No se puede crear una gráfica, debido a que la"
                 res += " regresión lineal es múltiple, no simple."
@@ -309,64 +373,85 @@ class LinealModelTab(QWidget):
 
             show_message("El modelo de regresión lineal ha sido creado exitosamente.", self)
 
-
         except Exception as e:
             show_error(f"Error al crear el modelo lineal: {str(e)}", self)
 
-    def enable_line_edits(self) -> None:
-        # Mostrar todos los QLabel y QLineEdit asociados
-        for label, line_edit in self.input_widgets:
-            label.setVisible(True)
-            line_edit.setVisible(True)
-
     def clear_previous_graph(self):
-        # Verificar si existe una gráfica previa y eliminarla
+        """
+        Removes any existing graph from the UI.
+        """
         if self.canvas:
             self.canvas.setParent(None)
             self.canvas.deleteLater()
             self.canvas = None  # Restablecer la referencia a None
             
     def plot2d_graph(self):
-        """Crea y muestra la gráfica del modelo"""
+        """
+        Creates and displays a 2D graph for models with one input column.
+        """
         if not hasattr(self.model, 'x') or not hasattr(self.model, 'y'):
             return      
-        # Crear la figura y el canvas
-        fig = Figure(figsize=(4, 3), dpi=50)
-        #fig.patch.set_facecolor('none')
+        # Create the figure and canvas for the graph
+        fig = Figure(figsize=(5, 4), dpi=100)
+        fig.patch.set_facecolor('none')
         self.canvas = FigureCanvasQTAgg(fig)
         ax = fig.add_subplot(111)
         ax.set_facecolor('none')
 
-        # Dibujar la gráfica de dispersión y la línea de regresión
+        # Plot the real data and regression line
         ax.scatter(self.model.x, self.model.y, label="Datos Reales")
         ax.plot(self.model.x, self.model.y_pred, color='red', label="Línea de Regresión")
         ax.set_xlabel(self.model.input_columns[0])
         ax.set_ylabel(self.model.output_column)
         ax.legend()
 
-        # Añadir el canvas al contenedor de la gráfica
+        # Add the canvas to the graph layout
         self.graph_layout.addWidget(self.canvas)
-        self.canvas.draw()
+        self.canvass.draw()
 
     def plot3d_graph(self):
-        fig = Figure(figsize=(4, 3), dpi=75)
+        """
+        Creates and displays a 3D graph for models with two input columns.
+        """
+        fig = Figure(figsize=(5, 4), dpi=100)
         self.canvas = FigureCanvasQTAgg(fig)
-        #fig.patch.set_facecolor('none')
+        fig.patch.set_facecolor('none')
         ax = fig.add_subplot(111, projection = "3d")
         ax.set_facecolor('none')
+
+        # Extract variables for the graph
         var1 = [x[0] for x in self.model.x]
         var2 = [x[1] for x in self.model.x]
         min1 , max1 = self.minmax(var1)
         min2, max2 = self.minmax(var2)
+        
+        # Plot real data points
         ax.plot(var1, var2, self.model.y, 'o', markersize = 2, alpha = 0.5, label = "Datos Reales")
+        
+        # Generate a regression plane
         x, y = np.meshgrid(np.linspace(min1,  max1, 20), np.linspace(min2, max2, 20))
         z = self.model.intercept_ + self.model.coef_[0] * x + self.model.coef_[1] * y
         ax.plot_surface(x, y, z, color = "red", alpha = 0.5, label = "Plano de Regresion")
         ax.legend()
+        
+        # Add the canvas to the graph layout
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
 
-    def minmax(self, v) -> tuple[int]:
+    def minmax(self, v:list[float]) -> tuple[int]:
+        """
+        Computes the minimum and maximum values of a list.
+
+        Parameters
+        ----------
+        v : list[float]
+            List of numerical values.
+
+        Returns
+        -------
+        tuple[float, float]
+            The minimum and maximum values of the list.
+        """
         mn = v[0]
         mx = v[0]
         for x in v[1:]:
@@ -387,11 +472,10 @@ class LinealModelTab(QWidget):
             return
 
         try:
-            # Para modelos cargados, usar las métricas existentes
+            # Use existing metrics for loaded models, or compute metrics for new ones
             if hasattr(self, 'loaded_model') and self.loaded_model is not None:
                 metrics = self.loaded_model['metrics']
             else:
-                # Para modelos nuevos, calcular métricas
                 metrics = {
                     'r2_score': float(self.model.r2_) if hasattr(self.model, 'r2_') 
                             else r2_score(self.model.y, self.model.y_pred),
@@ -399,7 +483,7 @@ class LinealModelTab(QWidget):
                         else mean_squared_error(self.model.y, self.model.y_pred)
                 }
 
-            # Preparar datos del modelo
+            # Prepare the model data dictionary
             model_data = {
                 'formula': self.model.formula,
                 'coefficients': self.model.coef_.tolist(),
@@ -412,7 +496,7 @@ class LinealModelTab(QWidget):
                 }
             }
         
-            # Guardar modelo
+            # Save model dialog
             file_path = save_file_dialog()
             if file_path:
                 joblib.dump(model_data, file_path)
@@ -430,10 +514,15 @@ class LinealModelTab(QWidget):
             show_error("No hay un modelo disponible para realizar predicciones.", self)
             return
 
-        # Actualizar el layout para reflejar la visibilidad de los campos
+        # Ensure all input fields are visible
+        for label, line_edit in self.input_widgets:
+            label.setVisible(True)
+            line_edit.setVisible(True)
+
+        # Refresh the UI
         self.layout().update()
 
-        # Obtener los valores ingresados en los QLineEdits
+        # Retrieve user-entered values from input fields
         input_values = []
         for label, line_edit in self.input_widgets:
             value = line_edit.text()
@@ -448,13 +537,13 @@ class LinealModelTab(QWidget):
                 return None
 
         try:
-            # Realizar la predicción
+            # Compute the prediction using the model's coefficients and intercept
             prediction = self.model.intercept_
             for i in range(len(input_values)):
                 prediction += self.model.coef_[i] * input_values[i]
         
 
-            # Actualizar QLabel para mostrar el resultado
+            # Display the prediction result
             self.prediction_label.setText(f"Resultado de la predicción:\n{self.output_column} = {prediction:.4f}")
             self.prediction_label.setVisible(True)  # Mostrar el QLabel
 

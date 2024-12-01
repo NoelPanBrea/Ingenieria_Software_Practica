@@ -3,9 +3,36 @@ from PyQt5.QtWidgets import (QLabel, QLineEdit, QMessageBox)
 from PyQt5.QtCore import Qt
 
 class ModelDescription:
+    """
+    Manages the user interface and functionality for a model's description.
+
+    This class provides an editable description field, switching between a label
+    and an input field, along with methods to retrieve, update, or clear the description.
+
+    Attributes
+    ----------
+    DEFAULT_TEXT : str
+        Default placeholder text when no description is set.
+    parent_widget : QWidget, optional
+        The parent widget for the description elements.
+    description : str
+        The current description of the model.
+    display_label : QLabel
+        Label used to display the description.
+    input_field : QLineEdit
+        Input field used to edit the description.
+    """
     DEFAULT_TEXT = "Haz clic para añadir una descripción..."
     
     def __init__(self, parent_widget=None):
+        """
+        Initializes the ModelDescription object.
+
+        Parameters
+        ----------
+        parent_widget : QWidget, optional
+            The parent widget for the description elements. Defaults to None.
+        """
         self.parent_widget = parent_widget
         self.description = ""
         self.setup_ui_elements()
@@ -15,12 +42,15 @@ class ModelDescription:
         """
         Sets up the UI elements related to the description.
         """
+
+        # Create the display label
         self.display_label = QLabel(self.DEFAULT_TEXT)
         self.display_label.setObjectName("displayLabel")
         self.display_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.display_label.setMouseTracking(True)
         self.display_label.setCursor(Qt.PointingHandCursor)
         
+        # Create the input field for editing the description
         self.input_field = QLineEdit()
         self.input_field.setObjectName("modelInput")
         self.input_field.setPlaceholderText("Escribe aquí la descripción del modelo...")
@@ -45,6 +75,7 @@ class ModelDescription:
         current_text = self.display_label.text()
         self.display_label.hide()
         
+        # Set input field text based on the current label content
         if current_text == self.DEFAULT_TEXT:
             self.input_field.setText("")
         else:
@@ -63,8 +94,10 @@ class ModelDescription:
         description = self.input_field.text()
         
         if not description:
+             # Set default placeholder text if the input is empty
             self.display_label.setText(self.DEFAULT_TEXT)
         else:
+            # Update the description and label text
             self.description = description
             self.display_label.setText(description)
         
