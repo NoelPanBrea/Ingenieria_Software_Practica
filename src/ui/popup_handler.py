@@ -136,3 +136,13 @@ def save_file_dialog(parent=None) -> str:
     file_path, _ = QFileDialog.getSaveFileName(parent, 'Guardar archivo',
                                                '', res, options=options)
     return file_path
+
+def open_model_dialog(parent=None) -> str:
+    """
+    Shows the dialog to load models
+    """
+    options = QFileDialog.Options()
+    res = 'Todos los Archivos (*.*);;Archivos JOBLIB (*.joblib)'
+    file_path, _ = QFileDialog.getOpenFileName(parent, 'Seleccionar archivo',
+                                               '', res, options=options)
+    return file_path

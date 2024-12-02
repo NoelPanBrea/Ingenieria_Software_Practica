@@ -6,7 +6,7 @@ import joblib
 
 from data_processing.import_module import DataFrame, load_file
 from ui.popup_handler import (InputDialog, open_file_dialog,
-    show_error, show_message, QtCore)
+    open_model_dialog, show_error, show_message, QtCore)
 from data_processing.dataset_calc import PreprocessApplier, none_count
 from ui.components.column_selector import ColumnSelector
 from ui.components.data_table import DataTable
@@ -139,7 +139,7 @@ class DataTab(QWidget):
         """    
         Loads a model and returns it if successful.
         """
-        model_path = open_file_dialog(self)
+        model_path = open_model_dialog(self)
         if not model_path:
             return None
 
