@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
-    QSpacerItem, QHBoxLayout, QApplication, QGroupBox)
+    QSpacerItem, QHBoxLayout, QApplication, QGroupBox, QScrollArea, QFrame)
 import joblib
 import numpy as np
 from models.lineal_model import LinealModel
@@ -69,6 +69,7 @@ class LinealModelTab(QWidget):
         self.model = None
         self.canvas = None  # Graph canvas reference
         self.loaded_model = loaded_model
+        self.input_widgets = []
         self.setup_ui()
 
         # Initialize based on whether a model is loaded or a new one is being created
@@ -98,7 +99,7 @@ class LinealModelTab(QWidget):
             self.create_model_button.setFixedSize(350, 50)
             self.create_model_button.clicked.connect(self.create_model)
             
-            
+
             model_creation_layout.addWidget(self.create_model_button, Qt.AlignCenter)
             model_creation_group.setLayout(model_creation_layout)
             main_layout.addWidget(model_creation_group)
@@ -137,60 +138,63 @@ class LinealModelTab(QWidget):
         bottom_layout.setSpacing(10)
 
         # Left container: Prediction and save button
-        left_container = QVBoxLayout()
+        left_widget = QWidget()
+        left_container = QVBoxLayout(left_widget)
         left_container.setSpacing(5)
 
         # Prediction group
         prediction_group = QGroupBox("Predicción")
         prediction_group.setMaximumWidth(400)
-        prediction_layout = QVBoxLayout()
+        prediction_layout = QVBoxLayout(prediction_group)
         prediction_layout.setSpacing(0)
         prediction_layout.setContentsMargins(10, 5, 10, 10)
+
+        # Create a scroll area for the input container
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setFrameShape(QFrame.NoFrame)
         
         # Container for prediction inputs
         self.input_container = QWidget()
         self.input_layout = QVBoxLayout(self.input_container)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
         self.input_layout.setSpacing(0)
-        self.input_widgets = []
-        prediction_layout.addWidget(self.input_container)
+        self.input_container.setStyleSheet("background: transparent;")
+        scroll_area.setWidget(self.input_container)
+        prediction_layout.addWidget(scroll_area)
         
         # Prediction label (hidden initially)
         self.prediction_label = QLabel()
         self.prediction_label.setObjectName("prediction_label")
         self.prediction_label.setVisible(False)
         prediction_layout.addWidget(self.prediction_label)
-        
+
         # Prediction button
-        predict_button_container = QHBoxLayout()
-        predict_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.predict_button = QPushButton("Realizar Predicción")
         self.predict_button.setFixedHeight(50)
         self.predict_button.setVisible(False)
         self.predict_button.clicked.connect(self.make_prediction)
-        predict_button_container.addWidget(self.predict_button)
-        prediction_layout.addLayout(predict_button_container)
+        prediction_layout.addWidget(self.predict_button)
 
-        # Set layout for prediction group
-        prediction_group.setLayout(prediction_layout)
+        # Add prediction group to left container
         left_container.addWidget(prediction_group)
-        
+
         # Save button below the prediction group
-        save_button_container = QHBoxLayout()
-        save_button_container.setContentsMargins(10, 20, 10, 20)  # Márgenes amplios
         self.save_button = QPushButton("💾 Guardar Modelo")
         self.save_button.setFixedHeight(50)
         self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
-        save_button_container.addWidget(self.save_button)
-        left_container.addLayout(save_button_container)
+        left_container.addWidget(self.save_button)
         
-        # Add left container to the bottom layout
-        bottom_layout.addLayout(left_container)
+        # Set size policies for left widget
+        left_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        left_widget.setFixedWidth(300)
 
         # Visualization group (right)
         visualization_group = QGroupBox("Visualización")
-        visualization_layout = QVBoxLayout()
+        visualization_layout = QVBoxLayout(visualization_group)
         visualization_layout.setContentsMargins(10, 10, 10, 10)
         
         # Graph container
@@ -198,12 +202,13 @@ class LinealModelTab(QWidget):
         self.graph_layout = QVBoxLayout(self.graph_container)
         self.graph_layout.setContentsMargins(0, 0, 0, 0)
         visualization_layout.addWidget(self.graph_container)
-        visualization_group.setLayout(visualization_layout)
-        bottom_layout.addWidget(visualization_group)
 
-        # Adjust proportions for prediction and visualization
-        prediction_group.setMinimumWidth(300)
-        visualization_group.setMinimumWidth(500)
+        # Set size policy for visualization group
+        visualization_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+
+        # Add widgets to bottom layout
+        bottom_layout.addWidget(left_widget)
+        bottom_layout.addWidget(visualization_group)
 
         # Add bottom layout to the main layout
         main_layout.addLayout(bottom_layout)
@@ -229,6 +234,11 @@ class LinealModelTab(QWidget):
             if 'description' in model_data:
                 self.model_description.set_description(model_data['description'])
 
+            # Enable word wrap on labels that can have long text
+            self.formula_label.setWordWrap(True)
+            self.coefficients_label.setWordWrap(True)
+            self.input_columns_label.setWordWrap(True)
+            
             # Show intercept and coefficients
             intercept = model_data['intercept']
             coefficients = model_data['coefficients']
@@ -311,17 +321,17 @@ class LinealModelTab(QWidget):
             for column in self.input_columns:
                 container = QWidget()
                 container_layout = QVBoxLayout(container)
-                container_layout.setContentsMargins(0, 0, 0, 0)  # Sin márgenes
-                container_layout.setSpacing(0)  # Sin espacio entre elementos
+                container_layout.setContentsMargins(0, 0, 0, 0)
+                container_layout.setSpacing(0)
                 
                 # Label for the input column
                 label = QLabel(f"{column}:")
-                label.setFixedHeight(25)  # Altura fija para el label
+                label.setFixedHeight(25)
                 
                 # Input field for the column
                 line_edit = QLineEdit()
-                line_edit.setFixedHeight(30)  # Altura fija para el input
-                line_edit.setFixedWidth(300)
+                line_edit.setFixedHeight(30)
+                line_edit.setFixedWidth(230)
                 
                 # Add label and input field to the container
                 container_layout.addWidget(label)
@@ -373,8 +383,8 @@ class LinealModelTab(QWidget):
                 self.plot3d_graph()
                 self.graph_layout.addWidget(NavigationToolbar2QT(self.canvas, self))
             else:
-                res = "No se puede crear una gráfica, debido a que la"
-                res += " regresión lineal es múltiple, no simple."
+                res = "No se puede crear una gráfica con más de 2 columnas de entrada. "
+                res += "Para visualizar el modelo, seleccione un máximo de 2 variables independientes."
                 show_message(res, self)
 
             show_message("El modelo de regresión lineal ha sido creado exitosamente.", self)
@@ -383,7 +393,7 @@ class LinealModelTab(QWidget):
             show_error(f"Error al crear el modelo lineal: {str(e)}", self)
 
     def enable_line_edits(self) -> None:
-        # Mostrar todos los QLabel y QLineEdit asociados
+        # Show all associated QLabel and QLineEdit
         for label, line_edit in self.input_widgets:
             label.setVisible(True)
             line_edit.setVisible(True)
@@ -395,7 +405,7 @@ class LinealModelTab(QWidget):
         if self.canvas:
             self.canvas.setParent(None)
             self.canvas.deleteLater()
-            self.canvas = None  # Restablecer la referencia a None
+            self.canvas = None  
             
     def plot2d_graph(self):
         """
