@@ -192,7 +192,7 @@ class DataTab(QWidget):
             show_message('✅ ¡Archivo cargado exitosamente! 😃', self)
                 
         except Exception as e:
-            show_error(str(e), self)
+            show_error(f'⚠ {str(e)} ⚠', self)
 
     def on_input_column_selection_changed(self, item):
         """
@@ -253,7 +253,7 @@ class DataTab(QWidget):
         if not input_columns:
             show_error('⚠ Debe seleccionar al menos una columna de entrada. ⚠', self)
             return
-        elif not output_column:
+        elif output_column == "":
             show_error('⚠ Debe seleccionar una columna de salida. ⚠', self)
             return
 

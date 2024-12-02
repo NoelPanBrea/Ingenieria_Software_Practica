@@ -28,14 +28,11 @@ def load_file(file_path: str) -> DataFrame:
         else:
             raise ValueError('Formato de archivo no soportado')
 
-        # Verify there was data in the file
-        if data.empty:
-            raise ValueError("En el archivo no hay tabla")
 
         return data
     # Error managing: File reading error
     except ValueError as e:
-        raise ValueError(f"Error al leer el archivo: {e}")
+        raise ValueError(f"Error al cargar el archivo: {e}")
     # Error managing: File not found error
     except FileNotFoundError as e:
         raise FileNotFoundError(f"Archivo no encontrado: {e}")
@@ -57,6 +54,10 @@ def __import_sql(file_path: str) -> DataFrame:
     -----------
      data: DataFrame
         Data in a DataFrame.
+        
+    Raises
+    -----------
+    ValueError: If the database is empty or cannot be loaded
     """
     try:
         conn = sqlite3.connect(file_path)
@@ -64,16 +65,21 @@ def __import_sql(file_path: str) -> DataFrame:
 
         # Obtain the name of the first table
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        table_name = cursor.fetchone()[0]
-
+        result = cursor.fetchone()
+        
+        # Check if any tables exist
+        if result is None:
+            conn.close()
+            raise ValueError("La base de datos no contiene ninguna tabla")
+            
+        table_name = result[0]
+        
         # Load the data from the table to the DataFrame
         query = f"SELECT * FROM {table_name}"
         data = read_sql(query, conn)
 
         conn.close()
         return data
-    except ValueError as e:
-        raise ValueError(f"Documento SQLite vacio")
     except Exception as e:
         raise ValueError(f"Error al cargar la base de datos SQLite: {e}")
 
@@ -95,10 +101,10 @@ def __import_excel(file_path: str) -> DataFrame:
     try:
         # Read excel file
         data = read_excel(file_path)
+        if data.empty:
+            raise ValueError(f"Documento excel vacio")
         return data
-    
-    except ValueError as e:
-        raise ValueError(f"Documento excel vacio")
+
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo excel: {e}")
     # Needed in order to work: pip install pandas openpyxl xlrd
@@ -124,6 +130,6 @@ def __import_csv(file_path: str) -> DataFrame:
         return data
     
     except ValueError as e:
-        raise ValueError(f"Documento CSV vacio")
+        raise ValueError(f"Error al cargar el archivo CSV: Documento CSV vacio")
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo CSV: {e}")
