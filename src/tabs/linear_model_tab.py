@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolic
     QSpacerItem, QHBoxLayout, QApplication, QGroupBox, QScrollArea, QFrame)
 import joblib
 import numpy as np
-from models.lineal_model import LinealModel
+from models.linear_model import LinearModel
 from sklearn.metrics import mean_squared_error, r2_score
 from models.description import *
 from ui.popup_handler import (show_error, show_message, 
@@ -14,7 +14,7 @@ style.use('fivethirtyeight')
 
 
 
-class LinealModelTab(QWidget):
+class LinearModelTab(QWidget):
     """
     UI Tab for managing linear regression models.
 
@@ -33,7 +33,7 @@ class LinealModelTab(QWidget):
         Names of the input columns.
     output_column : Optional[str]
         Name of the output column.
-    model : Optional[LinealModel]
+    model : Optional[LinearModel]
         Instance of the trained linear regression model.
     canvas : Optional[FigureCanvasQTAgg]
         Canvas for displaying plots.
@@ -45,7 +45,7 @@ class LinealModelTab(QWidget):
 
     def __init__(self, data=None, input_columns=None, output_column=None, loaded_model=None, parent=None):
         """
-        Initializes the LinealModelTab.
+        Initializes the LinearModelTab.
 
         Parameters
         ----------
@@ -61,7 +61,7 @@ class LinealModelTab(QWidget):
             Parent widget.
         """
         super().__init__(parent)
-        LinealModelTab.tab_list.append(self)
+        LinearModelTab.tab_list.append(self)
         self.model_description = ModelDescription(self)
         self.data = data
         self.input_columns = input_columns
@@ -280,7 +280,7 @@ class LinealModelTab(QWidget):
         """Initializes the tab with details from a pre-loaded model."""
         try:
             # Reconstruct the model using its coefficients and intercept
-            self.model = LinealModel(None, 
+            self.model = LinearModel(None, 
                                 loaded_model['columns']['input'],
                                 loaded_model['columns']['output'])
             self.model.coef_ = np.array(loaded_model['coefficients'])
@@ -356,7 +356,7 @@ class LinealModelTab(QWidget):
         self.clear_previous_graph()
         try:
             # Initialize and fit the model
-            self.model = LinealModel(self.data, self.input_columns, self.output_column)
+            self.model = LinearModel(self.data, self.input_columns, self.output_column)
             self.model.fit()
 
             # Display the model's details on the UI

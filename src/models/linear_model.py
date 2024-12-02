@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
-class LinealModel:
+class LinearModel:
     def __init__(self, data, input_columns, output_column):
         """
         A class for creating and managing a linear regression model.
