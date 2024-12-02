@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout,
     QApplication, QTabBar, QHBoxLayout, QToolButton, QMenu)
 from PyQt5.QtCore import Qt
 from tabs.data_tab import DataTab
-from tabs.lineal_model_tab import LinealModelTab
+from tabs.linear_model_tab import LinearModelTab
 from ui.popup_handler import show_error
 
 class MainWindow(QMainWindow):
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
     data_tab : DataTab
         The default tab for loading and managing data.
     tabs_counter : int
-        Counter for the number of `LinealModelTab` instances.
+        Counter for the number of `LinearModelTab` instances.
     """
     def __init__(self):
         """
@@ -144,34 +144,34 @@ class MainWindow(QMainWindow):
         self.tabs_counter += 1
 
         # Create a new linear model tab
-        LinealModelTab(
+        LinearModelTab(
             data=self.data_tab.data, 
             input_columns=self.data_tab.selected_input_columns, 
             output_column=self.data_tab.selected_output_column,
             loaded_model=None)
 
         # Clear the description of the newly created tab
-        LinealModelTab.tab_list[-1].model_description.clear_description()
+        LinearModelTab.tab_list[-1].model_description.clear_description()
         
         # Add the new tab to the tab widget
-        self.tab_widget.addTab(LinealModelTab.tab_list[-1],
+        self.tab_widget.addTab(LinearModelTab.tab_list[-1],
                      f"Modelo {self.tabs_counter}")
         
         # Close any old tabs with untrained models
-        if len(LinealModelTab.tab_list) > 1 and\
-              LinealModelTab.tab_list[-2].model is None:
-            self.close_tab(len(LinealModelTab.tab_list) - 1)
+        if len(LinearModelTab.tab_list) > 1 and\
+              LinearModelTab.tab_list[-2].model is None:
+            self.close_tab(len(LinearModelTab.tab_list) - 1)
 
     def load_model_open_tab(self) -> bool:
         """    
-        Loads a model and opens a LinealModelTab.
+        Loads a model and opens a LinearModelTab.
         """
         model_data = self.data_tab.load_model()
         if model_data:
             try:
                 # Increment tab counter
                 self.tabs_counter += 1
-                new_tab = LinealModelTab(loaded_model=model_data)
+                new_tab = LinearModelTab(loaded_model=model_data)
                 # Add the new tab and switch to it
                 tab_index = self.tab_widget.addTab(new_tab, f"Modelo {self.tabs_counter}")
                 self.tab_widget.setCurrentIndex(tab_index)                
@@ -198,7 +198,7 @@ class MainWindow(QMainWindow):
         # Prevent closing the first tab (data tab)
         if index != 0:
             self.tab_widget.removeTab(index)
-            del(LinealModelTab.tab_list[index - 1])
+            del(LinearModelTab.tab_list[index - 1])
     
     def resizeEvent(self, event):
         """

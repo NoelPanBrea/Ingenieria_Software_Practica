@@ -59,7 +59,7 @@ class InputDialog(QDialog):
         return tuple(input.text() for input in self.inputs)
 
 
-def show_message(message: str, parent=None) -> None:
+def show_message(message: str, parent=None):
     """
     Shows a message in a pop up window
 
@@ -67,10 +67,6 @@ def show_message(message: str, parent=None) -> None:
     -----------
     message : str
         String to show in the pop up
-
-    Returns
-    -----------
-        None
     """
     msg_box = QMessageBox(parent=parent)
     msg_box.setIcon(QMessageBox.Information)
@@ -79,7 +75,7 @@ def show_message(message: str, parent=None) -> None:
     msg_box.exec_()
 
 
-def show_warning(message: str, parent=None) -> None:
+def show_warning(message: str, parent=None):
     """
     Shows an error message in a pop up window
 
@@ -87,10 +83,6 @@ def show_warning(message: str, parent=None) -> None:
     -----------
     message : str
         Error string to show in the pop up
-
-    Returns
-    -----------
-        None
     """
     error_msg = QMessageBox(parent=parent)
     error_msg.setIcon(QMessageBox.Warning)
@@ -99,7 +91,7 @@ def show_warning(message: str, parent=None) -> None:
     error_msg.exec_()
 
 
-def show_error(message: str, parent=None) -> None:
+def show_error(message: str, parent=None):
     """
     Shows an error message in a pop up window
 
@@ -107,10 +99,6 @@ def show_error(message: str, parent=None) -> None:
     -----------
     message : str
         Error string to show in the pop up
-
-    Returns
-    -----------
-        None
     """
     error_msg = QMessageBox(parent=parent)
     error_msg.setIcon(QMessageBox.Critical)
@@ -119,7 +107,7 @@ def show_error(message: str, parent=None) -> None:
     error_msg.exec_()
 
 
-def open_file_dialog(parent=None) -> None:
+def open_file_dialog(parent=None) -> str:
     """
     Shows the dialog to open files and returns the selected directory
 
@@ -135,7 +123,7 @@ def open_file_dialog(parent=None) -> None:
     return file_path
 
 
-def save_file_dialog(parent=None) -> None:
+def save_file_dialog(parent=None) -> str:
     """
     Shows the dialog to save files and returns the selected directory
 
