@@ -35,7 +35,7 @@ def load_file(file_path: str) -> DataFrame:
         return data
     # Error managing: File reading error
     except ValueError as e:
-        raise ValueError(f"Error al leer el archivo de Excel: {e}")
+        raise ValueError(f"Error al leer el archivo: {e}")
     # Error managing: File not found error
     except FileNotFoundError as e:
         raise FileNotFoundError(f"Archivo no encontrado: {e}")
@@ -72,6 +72,8 @@ def __import_sql(file_path: str) -> DataFrame:
 
         conn.close()
         return data
+    except ValueError as e:
+        raise ValueError(f"Documento SQLite vacio")
     except Exception as e:
         raise ValueError(f"Error al cargar la base de datos SQLite: {e}")
 
@@ -94,6 +96,9 @@ def __import_excel(file_path: str) -> DataFrame:
         # Read excel file
         data = read_excel(file_path)
         return data
+    
+    except ValueError as e:
+        raise ValueError(f"Documento excel vacio")
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo excel: {e}")
     # Needed in order to work: pip install pandas openpyxl xlrd
@@ -117,5 +122,8 @@ def __import_csv(file_path: str) -> DataFrame:
         # Read csv file
         data = read_csv(file_path)
         return data
+    
+    except ValueError as e:
+        raise ValueError(f"Documento CSV vacio")
     except Exception as e:
-        raise ValueError(f"Error al cargar el archivo excel: {e}")
+        raise ValueError(f"Error al cargar el archivo CSV: {e}")

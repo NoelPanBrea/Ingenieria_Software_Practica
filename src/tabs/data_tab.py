@@ -192,7 +192,7 @@ class DataTab(QWidget):
             show_message('✅ ¡Archivo cargado exitosamente! 😃', self)
                 
         except Exception as e:
-            show_error(f'⚠ Error al cargar el archivo: {str(e)} ⚠', self)
+            show_error(str(e), self)
 
     def on_input_column_selection_changed(self, item):
         """
