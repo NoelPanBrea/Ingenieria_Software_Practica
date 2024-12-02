@@ -7,7 +7,29 @@ from ui.popup_handler import show_error
 
 class MainWindow(QMainWindow):
     """
-    Main window of the application that manages the tabs.
+    Main window of the application that manages tabs and their interactions.
+
+    This window contains a central `QTabWidget` where different tabs for data
+    loading, linear model creation, and other operations are managed.
+
+    Attributes
+    ----------
+    central_widget : QWidget
+        The main widget for the window.
+    main_layout : QVBoxLayout
+        The layout that organizes the main components.
+    tab_widget : QTabWidget
+        The widget containing all the tabs.
+    settings_button : QToolButton
+        Button for accessing theme settings.
+    style_menu : QMenu
+        Menu containing theme options.
+    style_sheets : dict
+        Dictionary mapping style names to their file paths.
+    data_tab : DataTab
+        The default tab for loading and managing data.
+    tabs_counter : int
+        Counter for the number of `LinealModelTab` instances.
     """
     def __init__(self):
         """
@@ -59,13 +81,14 @@ class MainWindow(QMainWindow):
         self.style_menu = QMenu(self.settings_button)
         self.style_menu.setObjectName("settingsMenu") # Agregamos un nombre de objeto para poder estilizarlo
         
-        # Crear las acciones del menú con un estilo específico
+        # Add actions for each theme to the menu
         for style_name in self.style_sheets.keys():
             action = self.style_menu.addAction(style_name)
             action.setObjectName("menuItem")  # Agregamos un nombre de objeto para los items
             action.triggered.connect(
                 lambda checked, name=style_name: self.load_style(self.style_sheets[name]))
         
+        # Attach the menu to the settings button
         self.settings_button.setMenu(self.style_menu)
         self.settings_button.setPopupMode(QToolButton.InstantPopup)
 
@@ -100,60 +123,61 @@ class MainWindow(QMainWindow):
         """
         Initializes the tabs of the main window.
         """
-        self.data_tab = DataTab()
 
+        # Create the initial data tab
+        self.data_tab = DataTab()
         self.tab_widget.addTab(self.data_tab, "Datos")
 
-        # Desactivar el botón de cerrar solo en la pestaña "Datos" (índice 0)
+        # Disable the close button for the first tab
         self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
-        # Conectar la carga de datos para crear el modelo lineal después
+        # Connect events for creating or loading a linear model
         self.tabs_counter = 0
         self.data_tab.column_selector.confirm_button.clicked.connect(self.create_linear_model_tab)
-        # Conectar el botón de cargar modelo
         self.data_tab.model_button.clicked.connect(self.load_model_open_tab)
+
     def create_linear_model_tab(self):
         """
         Creates the linear model tab if the data is available.
         """
 
         self.tabs_counter += 1
-        # Crear la pestaña de modelo lineal
+
+        # Create a new linear model tab
         LinealModelTab(
             data=self.data_tab.data, 
             input_columns=self.data_tab.selected_input_columns, 
             output_column=self.data_tab.selected_output_column,
             loaded_model=None)
 
-        # Limpiar la descripción al crear una nueva pestaña
+        # Clear the description of the newly created tab
         LinealModelTab.tab_list[-1].model_description.clear_description()
         
-        # Agregar la pestaña de modelo lineal con la "X" de cierre
+        # Add the new tab to the tab widget
         self.tab_widget.addTab(LinealModelTab.tab_list[-1],
                      f"Modelo {self.tabs_counter}")
+        
+        # Close any old tabs with untrained models
         if len(LinealModelTab.tab_list) > 1 and\
               LinealModelTab.tab_list[-2].model is None:
             self.close_tab(len(LinealModelTab.tab_list) - 1)
 
-    def load_model_open_tab(self):
+    def load_model_open_tab(self) -> bool:
         """    
         Loads a model and opens a LinealModelTab.
         """
         model_data = self.data_tab.load_model()
         if model_data:
             try:
-                # Incrementar el contador de pestañas
+                # Increment tab counter
                 self.tabs_counter += 1
-                # Crear nueva pestaña con el modelo cargado
                 new_tab = LinealModelTab(loaded_model=model_data)
-                # Agregar la pestaña al widget de pestañas
+                # Add the new tab and switch to it
                 tab_index = self.tab_widget.addTab(new_tab, f"Modelo {self.tabs_counter}")
-                # Cambiar a la nueva pestaña
                 self.tab_widget.setCurrentIndex(tab_index)                
-                # Forzar actualización de la UI
+                # Force UI update
                 self.tab_widget.update()
                 QApplication.processEvents()
-                
                 return True
                 
             except Exception as e:
@@ -162,16 +186,29 @@ class MainWindow(QMainWindow):
         
         return False
     
-    def close_tab(self, index):
+    def close_tab(self, index: int):
         """
         Closes the tab at the given index.
+
+        Parameters
+        ----------
+        index : int
+            Index of the tab to close.
         """
-        # Evita que la pestaña de datos se cierre
-        if index != 0:  # Asumiendo que la pestaña de datos es la primera pestaña
+        # Prevent closing the first tab (data tab)
+        if index != 0:
             self.tab_widget.removeTab(index)
             del(LinealModelTab.tab_list[index - 1])
     
     def resizeEvent(self, event):
+        """
+        Handles window resize events to adjust the data tab layout.
+
+        Parameters
+        ----------
+        event : QResizeEvent
+            The resize event triggered when the window is resized.
+        """
         QMainWindow.resizeEvent(self, event)
         if hasattr(self, 'data_tab') and self.data_tab.data is not None:
             self.data_tab.table.fill_area(self.data_tab.data.shape[1])
