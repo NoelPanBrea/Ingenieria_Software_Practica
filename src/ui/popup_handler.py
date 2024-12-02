@@ -4,35 +4,58 @@ from PyQt5 import QtCore
 
 
 class InputDialog(QDialog):
+    """
+    A dialog window for collecting user input.
+
+    This dialog displays a set of input fields (QLineEdit) associated with given labels. 
+    It includes "OK" and "Cancel" buttons to confirm or reject the input.
+
+    Attributes
+    ----------
+    inputs : list[QLineEdit]
+        List of input fields for user entry.
+    """
     def __init__(self, labels: list[str], title: str = 'default title',
         stylesheet: str = None, parent=None):
 
         super().__init__(parent, QtCore.Qt.WindowCloseButtonHint)
 
-        # Configuración del botón de Aceptar y Cancelar
+        # Create "Aceptar" and "Cancelar" buttons
         buttonBox = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
+        # Set up the dialog layout
         layout = QFormLayout(self)
         self.setWindowTitle(title)
 
-        # Si hay una hoja de estilo personalizada, aplicarla
+        # Apply a custom stylesheet if provided
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
+        # Initialize input fields
         self.inputs = []
         for lab in labels:
+            # Create a QLineEdit for each label and add it to the layout
             line_edit = QLineEdit(self)
             self.inputs.append(line_edit)
             layout.addRow(lab, line_edit)
 
+        # Add the button box to the layout
         layout.addWidget(buttonBox)
 
-        # Conectar los botones
+        # Connect the buttons to their respective methods
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def get_inputs(self):
+    def get_inputs(self) -> tuple[str]:
+        """
+        Retrieves the user inputs from all input fields.
+
+        Returns
+        -------
+        tuple[str]
+            A tuple containing the text entered in each input field.
+        """
         return tuple(input.text() for input in self.inputs)
 
 
