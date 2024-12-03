@@ -378,10 +378,12 @@ class LinearModelTab(QWidget):
             # Create a visualization based on the number of input columns
             if len(self.model.input_columns) == 1:
                 self.plot2d_graph()
-                self.graph_layout.addWidget(NavigationToolbar2QT(self.canvas, self))
+                self.toolbar = NavigationToolbar2QT(self.canvas, self)
+                self.graph_layout.addWidget(self.toolbar)
             elif len(self.model.input_columns) == 2:
                 self.plot3d_graph()
-                self.graph_layout.addWidget(NavigationToolbar2QT(self.canvas, self))
+                self.toolbar = NavigationToolbar2QT(self.canvas, self)
+                self.graph_layout.addWidget(self.toolbar)
             else:
                 res = "No se puede crear una gráfica con más de 2 columnas de entrada. "
                 res += "Para visualizar el modelo, seleccione un máximo de 2 variables independientes."
@@ -405,7 +407,8 @@ class LinearModelTab(QWidget):
         if self.canvas:
             self.canvas.setParent(None)
             self.canvas.deleteLater()
-            self.canvas = None  
+            self.canvas = None
+            self.graph_layout.removeWidget(self.toolbar)
             
     def plot2d_graph(self):
         """
