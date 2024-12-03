@@ -1,0 +1,535 @@
+/* ==== Dark Blue Theme Colors ==== */
+/* Fondos */
+/* #1A1B1E (Negro principal)
+   #222327 (Negro secundario)
+   #2A2B2F (Gris muy oscuro) */
+
+/* Azules */
+/* #2196F3 (Azul principal)
+   #1E88E5 (Azul hover)
+   #0D47A1 (Azul oscuro) 
+   color = QColor(33, 150, 243, 130) if highlight else QColor("#1A1B1E")*/
+
+/* Configuración base para todos los widgets */
+QWidget {
+    background-color: #1A1B1E;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Estilo de los botones */
+QPushButton {
+    background-color: #2196F3;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: none;
+}
+
+/* Efecto hover para botones */
+QPushButton:hover {
+    background-color: #1E88E5;
+}
+
+/* Estilo boton presionado */
+QPushButton:pressed {
+    background-color: #0D47A1;
+}
+
+/* Estilo base para etiquetas */
+QLabel {
+    color: white;
+    font-size: 14px;
+}
+
+/* Estilo para tablas */
+QTableWidget {
+    background-color: #1A1B1E;
+    alternate-background-color: #222327;
+    border: 1px solid #2A2B2F;
+    gridline-color: #2A2B2F;
+    color: white;
+    selection-background-color: #2196F3;
+    selection-color: white;
+    alternate-background-color: rgba(33, 150, 243, 0.3)
+}
+
+/* Cabeceras de las tablas */
+QHeaderView::section {
+    background-color: #222327;
+    color: white;
+    padding: 5px;
+    border: none;
+    font-weight: bold;
+}
+
+/* Esquina de las tablas */
+QTableView QTableCornerButton::section {
+    background-color: #1A1B1E;
+    border: none;
+}
+
+/* Elemnto de la tabla */
+QTableWidget::item {
+    padding: 5px;
+}
+
+
+/* Estilo para listas */
+QListWidget {
+    background-color: #222327;
+    border: 1px solid #2A2B2F;
+    color: white;
+    outline: 0;
+    padding: 5px;
+}
+
+/* Elementos de las listas */
+QListWidget::item {
+    padding: 5px;
+}
+
+/* Elemento seleccionado en listas */
+QListWidget::item:selected {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* Hover de elemento en listas */
+QListWidget::item:hover {
+    background-color: #2A2B2F;
+}
+
+/* Estilo base para ComboBox (desplegable) */
+QComboBox {
+    background-color: #222327;
+    border: 1px solid #2A2B2F;
+    border-radius: 4px;
+    color: white;
+    padding: 5px;
+    min-width: 70px;
+}
+
+QComboBox:hover {
+    border-color: #2196F3;
+}
+
+/* Botón desplegable del ComboBox */
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+/* Flecha del ComboBox */
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #2196F3;
+}
+
+/* Lista desplegable del ComboBox */
+QComboBox QAbstractItemView {
+    background-color: #222327;
+    border: 1px solid #2196F3;
+    color: white;
+    selection-background-color: #2196F3;
+    selection-color: white;
+    outline: none;
+}
+
+
+/* === Estilos específicos para pestañas === */
+
+/* Panel principal de pestañas */
+QTabWidget::pane {
+    background-color: #1A1B1E;
+    border: 2px solid #2196F3;
+    border-radius: 5px;
+    top: -1px; 
+}
+
+/* Pestañas individuales */
+QTabBar::tab {
+    background-color: #222327;
+    color: #BDBDBD;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 2px;
+    border: 2px solid #2196F3;
+    border-bottom: none;
+    min-width: 100px;
+    height: 20px; 
+}
+
+/* Pestaña seleccionada */
+QTabBar::tab:selected {
+    background-color: #2196F3;
+    color: white;
+    font-weight: bold;
+    border-bottom-color: #2196F3; 
+}
+
+/* Pestañas no seleccionadas */
+QTabBar::tab:!selected {
+    margin-top: 3px; 
+}
+
+/* Hover sobre pestañas */
+QTabBar::tab:hover {
+    background-color: #1E88E5;
+}
+
+/* Contenedor principal de pestañas */
+QTabWidget {
+    background-color: #1A1B1E;
+    border: none;
+}
+
+/* Barra de pestañas */
+QTabBar {
+    alignment: left; 
+}
+
+/* Área de botones de navegación */
+QTabBar::scroller {
+    width: 20px;
+}
+
+/* Botones de navegación */
+QTabBar QToolButton { 
+    background-color: #222327;
+    border: 2px solid #2196F3;
+    color: white;
+    height: 20px;
+    width: 20px;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 12px;      
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Hover en botones de navegación */
+QTabBar QToolButton:hover {
+    background-color: #1E88E5;
+    color: white;
+}
+
+/* Símbolos de navegación */
+QTabBar QToolButton::right-arrow:enabled {
+    qproperty-text: "❯";        
+}
+
+QTabBar QToolButton::left-arrow:enabled {
+    qproperty-text: "❮";        
+}
+
+/* Botones deshabilitados */
+QTabBar QToolButton::right-arrow:disabled,
+QTabBar QToolButton::left-arrow:disabled {
+    color: #222327;
+    background-color: #1A1B1E;
+}
+
+/* === Estilos ModelDescription === */
+
+/* Etiqueta de visualización */
+QLabel#displayLabel {
+    color: white;
+    font-size: 15px;
+    padding: 5px;
+    background: #222327;
+    border: 2px solid #2196F3;
+    border-radius: 4px
+}
+
+/* Campo de entrada */
+QLineEdit#modelInput {
+    background-color: #222327;
+    border: 2px solid #2196F3;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 11px;
+    color: white;
+}
+
+/* Campo de entrada al tener foco */
+QLineEdit#modelInput:focus {
+    border: 2px solid #1E88E5;
+    background-color: #2A2B2F;
+}
+
+/* Placeholder del campo de entrada */
+QLineEdit#modelInput::placeholder {
+    color: #BDBDBD;
+    font-style: italic;
+}
+
+
+
+/* === Estilo de Checkboxes === */
+
+/* Checkbox */
+QCheckBox {
+    color: white;
+    spacing: 5px;
+}
+
+/* Indicador del checkbox */
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #2A2B2F;
+    background: #222327;
+    border-radius: 3px;
+}
+
+/* Hover sobre checkbox sin marcar */
+QCheckBox::indicator:unchecked:hover {
+    border: 2px solid #2196F3;
+}
+
+/* Checkbox marcado */
+QCheckBox::indicator:checked {
+    background: #2196F3;
+    border: 2px solid #2196F3;
+}
+
+
+
+/* === Scrollbars === */
+
+/* Scrollbar vertical */
+QScrollBar:vertical {
+    background: #222327;
+    width: 10px;
+    margin: 0;
+}
+
+/* Manejador del scrollbar vertical */
+QScrollBar::handle:vertical {
+    background: #2A2B2F;
+    min-height: 30px;
+}
+
+/* Hover sobre el manejador vertical */
+QScrollBar::handle:vertical:hover {
+    background: #2196F3;
+}
+
+/* Ocultar botones adicionales del scrollbar vertical */
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+/* Scrollbar horizontal */
+QScrollBar:horizontal {
+    background: #222327;
+    height: 10px;
+    margin: 0;
+}
+
+/* Manejador del scrollbar horizontal */
+QScrollBar::handle:horizontal {
+    background: #2A2B2F;
+    min-width: 30px;
+}
+
+/* Hover sobre el manejador horizontal */
+QScrollBar::handle:horizontal:hover {
+    background: #2196F3;
+}
+
+/* Ocultar botones adicionales del scrollbar horizontal */
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* Frame */
+QFrame {
+    border: none;
+}
+
+
+/* === Estilo para menús === */
+QMenu#settingsMenu {
+    background-color: #222327;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    padding: 5px;
+    margin: 0px;
+}
+
+QMenu#settingsMenu::item {
+    background-color: transparent;
+    color: white;
+    padding: 8px 25px 8px 20px;
+    margin: 2px;
+    border: none;
+    border-radius: 4px;
+    min-width: 150px;
+}
+
+QMenu#settingsMenu::item:selected {
+    background-color: #2196F3;
+    color: white;
+}
+
+QMenu#settingsMenu::item:hover {
+    background-color: #1E88E5;
+    color: white;
+}
+
+/* Estilo específico para el botón de configuración */
+QToolButton {
+    background-color: #2196F3;
+    color: white;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    font-size: 24px;
+    padding-bottom: 8px;
+    margin: 0px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+QToolButton:hover {
+    background-color: #1E88E5;
+}
+
+QToolButton:pressed {
+    background-color: #0D47A1;
+}
+
+QToolButton::menu-indicator {
+    image: none;
+}
+
+
+
+/* === Estilos para Diálogos === */
+
+QDialog {
+    background-color: #1A1B1E;
+    color: white;
+}
+
+
+
+/* === Estilos para MessageBox === */
+
+QMessageBox {
+    background-color: #1A1B1E;
+}
+
+QMessageBox QLabel {
+    color: white;
+}
+
+/* === Estilos para FileDialog === */
+QFileDialog {
+    background-color: #1A1B1E;
+}
+
+QFileDialog QLabel {
+    color: white;
+}
+
+QFileDialog QTreeView {
+    background-color: #222327;
+    color: white;
+    border: 1px solid #2196F3;
+}
+
+QFileDialog QTreeView::item:selected {
+    background-color: #2196F3;
+}
+
+QFileDialog QTreeView::item:hover {
+    background-color: #1E88E5;
+}
+
+QFileDialog QLineEdit {
+    background-color: #222327;
+    color: white;
+    border: 1px solid #2196F3;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+
+
+/* === Estilos para DialogButtonBox === */
+
+QDialogButtonBox {
+    button-layout: 0;
+}
+
+QDialogButtonBox QPushButton {
+    min-width: 80px;
+}
+
+/* === Estilos para campos de entrada (QLineEdit) === */
+QLineEdit {
+    background-color: #222327;
+    color: white;
+    border: 1px solid #2196F3;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #1E88E5;
+    background-color: #2A2B2F;
+}
+
+QLineEdit::placeholder {
+    color: #BDBDBD;
+    font-style: italic;
+}
+
+/* Específicamente para los GroupBox */
+QGroupBox {
+    color: white;
+    border: 2px solid #2196F3;
+    border-radius: 4px;
+    margin-top: 1em;
+    padding: 5px;
+}
+
+QGroupBox::title {
+    color: white;
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QGroupBox[title="Predicción"] QLabel {
+    font-size: 18px;
+    margin: 0px;
+    padding: 0px;
+}
+
+QLineEdit {
+    margin: 0px;
+    padding: 5px;
+    margin-bottom: 2px;
+}
+
+QGroupBox[title="Predicción"] {
+    padding-top: 25px;
+}
