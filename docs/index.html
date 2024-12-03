@@ -1,11 +1,452 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placeholder</title>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>Page Title</title>
+  <meta name="description" content="">
 </head>
+
 <body>
-    <h1>Placeholder!</h1>
+  <main>
+    <article>
+      <h1>About this software</h1>
+<p>
+  This software allows you to create linear regression models from data sets.
+  The models can be saved, edited, and used to generate predictions. Easily
+  create and apply linear regression models for all your project needs.
+</p>
+<p>
+  A suitable environment is key to running any software smoothly. This software
+  tool was designed for a Windows environment and would work best with an
+  operating system of Windows 10 and above.
+</p>
+<h1>Table of contents</h1>
+<ul>
+  <li><a href="#uploading-your-database">Uploading your database</a></li>
+  <li><a href="#datos-tab-overview">Datos tab overview</a></li>
+  <li><a href="#generating-your-model">Generating your model</a></li>
+  <li><a href="#modelo-tab-overview">Modelo tab overview</a></li>
+  <li><a href="#preprocessing-null-data">Preprocessing null data</a></li>
+  <li><a href="#adding-a-model-description">Adding a model description</a></li>
+  <li><a href="#saving-your-model">Saving your model</a></li>
+  <li>
+    <a href="#saving-the-graph-as-an-image-file"
+      >Saving the graph as an image file</a
+    >
+  </li>
+  <li><a href="#upload-a-model-file">Upload a model file</a></li>
+  <li><a href="#creating-a-prediction">Creating a prediction</a></li>
+  <li>
+    <a href="#changing-the-interface-colors">Changing the interface color</a>
+  </li>
+  <li><a href="#graph-toolbar-guide">Graph toolbar guide</a></li>
+</ul>
+<h1>Uploading your database</h1>
+<p>
+  The first step to creating a linear regression model is preparing a
+  well-rounded set of data. Once you have gathered the data, upload your
+  database file and begin generating models.
+</p>
+<p><strong>To upload your database</strong></p>
+<ol>
+  <li>Open the software.</li>
+  <li>
+    Select the <strong>Abrir Archivo</strong> button.<br />
+    The File Explorer opens.
+  </li>
+  <li>
+    Select the database file you want to upload.<br />
+    The database shows up in the Datos tab and an Éxito dialog appears.<br />
+    You have successfully uploaded your data set to the software.
+  </li>
+</ol>
+<h1>Datos tab overview</h1>
+<p>
+  Refer to the following screenshot and table for the name and purpose of the
+  buttons and sections found in the Datos tab.
+</p>
+<p><img alt="Datos tab screenshot" src="docs/datos%20tab.jpg" /></p>
+<table>
+  <thead>
+    <tr>
+      <th>Number</th>
+      <th>Name and purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Datos tab. Shows the data uploaded.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Abrir Archivo button. Uploads database files.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Cargar Modelo button. Uploads model files.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>File name and location.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>
+        Seleccione columnas de entrada (features) section. Select feature data.
+      </td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>
+        Seleccione columna de salida (target) section. Select target data.
+      </td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Confirmar selección button. Confirm your data selection.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Preprocessing function buttons.</td>
+    </tr>
+  </tbody>
+</table>
+<h1>Generating your model</h1>
+<p>
+  Once you have uploaded your database into the software, you can begin
+  generating linear regression models. You can generate as many models as you
+  want, with each new model and their information appearing in a separate,
+  numbered Modelo tab.
+</p>
+<p><strong>To generate a model</strong></p>
+<ol>
+  <li>Upload a database to the software.</li>
+  <li>
+    In the <strong>Datos tab</strong>, under the
+    <strong>Seleccione columnas de entrada (features)</strong> section, select
+    your feature data. You can choose more than one feature data.
+  </li>
+  <li>
+    Under the <strong>Seleccione columna de salida (target)</strong> section,
+    choose your target data from the dropdown menu. You can only choose one
+    target data.<br />
+    The selected columns are highlighted.
+  </li>
+  <li>
+    Select the <strong>Confirmar selección</strong> button.<br />
+    An Éxito dialog and Modelo tab appear.
+  </li>
+  <li>
+    Go to the <strong>Modelo tab</strong> and select the
+    <strong>Crear Modelo de Regresión Lineal</strong> button.<br />
+    An Éxito dialog appears and your linear regression model is successfully
+    generated.
+  </li>
+</ol>
+<blockquote>
+  <p>
+    [!IMPORTANT] Models cannot be generated if there are null data present. An
+    Éxito dialog shows if you have any null data. See
+    <a href="#preprocessing-null-data">Preprocessing null data</a> for more
+    details on editing your null data.
+  </p>
+</blockquote>
+<h1>Modelo tab overview</h1>
+<p>
+  Refer to the following screenshot and table for the name and purpose of the
+  buttons and sections found in the Modelo tab.
+</p>
+<p><img alt="Modelo tab screenshot" src="docs/modelo%20tab.jpg" /></p>
+<table>
+  <thead>
+    <tr>
+      <th>Number</th>
+      <th>Name and purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Modelo tab. Numbered and shows the model information.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>
+        Crear Modelo de Regresión Lineal button. Generates a linear regression
+        model.
+      </td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>
+        Haz clic para añadir una descripción section. Adds a model description.
+      </td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Predicción section. Adds new feature values.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Realizar Predicción button. Creates predicted target data</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Guardar Modelo button. Saves the model.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Visualización section. Shows the graph of the model.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Graph toolbar. Edits the graph image.</td>
+    </tr>
+  </tbody>
+</table>
+<h1>Preprocessing null data</h1>
+<p>
+  Depending on the data selected, you may have null data. If this happens, a row
+  of preprocessing buttons appears so you can edit your null data directly from
+  the software. Please make sure to preprocess all null data before generating a
+  model.
+</p>
+<p><strong>To preprocess null data before generating a model</strong></p>
+<ol>
+  <li>
+    When null data is detected in the selected columns, confirm the Éxito
+    dialog.<br />
+    A row of preprocessing function buttons appears.
+  </li>
+  <li>
+    Select the button for the function you want to apply to the null data.
+  </li>
+  <li>
+    Select the <strong>Aplicar preprocesado</strong> button.<br />
+    An Éxito dialog appears when the preprocessing function is completed.
+  </li>
+  <li>
+    Go to the <strong>Modelo</strong> tab and select the
+    <strong>Crear Modelo de Regresión Lineal</strong> button to generate the
+    model.<br />
+    You have successfully edited the null data before generating a model.
+  </li>
+</ol>
+<blockquote>
+  <p>
+    [!NOTE] The following screenshot and table show the function of each null
+    data preprocessing button.
+  </p>
+</blockquote>
+<p>
+  <img
+    alt="Preprocessing function button"
+    src="docs/preprocessing%20buttons.jpg"
+  />
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Button name</th>
+      <th>Function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Eliminar</td>
+      <td>Deletes the null data.</td>
+    </tr>
+    <tr>
+      <td>Media</td>
+      <td>Replaces null data with the mean.</td>
+    </tr>
+    <tr>
+      <td>Mediana</td>
+      <td>Replaces null data with the median.</td>
+    </tr>
+    <tr>
+      <td>Constantes</td>
+      <td>Replaces with a constant you enter.</td>
+    </tr>
+    <tr>
+      <td>Aplicar preprocesado</td>
+      <td>
+        Applies the preprocessing choice to all null data in the selected
+        columns.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h1>Adding a model description</h1>
+<p>
+  If you want to differentiate between two similar models or make a note about a
+  specific model, you can add a short description.
+</p>
+<p><strong>To add a model description</strong></p>
+<ol>
+  <li>
+    Go to the <strong>Modelo</strong> tab of the model you want to add a
+    description.
+  </li>
+  <li>
+    Select the
+    <strong>Haz clic para añadir una descripción</strong> section.<br />
+    A cursor appears.
+  </li>
+  <li>
+    Enter your description for the model.<br />
+    You have successfully added a description to a model.
+  </li>
+</ol>
+<h1>Saving your model</h1>
+<p>
+  Once you are satisfied with the model you generated, you can save it to your
+  computer and open it in the software tool another time. Models are saved as a
+  joblib file, and any descriptions added are saved as well.
+</p>
+<p><strong>To save your model</strong></p>
+<ol>
+  <li>Go to the <strong>Modelo</strong> tab of the model you want to save.</li>
+  <li>Select the <strong>Guardar Modelo</strong> button.</li>
+  <li>
+    Name and save your model file with the File Explorer.<br />
+    You have successfully saved your model.
+  </li>
+</ol>
+<h1>Saving the graph as an image file</h1>
+<p>
+  When you generate a model, an interactive graph of the model is also created.
+  You can choose to save the graph as an image file to easily apply elsewhere.
+  Please note that this method only saves an image of the graph and not the
+  model itself.
+</p>
+<p>
+  <strong>To save the graph as an image file</strong> 1. Go to the
+  <strong>Modelo</strong> tab of the graph you want to save. 2. Move the graph
+  using the icons in the graph toolbar until your desired image appears in the
+  Visualización section. 3. Select the
+  <img alt="Save icon" src="docs/save%20icon.jpg" /> save icon. 4. Name and
+  select the file type you want to save as.<br />
+  You have successfully saved the graph as an image file.
+</p>
+<blockquote>
+  <p>
+    [!IMPORTANT] Only the area of the graph shown in the Visualización section
+    of the interface is saved. Move the graph around before saving as an image
+    file. See the <a href="#graph-tool-bar-guide">Graph tool bar guide</a> for
+    more details on editing the graph.
+  </p>
+</blockquote>
+<h1>Upload a model file</h1>
+<p>
+  You can also work with a model file with this software. Continue working on a
+  previously saved model or use models generated by other people.
+</p>
+<p><strong>To upload a model file</strong></p>
+<ol>
+  <li>
+    In the <strong>Datos</strong> tab, select the
+    <strong>Cargar Modelo</strong> button.<br />
+    The File Explorer opens.
+  </li>
+  <li>
+    Select the model file you want to use. A <strong>Modelo</strong> tab with
+    the selected model and an Éxito dialog appears.<br />
+    You have successfully uploaded a model file.
+  </li>
+</ol>
+<h1>Creating a prediction</h1>
+<p>
+  Because linear regression models are a type of machine learning algorithm, you
+  can create predictions using this software. Using a model you have generated,
+  add new target values to predict a feature value.
+</p>
+<p><strong>To create a prediction</strong></p>
+<ol>
+  <li>
+    Go to the <strong>Modelo</strong> tab of the model you want to use for
+    prediction.
+  </li>
+  <li>
+    In the <strong>Predicción</strong> section, enter your new target values.
+  </li>
+  <li>
+    Select the <strong>Realizar Predicción</strong> button.<br />
+    A feature value is generated, and you have successfully created a
+    prediction.
+  </li>
+</ol>
+<h1>Changing the interface colors</h1>
+<p>
+  A fun feature of this software is that you can choose between four different
+  colors themes for your interface. Switch between the themes to find the color
+  that best suits your needs. By default, the software uses the dark pink theme.
+</p>
+<p><strong>To change your interface color theme</strong></p>
+<ol>
+  <li>
+    Select the <img alt="Gear icon" src="docs/gear%20icon.jpg" /> gear icon.
+  </li>
+  <li>
+    Choose a new color theme from the drop-down menu.<br />
+    You have successfully changed your interface color.
+  </li>
+</ol>
+<h1>Graph toolbar guide</h1>
+<p>
+  The graph toolbar allows you to save and edit the image shown in the
+  Visualizacion section. Refer to the following table for the purpose of each
+  icon.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Icon</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img alt="Home icon" src="docs/home%20icon.jpg" /></td>
+      <td>Returns the graph to original image.</td>
+    </tr>
+    <tr>
+      <td><img alt="Move icon" src="docs/move%20icon.jpg" /></td>
+      <td>Moves the graph left and right.</td>
+    </tr>
+    <tr>
+      <td><img alt="shift icon" src="docs/shift%20icon.jpg" /></td>
+      <td>Moves the graph in all directions.</td>
+    </tr>
+    <tr>
+      <td><img alt="Zoom icon" src="docs/zoom%20icon.jpg" /></td>
+      <td>Zooms in on the graph.</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="Adjust value icon" src="docs/adjust%20value%20icon.jpg" />
+      </td>
+      <td>Adjusts the graph borders and spacing.</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="Figure option icon" src="docs/figure%20option%20icon.jpg" />
+      </td>
+      <td>Adjusts the graph options such as color and axis range.</td>
+    </tr>
+    <tr>
+      <td><img alt="Save icon" src="docs/save%20icon.jpg" /></td>
+      <td>Saves the graph as an image file.</td>
+    </tr>
+  </tbody>
+</table>
+
+    </article>
+  </main>
 </body>
+
 </html>
