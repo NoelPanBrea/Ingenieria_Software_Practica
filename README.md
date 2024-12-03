@@ -35,7 +35,7 @@ You have successfully uploaded your data set to the software.
 
 Refer to the following screenshot and table for the name and purpose of the buttons and sections found in the Datos tab.
 
-![Datos tab screenshot](<../README images/datos tab.jpg>)
+![Datos tab screenshot](<docs/datos tab.jpg>)
 
 Number | Name and purpose
 --- | --- 
@@ -69,7 +69,7 @@ An Éxito dialog appears and your linear regression model is successfully genera
 
 Refer to the following screenshot and table for the name and purpose of the buttons and sections found in the Modelo tab.
 
-![Modelo tab screenshot](<../README images/modelo tab.jpg>)
+![Modelo tab screenshot](<docs/modelo tab.jpg>)
 
 Number | Name and purpose
 --- | --- 
@@ -98,7 +98,7 @@ You have successfully edited the null data before generating a model.
 > [!NOTE]
 > The following screenshot and table show the function of each null data preprocessing button.
 
-![Preprocessing function button](<../README images/preprocessing buttons.jpg>)
+![Preprocessing function button](<docs/preprocessing buttons.jpg>)
 
 Button name | Function
 --- | --- 
@@ -136,7 +136,7 @@ When you generate a model, an interactive graph of the model is also created. Yo
 **To save the graph as an image file**
 1.	Go to the **Modelo** tab of the graph you want to save.
 2.	Move the graph using the icons in the graph toolbar until your desired image appears in the Visualización section.
-3.	Select the ![Save icon](<../README images/save icon.jpg>) save icon.
+3.	Select the ![Save icon](<docs/save icon.jpg>) save icon.
 4.	Name and select the file type you want to save as.<br>
 You have successfully saved the graph as an image file.
 
@@ -169,7 +169,7 @@ A feature value is generated, and you have successfully created a prediction.
 A fun feature of this software is that you can choose between four different colors themes for your interface. Switch between the themes to find the color that best suits your needs. By default, the software uses the dark pink theme.
 
 **To change your interface color theme**
-1. Select the ![Gear icon](<../README images/gear icon.jpg>) gear icon.
+1. Select the ![Gear icon](<docs/gear icon.jpg>) gear icon.
 2. Choose a new color theme from the drop-down menu.<br>
 You have successfully changed your interface color.
 
@@ -179,11 +179,10 @@ The graph toolbar allows you to save and edit the image shown in the Visualizaci
 
 Icon | Purpose
 --- | --- 
-![Home icon](<../README images/home icon.jpg>) | Returns the graph to original image.
-![Move icon](<../README images/move icon.jpg>) | Moves the graph left and right.
-![shift icon](<../README images/shift icon.jpg>) | Moves the graph in all directions.
-![Zoom icon](<../README images/zoom icon.jpg>) | Zooms in on the graph.
-![Adjust value icon](<../README images/adjust value icon.jpg>) | Adjusts the graph borders and spacing.
-![Figure option icon](<../README images/figure option icon.jpg>) | Adjusts the graph options such as color and axis range.
-![Save icon](<../README images/save icon.jpg>) | Saves the graph as an image file.
-
+![Home icon](<docs/home icon.jpg>) | Returns the graph to original image.
+![Move icon](<docs/move icon.jpg>) | Moves the graph left and right.
+![shift icon](<docs/shift icon.jpg>) | Moves the graph in all directions.
+![Zoom icon](<docs/zoom icon.jpg>) | Zooms in on the graph.
+![Adjust value icon](<docs/adjust value icon.jpg>) | Adjusts the graph borders and spacing.
+![Figure option icon](<docs/figure option icon.jpg>) | Adjusts the graph options such as color and axis range.
+![Save icon](<docs/save icon.jpg>) | Saves the graph as an image file.
