@@ -13,7 +13,6 @@ from matplotlib import style
 style.use('fivethirtyeight')
 
 
-
 class LinearModelTab(QWidget):
     """
     UI Tab for managing linear regression models.
@@ -170,7 +169,8 @@ class LinearModelTab(QWidget):
         self.prediction_label.setObjectName("prediction_label")
         self.prediction_label.setVisible(False)
         prediction_layout.addWidget(self.prediction_label)
-
+        prediction_layout.setSpacing(30)
+        
         # Prediction button
         self.predict_button = QPushButton("Realizar Predicción")
         self.predict_button.setFixedHeight(50)
