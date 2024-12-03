@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import (QLabel, QLineEdit, QMessageBox)
+from PyQt5.QtWidgets import (QLabel, QLineEdit, QFrame, QMessageBox)
 from PyQt5.QtCore import Qt
 
 class ModelDescription:
@@ -49,6 +49,7 @@ class ModelDescription:
         self.display_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.display_label.setMouseTracking(True)
         self.display_label.setCursor(Qt.PointingHandCursor)
+        
         
         # Create the input field for editing the description
         self.input_field = QLineEdit()

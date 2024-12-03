@@ -241,9 +241,10 @@ QTabBar QToolButton::left-arrow:disabled {
 QLabel#displayLabel {
     color: white;
     font-size: 15px;
-    padding: 2px;
-    background: transparent;
-    border: 1px solid transparent;
+    padding: 5px;
+    background: #222327;
+    border: 2px solid #2196F3;
+    border-radius: 4px
 }
 
 /* Campo de entrada */
