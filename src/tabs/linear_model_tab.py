@@ -569,7 +569,7 @@ class LinearModelTab(QWidget):
             try:
                 input_values.append(float(value))
             except ValueError:
-                show_error(f"El valor para {label.text()} debe ser numérico.", self)
+                show_error(f"Todos los valores deben ser numéricos.", self)
                 return None
 
         try:
