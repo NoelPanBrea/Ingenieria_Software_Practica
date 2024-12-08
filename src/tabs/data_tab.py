@@ -251,10 +251,8 @@ class DataTab(QWidget):
         input_columns, output_column = self.column_selector.get_selected_columns()
 
         if not input_columns:
-            show_error('⚠ Debe seleccionar al menos una columna de entrada. ⚠', self)
             return
         elif output_column == "":
-            show_error('⚠ Debe seleccionar una columna de salida. ⚠', self)
             return
 
         # Store the selected columns and display a summary

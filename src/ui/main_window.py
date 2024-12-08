@@ -141,6 +141,11 @@ class MainWindow(QMainWindow):
         Creates the linear model tab if the data is available.
         """
 
+        # Check if input_columns or output_column is None
+        if not self.data_tab.selected_input_columns or not self.data_tab.selected_output_column:
+            show_error("Debe seleccionar columnas de entrada y salida antes de crear un modelo.", self)
+            return
+
         self.tabs_counter += 1
 
         # Create a new linear model tab
