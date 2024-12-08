@@ -322,11 +322,18 @@ class DataTab(QWidget):
         This method only activates if input columns are selected.
         """
         if self.selected_input_columns:
+
+            # Combine selected input columns and output column
+            selected_columns = self.selected_input_columns + [self.selected_output_column]
+
+            # Filter columns that are selected and contain null values
+            null_columns = [
+                column for column in selected_columns
+                if column in self.data.columns and self.data[column].isnull().any()]
+            
             # Create and display the input dialog for constants
             input_window = InputDialog(
-                self.selected_input_columns + [self.selected_output_column],
-                'Introduzca las constantes',
-                parent = self)
+                null_columns, 'Introduzca las constantes', parent = self)
             input_window.exec()
 
             # Retrieve the constants entered by the user
