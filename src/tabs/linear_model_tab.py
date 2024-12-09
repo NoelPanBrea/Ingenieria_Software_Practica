@@ -355,6 +355,12 @@ class LinearModelTab(QWidget):
         # Clear any existing graphs
         self.clear_previous_graph()
         try:
+            # Check for null values in the selected columns
+            selected_columns = self.input_columns + [self.output_column]
+            if self.data[selected_columns].isnull().any().any():
+                show_error("⚠ Error al crear el modelo lineal: Debe preprocesar los datos en la pestaña de datos antes de seguir ⚠", self)
+                return
+            
             # Initialize and fit the model
             self.model = LinearModel(self.data, self.input_columns, self.output_column)
             self.model.fit()
