@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
 )
 from typing import List, Optional
 import joblib
-
+from os.path import splitext
 from data_processing.import_module import DataFrame, load_file
 from ui.popup_handler import (InputDialog, open_file_dialog,
     open_model_dialog, show_error, show_message, QtCore)
@@ -140,7 +140,10 @@ class DataTab(QWidget):
         Loads a model and returns it if successful.
         """
         model_path = open_model_dialog(self)
-        if not model_path:
+
+        # Displays an error if the loaded file's extension is not '.joblib'
+        if splitext(model_path)[1] != '.joblib':
+            show_error('⚠ Error al cargar el modelo: Formato de archivo no válido ⚠', self)
             return None
 
         try:
