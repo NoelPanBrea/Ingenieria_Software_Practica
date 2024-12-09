@@ -103,6 +103,12 @@ class LinearModelTab(QWidget):
             model_creation_group.setLayout(model_creation_layout)
             main_layout.addWidget(model_creation_group)
 
+        # Create horizontal layout for main content
+        content_layout = QHBoxLayout()
+        
+        # Left side container with vertical layout
+        left_container = QVBoxLayout()
+        
         # Group 2: Model information
         model_info_group = QGroupBox("Información del Modelo")
         model_info_layout = QVBoxLayout()
@@ -130,21 +136,11 @@ class LinearModelTab(QWidget):
         # Add model description functionality
         self.model_description.add_to_layout(model_info_layout)
         model_info_group.setLayout(model_info_layout)
-        main_layout.addWidget(model_info_group)
 
         # Group 3: Prediction and visualization
-        bottom_layout = QHBoxLayout()
-        bottom_layout.setSpacing(10)
-
-        # Left container: Prediction and save button
-        left_widget = QWidget()
-        left_container = QVBoxLayout(left_widget)
-        left_container.setSpacing(5)
-
         # Prediction group
         prediction_group = QGroupBox("Predicción")
-        prediction_group.setMaximumWidth(400)
-        prediction_layout = QVBoxLayout(prediction_group)
+        prediction_layout = QVBoxLayout()
         prediction_layout.setSpacing(0)
         prediction_layout.setContentsMargins(10, 5, 10, 10)
 
@@ -177,8 +173,14 @@ class LinearModelTab(QWidget):
         self.predict_button.setVisible(False)
         self.predict_button.clicked.connect(self.make_prediction)
         prediction_layout.addWidget(self.predict_button)
+        prediction_group.setLayout(prediction_layout)
 
         # Add prediction group to left container
+        left_widget = QWidget()
+        left_widget.setLayout(left_container)
+        left_widget.setFixedWidth(600)
+        
+        left_container.addWidget(model_info_group)
         left_container.addWidget(prediction_group)
 
         # Save button below the prediction group
@@ -187,14 +189,9 @@ class LinearModelTab(QWidget):
         self.save_button.clicked.connect(self.save_model)
         self.save_button.setVisible(False)
         left_container.addWidget(self.save_button)
-        
-        # Set size policies for left widget
-        left_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-        left_widget.setFixedWidth(300)
-
         # Visualization group (right)
         visualization_group = QGroupBox("Visualización")
-        visualization_layout = QVBoxLayout(visualization_group)
+        visualization_layout = QVBoxLayout()
         visualization_layout.setContentsMargins(10, 10, 10, 10)
         
         # Graph container
@@ -204,14 +201,15 @@ class LinearModelTab(QWidget):
         visualization_layout.addWidget(self.graph_container)
 
         # Set size policy for visualization group
-        visualization_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        visualization_group.setLayout(visualization_layout)
+        visualization_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        # Add widgets to bottom layout
-        bottom_layout.addWidget(left_widget)
-        bottom_layout.addWidget(visualization_group)
+        # Add both sides to content layout
+        content_layout.addWidget(left_widget)
+        content_layout.addWidget(visualization_group, 1)
 
-        # Add bottom layout to the main layout
-        main_layout.addLayout(bottom_layout)
+        # Add content layout to the main layout
+        main_layout.addLayout(content_layout)
 
         self.setLayout(main_layout)
 
