@@ -66,11 +66,11 @@ class DataTab(QWidget):
         load_bar = QHBoxLayout(self.load_widget)
         
         # File and model loading buttons
-        self.file_button = QPushButton('📂 Abrir Archivo')
+        self.file_button = QPushButton("📂 Abrir Archivo")
         self.file_button.setFixedSize(200, 50)
-        self.model_button = QPushButton('🗃️ Cargar Modelo')
+        self.model_button = QPushButton("🗃️ Cargar Modelo")
         self.model_button.setFixedSize(200, 50)
-        self.path_label = QLabel('Ruta del archivo cargado:')
+        self.path_label = QLabel("Ruta del archivo cargado:")
 
         # Data preview table
         self.table = DataTable()
@@ -115,7 +115,7 @@ class DataTab(QWidget):
     def init_preprocess(self):
         # Sección de preprocesado
         self.preprocess_label = QLabel(
-            'Seleccione una opción de preprocesado de datos nulos:')
+            "Seleccione una opción de preprocesado de datos nulos:")
         self.preprocess_label.hide()
         self.preprocess_toolbar = PreprocessToolbar()
 
@@ -139,9 +139,9 @@ class DataTab(QWidget):
         """
         model_path = open_model_dialog(self)
 
-        # Displays an error if the loaded file's extension is not '.joblib'
-        if splitext(model_path)[1] != '.joblib':
-            show_error('⚠ Error al cargar el modelo: Formato de archivo no válido ⚠', self)
+        # Displays an error if the loaded file"s extension is not ".joblib"
+        if splitext(model_path)[1] != ".joblib":
+            show_error("⚠ Error al cargar el modelo: Formato de archivo no válido ⚠", self)
             return None
 
         try:
@@ -149,7 +149,7 @@ class DataTab(QWidget):
             model_data = joblib.load(model_path)
 
             # Ensure the model has the required keys
-            required_keys = ['formula', 'coefficients', 'intercept', 'metrics', 'columns']
+            required_keys = ["formula", "coefficients", "intercept", "metrics", "columns"]
             if not all(key in model_data for key in required_keys):
                 show_error("⚠ El archivo no contiene un modelo válido ⚠", self)
                 return None
@@ -162,12 +162,12 @@ class DataTab(QWidget):
             
             # Display the loaded file path and confirmation message
             self.path_label.setText(
-                f'📄 Ruta del modelo cargado: {model_path}')
-            show_message('✅ ¡Modelo cargado exitosamente! 😃', self)
+                f"📄 Ruta del modelo cargado: {model_path}")
+            show_message("✅ ¡Modelo cargado exitosamente! 😃", self)
             
             return model_data
         except Exception as e:
-            show_error(f'⚠ Error al cargar el modelo: {str(e)} ⚠', self)
+            show_error(f"⚠ Error al cargar el modelo: {str(e)} ⚠", self)
             return None
     
     def load_data(self):
@@ -189,14 +189,14 @@ class DataTab(QWidget):
             # Load the dataset into the table and initialize column selection
             self.data = load_file(file_path)
             self.path_label.setText(
-                f'📄 Ruta del archivo cargado: {file_path}')
+                f"📄 Ruta del archivo cargado: {file_path}")
             self.table.load_data(self.data, batch_size=100)
             self.column_selector.populate_columns(self.data)
             self.column_selector.setVisible(True)
-            show_message('✅ ¡Archivo cargado exitosamente! 😃', self)
+            show_message("✅ ¡Archivo cargado exitosamente! 😃", self)
                 
         except Exception as e:
-            show_error(f'⚠ {str(e)} ⚠', self)
+            show_error(f"⚠ {str(e)} ⚠", self)
 
     def on_input_column_selection_changed(self, item):
         """
@@ -278,7 +278,7 @@ class DataTab(QWidget):
         Parameters
         ----------
         method : str
-            Preprocessing method to apply ('delete', 'mean', 'median', 'constant').
+            Preprocessing method to apply ("delete", "mean", "median", "constant").
         """
         try:
             self.preprocess_applier.set_current_method(method)
@@ -355,12 +355,12 @@ class DataTab(QWidget):
             
             # Create and display the input dialog for constants
             input_window = InputDialog(
-                null_columns, 'Introduzca las constantes', parent = self)
+                null_columns, "Introduzca las constantes", parent = self)
             input_window.exec()
 
             # Retrieve the constants entered by the user
             constants = input_window.get_inputs()
-            self.preprocess_applier.set_current_method('constant', constants)
+            self.preprocess_applier.set_current_method("constant", constants)
 
     def apply_preprocessing(self):
         """
@@ -388,8 +388,8 @@ class DataTab(QWidget):
 
             self.on_output_column_selection_changed()
 
-            show_message('✅ ¡Preprocesado aplicado exitosamente!', self)
+            show_message("✅ ¡Preprocesado aplicado exitosamente!", self)
             return True
         except Exception as e:
-            show_error(f'Error al aplicar el preprocesado: {str(e)}', self)
+            show_error(f"Error al aplicar el preprocesado: {str(e)}", self)
             return False

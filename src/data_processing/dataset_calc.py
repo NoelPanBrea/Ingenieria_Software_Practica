@@ -29,15 +29,15 @@ class PreprocessApplier():
         Sets up the dictionary of preprocessing methods and 
         initializes state variables.
         """
-        self._methods = {'delete': self.delete, 'mean': self.mean,
-                         'median': self.median, 'constant': self.constant}
+        self._methods = {"delete": self.delete, "mean": self.mean,
+                         "median": self.median, "constant": self.constant}
         self.cte = []
         self.dataframe = None
         self.columns = None
         self._current_method = None
 
     @property
-    def methods(self) -> dict['function']:
+    def methods(self) -> dict["function"]:
         """
         Gets the available preprocessing methods.
 
@@ -57,7 +57,7 @@ class PreprocessApplier():
         value : str
             Name of the preprocessing method to use.
         cte : list[float], optional
-            List of constants for the 'constant' method.
+            List of constants for the "constant" method.
         """
         self._current_method = self._methods[value]
         self.cte = cte
@@ -130,12 +130,12 @@ class PreprocessApplier():
                 self._current_method()
                 
         except IndexError as e:
-            raise Exception(f'{e}')
+            raise Exception(f"{e}")
         except ValueError as e:
-            res = 'En el campo constantes se deben introducir números '
-            raise ValueError(res + f'con "." como separador de decimales')
+            res = "En el campo constantes se deben introducir números "
+            raise ValueError(res + f"con '.' como separador de decimales")
         except Exception as e:
-            raise Exception(f'Ha ocurrido un error inesperado: {e}')
+            raise Exception(f"Ha ocurrido un error inesperado: {e}")
 
 
 def none_count(dataframe: DataFrame, columns: list[str]) -> list[int]:

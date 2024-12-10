@@ -19,14 +19,14 @@ def load_file(file_path: str) -> DataFrame:
 
     # Obtain the file's extension
     try:
-        if file_path.lower().endswith('.csv'):
+        if file_path.lower().endswith(".csv"):
             data = __import_csv(file_path)
-        elif file_path.lower().endswith(('.xlsx', '.xls')):
+        elif file_path.lower().endswith((".xlsx", ".xls")):
             data = __import_excel(file_path)
-        elif file_path.lower().endswith(('.sqlite', '.db')):
+        elif file_path.lower().endswith((".sqlite", ".db")):
             data = __import_sql(file_path)
         else:
-            raise ValueError('Formato de archivo no soportado')
+            raise ValueError("Formato de archivo no soportado")
 
 
         return data
