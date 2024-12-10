@@ -23,6 +23,7 @@ class PreprocessToolbar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
+        self.on_method_selected = None
 
     def init_ui(self):
         """
@@ -49,25 +50,36 @@ class PreprocessToolbar(QWidget):
             self.buttons[method] = button
             layout.addWidget(button)
 
-        self.apply_button = QPushButton('Aplicar preprocesado')
-        self.apply_button.hide()
-        self.apply_button.setMinimumWidth(400)
-        layout.addWidget(self.apply_button)
-
+            button.clicked.connect(lambda _, method=method: self.handle_button_click(method))
+        
         self.setLayout(layout)
+
+    def handle_button_click(self, method):
+        """
+        Handles the click event of a preprocessing method button.
+
+        Parameters
+        ----------
+        method : str
+            The name of the preprocessing method to apply.
+
+        Notes
+        -----
+        This method invokes the callback `on_method_selected` if it is set.
+        """
+        if self.on_method_selected:
+            self.on_method_selected(method)
 
     def show_buttons(self):
         """
-        Displays all preprocessing method buttons and the apply button.
+        Displays all preprocessing method buttons
         """
         for button in self.buttons.values():
             button.show()
-        self.apply_button.show()
     
     def hide_buttons(self):
         """
-        Hides all preprocessing method buttons and the apply button.
+        Hides all preprocessing method buttons
         """
         for button in self.buttons.values():
             button.hide()
-        self.apply_button.hide()

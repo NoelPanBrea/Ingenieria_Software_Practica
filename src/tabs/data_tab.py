@@ -125,20 +125,13 @@ class DataTab(QWidget):
         
         # Connect preprocessing toolbar buttons
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
-            lambda: self.set_preprocessing_method('delete'))
+            lambda: self.preprocessing_method('delete'))
         self.preprocess_toolbar.buttons['mean'].clicked.connect(
-            lambda: self.set_preprocessing_method('mean'))
+            lambda: self.preprocessing_method('mean'))
         self.preprocess_toolbar.buttons['median'].clicked.connect(
-            lambda: self.set_preprocessing_method('median'))
+            lambda: self.preprocessing_method('median'))
         self.preprocess_toolbar.buttons['constant'].clicked.connect(
             self.handle_constant_method)
-        # Connect apply button to trigger preprocessing and model creation if successful
-        self.preprocess_toolbar.apply_button.clicked.connect(
-            lambda: (
-                self.apply_preprocessing() and 
-                self.column_selector.confirm_button.clicked.emit()
-            )
-        )
 
     def load_model(self):
         """    
@@ -162,6 +155,7 @@ class DataTab(QWidget):
                 return None
             
             # Hide table and column selector for clarity
+            self.table.hide()
             self.column_selector.setVisible(False)
             self.preprocess_label.hide()
             self.preprocess_toolbar.hide_buttons()
@@ -190,6 +184,8 @@ class DataTab(QWidget):
             return
 
         try:
+            self.table.show()
+            
             # Load the dataset into the table and initialize column selection
             self.data = load_file(file_path)
             self.path_label.setText(
@@ -275,16 +271,22 @@ class DataTab(QWidget):
         else:
             self.disable_preprocessing()
 
-    def set_preprocessing_method(self, method: str):
+    def preprocessing_method(self, method: str):
         """
-        Sets the current preprocessing method and displays the 'Apply' button.
+        Sets and applies the current preprocessing method and displays the 'Apply' button.
 
         Parameters
         ----------
         method : str
             Preprocessing method to apply ('delete', 'mean', 'median', 'constant').
         """
-        self.preprocess_applier.set_current_method(method)
+        try:
+            self.preprocess_applier.set_current_method(method)
+            
+            self.apply_preprocessing()
+        except Exception as e:
+            show_error(f'⚠ Error al aplicar el preprocesado: {str(e)} ⚠', self)
+        
 
     def show_selection_summary(self, input_columns: List[str], output_column: str):
         """
@@ -297,11 +299,23 @@ class DataTab(QWidget):
         output_column : str
             Name of the column selected as output.
         """
-        summary = (
-            f'Columnas de entrada: {", ".join(input_columns)}\n'
-            f'Valores nulos: {", ".join(map(str, none_count(self.data, input_columns + [output_column])))}\n'
-            f'Columna de salida: {output_column}'
+        # Calcula los valores nulos por columna
+        all_columns = input_columns + [output_column]
+        null_counts = none_count(self.data, all_columns)
+
+        # Construye la sección de valores nulos con nombre y cantidad
+        null_summary = "\n".join(
+            f"- {col}: {nulos} valores nulos" for col, nulos in zip(all_columns, null_counts)
         )
+
+        # Construye el mensaje final
+        summary = (
+            f"Columnas de entrada: {', '.join(input_columns)}\n"
+            f"Columna de salida: {output_column}\n\n"
+            f"Valores nulos:\n{null_summary}"
+        )
+
+        # Muestra el mensaje en una ventana emergente
         show_message(summary, self)
 
     def enable_preprocessing(self):

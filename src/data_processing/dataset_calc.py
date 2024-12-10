@@ -128,10 +128,7 @@ class PreprocessApplier():
         try:
             if self.columns is not None and self._current_method is not None:
                 self._current_method()
-            else:
-                res = 'Se debe elegir una configuración de preprocesado '
-                res += 'para aplicar'
-                raise IndexError(res)
+                
         except IndexError as e:
             raise Exception(f'{e}')
         except ValueError as e:

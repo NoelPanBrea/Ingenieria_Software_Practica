@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout, 
-    QApplication, QTabBar, QHBoxLayout, QToolButton, QMenu)
+    QApplication, QTabBar, QHBoxLayout, QToolButton, QMenu, QMessageBox)
 from PyQt5.QtCore import Qt
 from tabs.data_tab import DataTab
 from tabs.linear_model_tab import LinearModelTab
@@ -92,10 +92,17 @@ class MainWindow(QMainWindow):
         self.settings_button.setMenu(self.style_menu)
         self.settings_button.setPopupMode(QToolButton.InstantPopup)
 
+        # Create info button
+        self.info_button = QToolButton()
+        self.info_button.setText("ℹ")
+        self.info_button.setFixedSize(50, 50) 
+        self.info_button.clicked.connect(self.show_info)
+        
         # Create tab corner widget for left side
         corner_widget = QWidget()
         corner_layout = QHBoxLayout(corner_widget)
         corner_layout.setContentsMargins(10, 0, 10, 0)
+        corner_layout.addWidget(self.info_button)
         corner_layout.addWidget(self.settings_button)
         
         # Set corner widget in tab widget
@@ -104,6 +111,27 @@ class MainWindow(QMainWindow):
         # Load initial style
         self.load_style(self.style_sheets["Tema Rosa Oscuro"])
 
+    def show_info(self):
+        """
+        Displays an information dialog explaining how the application works.
+        """
+        info_message = QMessageBox(self)
+        info_message.setWindowTitle("Información")
+        info_message.setText(
+            "Bienvenido a la aplicación Linear Regression Model Maker.\n\n"
+            "1. En la pestaña principal, puedes cargar un archivo CSV o cargar un modelo ya creado.\n"
+            "2. Para crear un modelo escoga las columnas de entrada y la columna de salida que desee y confirme la selección.\n"
+            "3. Si hay datos nulos será necesario preprocesarlos con las opciones disponibles que aparecerán.\n"	
+            "4. Cambie a la pestaña del modleo para poder entrenar el modelo.\n"
+            "5. En esta pestaña podrá cambiar la descripción, interactuar con la gráfica y realizar predicciones sobre el modelo.\n"
+            "6. Si desea guardar el modelo entrenado o la gráfica de este podrá hacerlo en la pestaña del modelo.\n"
+            "7. Explora múltiples modelos abriendo nuevas pestañas o cargando modelos ya creados.\n\n"
+            "¡Disfruta creando modelos lineales de manera sencilla!"
+        )
+        info_message.setIcon(QMessageBox.Information)
+        info_message.setStandardButtons(QMessageBox.Ok)
+        info_message.exec_()
+        
     def load_style(self, style_path):
         """
         Load a style sheet from a file.
