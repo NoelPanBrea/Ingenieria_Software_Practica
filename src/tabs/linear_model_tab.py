@@ -111,7 +111,19 @@ class LinearModelTab(QWidget):
         
         # Group 2: Model information
         model_info_group = QGroupBox("Información del Modelo")
-        model_info_layout = QVBoxLayout()
+        model_info_outer_layout = QVBoxLayout()
+        model_info_outer_layout.setContentsMargins(10, 10, 10, 10)
+
+        # Create scroll area for information
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setFrameShape(QFrame.NoFrame)
+
+        # Container for information labels
+        info_container = QWidget()
+        model_info_layout = QVBoxLayout(info_container)
         model_info_layout.setSpacing(5)
         model_info_layout.setContentsMargins(10, 10, 10, 10)
         
@@ -133,9 +145,13 @@ class LinearModelTab(QWidget):
         model_info_layout.addWidget(self.input_columns_label)
         model_info_layout.addWidget(self.output_column_label)
 
+        # Configure the scroll area
+        scroll_area.setWidget(info_container)
+        model_info_outer_layout.addWidget(scroll_area)
+
         # Add model description functionality
-        self.model_description.add_to_layout(model_info_layout)
-        model_info_group.setLayout(model_info_layout)
+        self.model_description.add_to_layout(model_info_outer_layout)
+        model_info_group.setLayout(model_info_outer_layout)
 
         # Group 3: Prediction and visualization
         # Prediction group
