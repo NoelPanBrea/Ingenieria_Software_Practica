@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         # Set main window title and geometry
-        self.setWindowTitle('Linear Regression Model Maker')
+        self.setWindowTitle("Linear Regression Model Maker")
         self.setGeometry(100, 100, 1200, 800)
 
         # Create central widget
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
             Path to the style sheet file
         """
         try:
-            with open(style_path, 'r', encoding='utf-8') as stylesheet_doc:
+            with open(style_path, "r", encoding="utf-8") as stylesheet_doc:
                 self.setStyleSheet(stylesheet_doc.read())
         except Exception as e:
             print(f"Error loading style: {e}")
@@ -223,5 +223,5 @@ class MainWindow(QMainWindow):
             The resize event triggered when the window is resized.
         """
         QMainWindow.resizeEvent(self, event)
-        if hasattr(self, 'data_tab') and self.data_tab.data is not None:
+        if hasattr(self, "data_tab") and self.data_tab.data is not None:
             self.data_tab.table.fill_area(self.data_tab.data.shape[1])

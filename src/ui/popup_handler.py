@@ -15,7 +15,7 @@ class InputDialog(QDialog):
     inputs : list[QLineEdit]
         List of input fields for user entry.
     """
-    def __init__(self, labels: list[str], title: str = 'default title',
+    def __init__(self, labels: list[str], title: str = "default title",
         stylesheet: str = None, parent=None):
 
         super().__init__(parent, QtCore.Qt.WindowCloseButtonHint)
@@ -87,7 +87,7 @@ def show_warning(message: str, parent=None):
     error_msg = QMessageBox(parent=parent)
     error_msg.setIcon(QMessageBox.Warning)
     error_msg.setText(message)
-    error_msg.setWindowTitle('Atención')
+    error_msg.setWindowTitle("Atención")
     error_msg.exec_()
 
 
@@ -103,7 +103,7 @@ def show_error(message: str, parent=None):
     error_msg = QMessageBox(parent=parent)
     error_msg.setIcon(QMessageBox.Critical)
     error_msg.setText(message)
-    error_msg.setWindowTitle('Error')
+    error_msg.setWindowTitle("Error")
     error_msg.exec_()
 
 
@@ -116,10 +116,10 @@ def open_file_dialog(parent=None) -> str:
         file_path: str
     """
     options = QFileDialog.Options()
-    res = 'Todos los Archivos (*.*);;Archivos CSV (*.csv);;Archivos Excel'
-    res += ' (*.xlsx *.xls);;Base de datos SQLite (*.sqlite *.db)'
-    file_path, _ = QFileDialog.getOpenFileName(parent, 'Seleccionar archivo',
-                                               '', res, options=options)
+    res = "Todos los Archivos (*.*);;Archivos CSV (*.csv);;Archivos Excel"
+    res += " (*.xlsx *.xls);;Base de datos SQLite (*.sqlite *.db)"
+    file_path, _ = QFileDialog.getOpenFileName(parent, "Seleccionar archivo",
+                                               "", res, options=options)
     return file_path
 
 
@@ -132,9 +132,9 @@ def save_file_dialog(parent=None) -> str:
         file_path: str
     """
     options = QFileDialog.Options()
-    res = 'Archivo joblib (*.joblib)'
-    file_path, _ = QFileDialog.getSaveFileName(parent, 'Guardar archivo',
-                                               '', res, options=options)
+    res = "Archivo joblib (*.joblib)"
+    file_path, _ = QFileDialog.getSaveFileName(parent, "Guardar archivo",
+                                               "", res, options=options)
     return file_path
 
 def open_model_dialog(parent=None) -> str:
@@ -142,7 +142,7 @@ def open_model_dialog(parent=None) -> str:
     Shows the dialog to load models
     """
     options = QFileDialog.Options()
-    res = 'Todos los Archivos (*.*);;Archivos JOBLIB (*.joblib)'
-    file_path, _ = QFileDialog.getOpenFileName(parent, 'Seleccionar archivo',
-                                               '', res, options=options)
+    res = "Todos los Archivos (*.*);;Archivos JOBLIB (*.joblib)"
+    file_path, _ = QFileDialog.getOpenFileName(parent, "Seleccionar archivo",
+                                               "", res, options=options)
     return file_path

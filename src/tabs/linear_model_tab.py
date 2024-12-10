@@ -10,7 +10,7 @@ from ui.popup_handler import (show_error, show_message,
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from matplotlib import style
-style.use('fivethirtyeight')
+style.use("fivethirtyeight")
 
 
 class LinearModelTab(QWidget):
@@ -245,8 +245,8 @@ class LinearModelTab(QWidget):
             self.mse_label.setText(f"ECM: {float(model_data['metrics']['rmse']):.4f}")
             
             # Update the model description if provided
-            if 'description' in model_data:
-                self.model_description.set_description(model_data['description'])
+            if "description" in model_data:
+                self.model_description.set_description(model_data["description"])
 
             # Enable word wrap on labels that can have long text
             self.formula_label.setWordWrap(True)
@@ -254,8 +254,8 @@ class LinearModelTab(QWidget):
             self.input_columns_label.setWordWrap(True)
             
             # Show intercept and coefficients
-            intercept = model_data['intercept']
-            coefficients = model_data['coefficients']
+            intercept = model_data["intercept"]
+            coefficients = model_data["coefficients"]
             if intercept is not None:
                 self.intercept_label.setText(f"Intercepto: {intercept:.4f}")
                 self.intercept_label.setVisible(True)
@@ -265,16 +265,16 @@ class LinearModelTab(QWidget):
                 self.coefficients_label.setVisible(True)
 
             # Show input and output columns
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
-            self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
+            self.input_columns = model_data["columns"]["input"]
+            self.output_column = model_data["columns"]["output"]
+            self.input_columns_label.setText(f"Columnas de Entrada: {", ".join(self.input_columns)}")
             self.input_columns_label.setVisible(True)
             self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
             self.output_column_label.setVisible(True)
             
             # Configure input fields for prediction
-            self.input_columns = model_data['columns']['input']
-            self.output_column = model_data['columns']['output']
+            self.input_columns = model_data["columns"]["input"]
+            self.output_column = model_data["columns"]["output"]
             self.create_prediction_inputs()
             
             # Show prediction and save buttons
@@ -295,20 +295,20 @@ class LinearModelTab(QWidget):
         try:
             # Reconstruct the model using its coefficients and intercept
             self.model = LinearModel(None, 
-                                loaded_model['columns']['input'],
-                                loaded_model['columns']['output'])
-            self.model.coef_ = np.array(loaded_model['coefficients'])
-            self.model.intercept_ = float(loaded_model['intercept'])
-            self.model.formula = loaded_model['formula']
+                                loaded_model["columns"]["input"],
+                                loaded_model["columns"]["output"])
+            self.model.coef_ = np.array(loaded_model["coefficients"])
+            self.model.intercept_ = float(loaded_model["intercept"])
+            self.model.formula = loaded_model["formula"]
             
             # Display the loaded model's details on the UI
             self.setup_model_display({
-                'formula': loaded_model['formula'],
-                'metrics': loaded_model['metrics'],
-                'description': loaded_model['description'],
-                'columns': loaded_model['columns'],
-                'intercept': loaded_model['intercept'],
-                'coefficients': loaded_model['coefficients']
+                "formula": loaded_model["formula"],
+                "metrics": loaded_model["metrics"],
+                "description": loaded_model["description"],
+                "columns": loaded_model["columns"],
+                "intercept": loaded_model["intercept"],
+                "coefficients": loaded_model["coefficients"]
                 })
             
         except Exception as e:
@@ -381,18 +381,18 @@ class LinearModelTab(QWidget):
 
             # Display the model's details on the UI
             self.setup_model_display({
-                'formula': self.model.formula,
-                'metrics': {
-                    'r2_score': self.model.r2_,
-                    'rmse': self.model.mse_
+                "formula": self.model.formula,
+                "metrics": {
+                    "r2_score": self.model.r2_,
+                    "rmse": self.model.mse_
                 },
-                'description': self.model_description.get_description(),
-                'columns': {
-                    'input': self.input_columns,
-                    'output': self.output_column
+                "description": self.model_description.get_description(),
+                "columns": {
+                    "input": self.input_columns,
+                    "output": self.output_column
                 },
-                'intercept': self.model.intercept_,
-                'coefficients': self.model.coef_
+                "intercept": self.model.intercept_,
+                "coefficients": self.model.coef_
             })
 
             # Create a visualization based on the number of input columns
@@ -434,17 +434,17 @@ class LinearModelTab(QWidget):
         """
         Creates and displays a 2D graph for models with one input column.
         """
-        if not hasattr(self.model, 'x') or not hasattr(self.model, 'y'):
+        if not hasattr(self.model, "x") or not hasattr(self.model, "y"):
             return      
         # Create the figure and canvas for the graph
         fig = Figure(figsize=(4, 3), dpi=50)
         self.canvas = FigureCanvasQTAgg(fig)
         ax = fig.add_subplot(111)
-        ax.set_facecolor('none')
+        ax.set_facecolor("none")
 
         # Plot the real data and regression line
         ax.scatter(self.model.x, self.model.y, label="Datos Reales")
-        ax.plot(self.model.x, self.model.y_pred, color='red', label="Línea de Regresión")
+        ax.plot(self.model.x, self.model.y_pred, color="red", label="Línea de Regresión")
         ax.set_xlabel(self.model.input_columns[0])
         ax.set_ylabel(self.model.output_column)
         ax.legend()
@@ -460,7 +460,7 @@ class LinearModelTab(QWidget):
         fig = Figure(figsize=(4, 3), dpi=75)
         self.canvas = FigureCanvasQTAgg(fig)
         ax = fig.add_subplot(111, projection = "3d")
-        ax.set_facecolor('none')
+        ax.set_facecolor("none")
 
         # Extract variables for the graph
         var1 = [x[0] for x in self.model.x]
@@ -469,7 +469,7 @@ class LinearModelTab(QWidget):
         min2, max2 = self.minmax(var2)
         
         # Plot real data points
-        ax.plot(var1, var2, self.model.y, 'o', markersize = 2, alpha = 0.5, label = "Datos Reales")
+        ax.plot(var1, var2, self.model.y, "o", markersize = 2, alpha = 0.5, label = "Datos Reales")
         
         # Generate a regression plane
         x, y = np.meshgrid(np.linspace(min1,  max1, 20), np.linspace(min2, max2, 20))
@@ -511,7 +511,7 @@ class LinearModelTab(QWidget):
         metrics (R², RMSE), and column information.
         """
         if not self.model:
-            show_error('⚠ Debe primero entrenar o cargar un modelo ⚠')
+            show_error("⚠ Debe primero entrenar o cargar un modelo ⚠")
             return
 
         # Check if model has description and show recommendation dialog if not
@@ -534,26 +534,26 @@ class LinearModelTab(QWidget):
         
         try:
             # Use existing metrics for loaded models, or compute metrics for new ones
-            if hasattr(self, 'loaded_model') and self.loaded_model is not None:
-                metrics = self.loaded_model['metrics']
+            if hasattr(self, "loaded_model") and self.loaded_model is not None:
+                metrics = self.loaded_model["metrics"]
             else:
                 metrics = {
-                    'r2_score': float(self.model.r2_) if hasattr(self.model, 'r2_') 
+                    "r2_score": float(self.model.r2_) if hasattr(self.model, "r2_") 
                             else r2_score(self.model.y, self.model.y_pred),
-                    'rmse': float(self.model.mse_) if hasattr(self.model, 'mse_') 
+                    "rmse": float(self.model.mse_) if hasattr(self.model, "mse_") 
                         else mean_squared_error(self.model.y, self.model.y_pred)
                 }
 
             # Prepare the model data dictionary
             model_data = {
-                'formula': self.model.formula,
-                'coefficients': self.model.coef_.tolist(),
-                'intercept': float(self.model.intercept_),
-                'description': self.model_description.get_description(),
-                'metrics': metrics,
-                'columns': {
-                    'input': self.input_columns,
-                    'output': self.output_column
+                "formula": self.model.formula,
+                "coefficients": self.model.coef_.tolist(),
+                "intercept": float(self.model.intercept_),
+                "description": self.model_description.get_description(),
+                "metrics": metrics,
+                "columns": {
+                    "input": self.input_columns,
+                    "output": self.output_column
                 }
             }
         
