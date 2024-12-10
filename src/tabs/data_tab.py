@@ -132,8 +132,13 @@ class DataTab(QWidget):
             lambda: self.set_preprocessing_method('median'))
         self.preprocess_toolbar.buttons['constant'].clicked.connect(
             self.handle_constant_method)
+        # Connect apply button to trigger preprocessing and model creation if successful
         self.preprocess_toolbar.apply_button.clicked.connect(
-            self.apply_preprocessing)
+            lambda: (
+                self.apply_preprocessing() and 
+                self.column_selector.confirm_button.clicked.emit()
+            )
+        )
 
     def load_model(self):
         """    
@@ -352,6 +357,11 @@ class DataTab(QWidget):
         ------
         Exception
             If an error occurs during data preprocessing.
+
+        Returns
+        -------
+        bool
+            True if preprocessing was successful, False otherwise
         """
         try:
             # Apply the preprocessing method to the selected columns
@@ -365,5 +375,7 @@ class DataTab(QWidget):
             self.on_output_column_selection_changed()
 
             show_message('✅ ¡Preprocesado aplicado exitosamente!', self)
+            return True
         except Exception as e:
             show_error(f'Error al aplicar el preprocesado: {str(e)}', self)
+            return False

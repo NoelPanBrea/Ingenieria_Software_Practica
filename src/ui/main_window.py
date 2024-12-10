@@ -146,6 +146,14 @@ class MainWindow(QMainWindow):
             show_error("Debe seleccionar columnas de entrada y salida antes de crear un modelo.", self)
             return
 
+        # Check for null values in selected columns
+        selected_columns = self.data_tab.selected_input_columns + [self.data_tab.selected_output_column]
+        has_nulls = self.data_tab.data[selected_columns].isnull().any().any()
+        
+        if has_nulls:
+            show_error("Hay valores nulos en los datos seleccionados. Por favor, aplique algún método de preprocesado antes de crear el modelo.", self)
+            return
+
         self.tabs_counter += 1
 
         # Create a new linear model tab
