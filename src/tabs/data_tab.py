@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout
+    QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QSpacerItem, QSizePolicy
 )
 from typing import List, Optional
 import joblib
@@ -74,6 +74,8 @@ class DataTab(QWidget):
 
         # Data preview table
         self.table = DataTable()
+        self.table.setMinimumHeight(500)
+        self.table.setMaximumHeight(500)
 
         # Initialize column selector and preprocessing section
         self.init_selector()
@@ -155,7 +157,10 @@ class DataTab(QWidget):
                 return None
             
             # Hide table and column selector for clarity
-            self.table.hide()
+            self.table.clear()
+            self.table.setRowCount(0)
+            self.table.setColumnCount(0)
+            
             self.column_selector.setVisible(False)
             self.preprocess_label.hide()
             self.preprocess_toolbar.hide_buttons()
@@ -184,8 +189,6 @@ class DataTab(QWidget):
             return
 
         try:
-            self.table.show()
-            
             # Load the dataset into the table and initialize column selection
             self.data = load_file(file_path)
             self.path_label.setText(
