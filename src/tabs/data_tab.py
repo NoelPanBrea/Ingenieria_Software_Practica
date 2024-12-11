@@ -155,7 +155,6 @@ class DataTab(QWidget):
                 return None
             
             # Hide table and column selector for clarity
-            self.table.hide()
             self.column_selector.setVisible(False)
             self.preprocess_label.hide()
             self.preprocess_toolbar.hide_buttons()
@@ -184,7 +183,6 @@ class DataTab(QWidget):
             return
 
         try:
-            self.table.show()
             
             # Load the dataset into the table and initialize column selection
             self.data = load_file(file_path)
@@ -262,7 +260,9 @@ class DataTab(QWidget):
         # Store the selected columns and display a summary
         self.selected_input_columns = input_columns
         self.selected_output_column = output_column
-        self.none_columns = none_count(self.data, input_columns + [output_column])
+        columns = input_columns + [output_column]
+        none_columns = none_count(self.data, columns)
+        self.null_columns = [x for i, x in enumerate(columns) if none_columns[i] >= 1]
         self.show_selection_summary(input_columns, output_column)
         
         # Enable preprocessing if there are null values
@@ -345,24 +345,17 @@ class DataTab(QWidget):
         """
         if self.selected_input_columns:
 
-            # Combine selected input columns and output column
-            selected_columns = self.selected_input_columns + [self.selected_output_column]
-
-            # Filter columns that are selected and contain null values
-            null_columns = [
-                column for column in selected_columns
-                if column in self.data.columns and self.data[column].isnull().any()]
-            
             # Create and display the input dialog for constants
             input_window = InputDialog(
-                null_columns, "Introduzca las constantes", parent = self)
+                self.null_columns, "Introduzca las constantes", parent = self)
+            input_window.buttonBox.accepted.connect(self.apply_preprocessing)
             input_window.exec()
 
             # Retrieve the constants entered by the user
             constants = input_window.get_inputs()
             self.preprocess_applier.set_current_method("constant", constants)
 
-    def apply_preprocessing(self):
+    def apply_preprocessing(self) -> bool:
         """
         Applies the selected preprocessing method to the loaded data
         and updates the table and column selector.
@@ -379,9 +372,7 @@ class DataTab(QWidget):
         """
         try:
             # Apply the preprocessing method to the selected columns
-            self.preprocess_applier.apply_preprocess(
-                self.data,
-                self.selected_input_columns + [self.selected_output_column])
+            self.preprocess_applier.apply_preprocess(self.data, self.null_columns)
 
             # Update the data table with the preprocessed data
             self.table.load_more_rows()

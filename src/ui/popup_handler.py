@@ -21,7 +21,7 @@ class InputDialog(QDialog):
         super().__init__(parent, QtCore.Qt.WindowCloseButtonHint)
 
         # Create "Aceptar" and "Cancelar" buttons
-        buttonBox = QDialogButtonBox(
+        self.buttonBox = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
         # Set up the dialog layout
@@ -41,11 +41,11 @@ class InputDialog(QDialog):
             layout.addRow(lab, line_edit)
 
         # Add the button box to the layout
-        layout.addWidget(buttonBox)
+        layout.addWidget(self.buttonBox)
 
         # Connect the buttons to their respective methods
-        buttonBox.accepted.connect(self.accept)
-        buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
     def get_inputs(self) -> tuple[str]:
         """
