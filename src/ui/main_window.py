@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout, 
     QApplication, QTabBar, QHBoxLayout, QToolButton, QMenu, QMessageBox)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from tabs.data_tab import DataTab
 from tabs.linear_model_tab import LinearModelTab
 from ui.popup_handler import show_error
