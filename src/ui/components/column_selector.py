@@ -46,7 +46,7 @@ class ColumnSelector(QWidget):
         super().__init__(parent)
         self.input_column_selector = QListWidget()
         self.output_column_selector = ComboBox()
-        self.confirm_button = QPushButton('Confirmar selección')
+        self.confirm_button = QPushButton('Confirmar')
         self.data = None
         self.init_ui()
 

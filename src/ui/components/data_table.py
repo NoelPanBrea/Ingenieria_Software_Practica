@@ -42,7 +42,6 @@ class DataTable(QTableWidget):
         """
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.setMinimumHeight(100)
 
         # Setup cell display handler
         self.setItemDelegate(HighlightDelegate())

@@ -267,7 +267,7 @@ class LinearModelTab(QWidget):
             # Show input and output columns
             self.input_columns = model_data["columns"]["input"]
             self.output_column = model_data["columns"]["output"]
-            self.input_columns_label.setText(f"Columnas de Entrada: {", ".join(self.input_columns)}")
+            self.input_columns_label.setText(f"Columnas de Entrada: {', '.join(self.input_columns)}")
             self.input_columns_label.setVisible(True)
             self.output_column_label.setText(f"Columna de Salida: {self.output_column}")
             self.output_column_label.setVisible(True)
