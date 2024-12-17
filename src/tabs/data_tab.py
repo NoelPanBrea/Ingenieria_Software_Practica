@@ -344,26 +344,39 @@ class DataTab(QWidget):
         -----
         This method only activates if input columns are selected.
         """
-        if self.selected_input_columns:
-
+        if self.selected_input_columns and self.selected_output_column != None:
             # Combine selected input columns and output column
             selected_columns = self.selected_input_columns + [self.selected_output_column]
-
+            
             # Filter columns that are selected and contain null values
             null_columns = [
                 column for column in selected_columns
                 if column in self.data.columns and self.data[column].isnull().any()]
-            
+        
+            unique_columns = []
+            for column in null_columns:
+                if column not in unique_columns:
+                    unique_columns.append(column)
+          
             # Create and display the input dialog for constants
             input_window = InputDialog(
-                null_columns, "Introduzca las constantes", parent = self)
-            input_window.exec()
+                unique_columns, "Introduzca las constantes", parent=self)
+            
+            # Use result() to handle the dialog's return value
+            if input_window.exec_() == InputDialog.Accepted:
+                # Convert tuple to list and retrieve the constants entered by the user
+                constants = list(input_window.get_inputs())
+                
+                # Set the method with the constants
+                self.preprocess_applier.set_current_method("constant", constants)
+                
+                # Apply preprocessing
+                try:
+                    self.apply_preprocessing(null_columns)
+                except Exception as e:
+                    show_error(f"⚠ Error al aplicar el preprocesado: {str(e)} ⚠", self)
 
-            # Retrieve the constants entered by the user
-            constants = input_window.get_inputs()
-            self.preprocess_applier.set_current_method("constant", constants)
-
-    def apply_preprocessing(self):
+    def apply_preprocessing(self, columns = None):
         """
         Applies the selected preprocessing method to the loaded data
         and updates the table and column selector.
@@ -378,11 +391,21 @@ class DataTab(QWidget):
         bool
             True if preprocessing was successful, False otherwise
         """
+        if columns != None:
+            selected_columns = columns
+        else:
+            selected_columns = self.selected_input_columns + [self.selected_output_column]
+            
         try:
             # Apply the preprocessing method to the selected columns
+            preprocess_columns = []
+            for column in selected_columns:
+                if column  not in preprocess_columns:
+                    preprocess_columns.append(column)
+                    
             self.preprocess_applier.apply_preprocess(
                 self.data,
-                self.selected_input_columns + [self.selected_output_column])
+                preprocess_columns)
 
             # Update the data table with the preprocessed data
             self.table.load_more_rows()

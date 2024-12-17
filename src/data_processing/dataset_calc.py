@@ -59,8 +59,11 @@ class PreprocessApplier():
         cte : list[float], optional
             List of constants for the "constant" method.
         """
+        
         self._current_method = self._methods[value]
+        print(self._current_method)
         self.cte = cte
+        print(self.cte)
 
     def delete(self) -> None:
         """
@@ -101,11 +104,25 @@ class PreprocessApplier():
         Replaces null values in the specified columns with 
         constant values defined in the cte list.
         """
+        # Validate the length of constants and columns
+        if self.cte is None:
+            raise ValueError("No se han proporcionado constantes")
+        
+        # Ensure we have a constant for each column
+        while len(self.cte) < len(self.columns):
+            # Pad the constants list with None if needed
+            self.cte.extend([None] * (len(self.columns) - len(self.cte)))
+          
+        # Replace null values with constants
         for i, x in enumerate(self.columns):
-            if self.cte[i]:
-                self.dataframe[x] = self.dataframe[x].fillna(float(self.cte[i]))
-            else:
-                raise ValueError()
+            # Only fill if a constant is provided and is not None
+            if i < len(self.cte) and self.cte[i] is not None:
+                print(self.cte[i])
+                try:
+                    constant_value = float(self.cte[i])
+                    self.dataframe[x] = self.dataframe[x].fillna(constant_value)
+                except (ValueError, TypeError):
+                    raise ValueError(f"No se puede convertir '{self.cte[i]}' a un número decimal")
 
     def apply_preprocess(self, dataframe: DataFrame, columns: list[str]) -> None:
         """
@@ -125,6 +142,7 @@ class PreprocessApplier():
         """
         self.dataframe = dataframe
         self.columns = columns
+        print(columns)
         try:
             if self.columns is not None and self._current_method is not None:
                 self._current_method()
