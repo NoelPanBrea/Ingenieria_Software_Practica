@@ -245,7 +245,7 @@ class LinearModelTab(QWidget):
                 x = np.linspace(min(x), max(x), 20)
                 z = np.linspace(min(z), max(z), 20)
                 prediction = np.linspace(min(self.model.y_pred), max(self.model.y_pred), 20)
-                x, z, prediction = np.meshgrid(x, z, prediction)
+                x, z = np.meshgrid(x, z)
                 self.plot_manager.plot3d(x, z, self.model.y,
                     prediction, selected_columns)
                 self.plot_manager.draw()
