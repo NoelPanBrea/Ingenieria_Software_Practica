@@ -106,6 +106,24 @@ def show_error(message: str, parent=None):
     error_msg.setWindowTitle("Error")
     error_msg.exec_()
 
+def show_suggestion(title: str, text: str, informative_text: str, parent=None):
+    msg_box = QMessageBox(parent=parent)
+    msg_box.setIcon(QMessageBox.Warning)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setInformativeText(informative_text)
+    msg_box.setWindowTitle("Recomendación")
+    msg_box.setText("El modelo no tiene una descripción.")
+    msg_box.setInformativeText("Se recomienda añadir una descripción para mejor documentación. ¿Desea continuar sin descripción?")
+    
+    # Create custom button
+    msg_box.addButton("Sí", QMessageBox.YesRole)
+    no_button = msg_box.addButton("No", QMessageBox.NoRole)
+    msg_box.setDefaultButton(no_button)
+    
+    msg_box.exec_()
+    if msg_box.clickedButton() == no_button:
+        return
 
 def open_file_dialog(parent=None) -> str:
     """

@@ -1,8 +1,6 @@
-import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-import numpy as np
+from numpy import ndarray
 
 class LinearModel:
     def __init__(self, data, input_columns, output_column):
@@ -94,31 +92,34 @@ class LinearModel:
         self.intercept_ = self.model.intercept_
 
         # Ensure predictions are generated using the training data
-        self.y_pred = self.predict(self.x)  # Use the predict method
+        self.y_pred = self.model.predict(self.x)  # Use the predict method
         self.evaluate()
         self.calc_formula()
     
-    def predict(self, data_to_predict: np.ndarray = None) -> np.ndarray:
+    def predict(self, input: ndarray = None) -> ndarray:
         """
         Makes predictions using the fitted model.
 
-        If `data_to_predict` is not provided, it defaults to the training data.
+        If `input` is not provided, it defaults to the training data.
 
         Parameters
         ----------
-        data_to_predict : np.ndarray, optional
+        input : ndarray, optional
             Data for which predictions are required.
 
         Returns
         -------
-        np.ndarray
+        ndarray
             Predicted values.
         """
-        if data_to_predict is None:
-            data_to_predict = self.x  # Usa los datos de entrenamiento si no se especifican otros
+        if input is None:
+            input = self.x[0]  # Usa los datos de entrenamiento si no se especifican otros
+        prediction = self.intercept_
+        for i in range(len(input)):
+            prediction += self.coef_[i] * input[i]
 
         # Return predictions for the input data
-        return self.model.predict(data_to_predict)
+        return prediction
 
     def evaluate(self):      
         """

@@ -1,5 +1,4 @@
-import os
-from PyQt5.QtWidgets import (QLabel, QLineEdit, QFrame, QMessageBox)
+from PyQt5.QtWidgets import (QLabel, QLineEdit)
 from PyQt5.QtCore import Qt
 
 class ModelDescription:

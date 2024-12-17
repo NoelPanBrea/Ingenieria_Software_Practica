@@ -75,7 +75,7 @@ class DataTab(QWidget):
         # Data preview table
         self.table = DataTable()
         self.table.setMinimumHeight(500)
-        self.table.setMaximumHeight(500)
+        #self.table.setMaximumHeight(500)
 
         # Initialize column selector and preprocessing section
         self.init_selector()
