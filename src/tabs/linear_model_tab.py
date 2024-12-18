@@ -240,14 +240,11 @@ class LinearModelTab(QWidget):
                         self.model.y_pred, selected_columns)
                 self.plot_manager.draw()
             elif len(self.model.input_columns) == 2:
-                x = [x[0] for x in self.model.x]
-                z = [x[1] for x in self.model.x]
-                x = np.linspace(min(x), max(x), 20)
-                z = np.linspace(min(z), max(z), 20)
-                prediction = np.linspace(min(self.model.y_pred), max(self.model.y_pred), 20)
-                x, z = np.meshgrid(x, z)
-                self.plot_manager.plot3d(x, z, self.model.y,
-                    prediction, selected_columns)
+                self.plot_manager.plot3d([x[0] for x in self.model.x],
+                                          [x[1] for x in self.model.x],
+                                          self.model.y,
+                                            self.model.y_pred,
+                                            selected_columns)
                 self.plot_manager.draw()
             else:
                 res = "No se puede crear una gráfica con más de 2 columnas de entrada. "

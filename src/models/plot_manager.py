@@ -1,7 +1,9 @@
 import numpy as np
+import random as rand
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from matplotlib import style
+from scipy.interpolate import griddata
 style.use("fivethirtyeight")
 
 
@@ -68,7 +70,16 @@ class PlotManager():
                   alpha=0.5, label="Datos Reales")
         # Generate a regression plane
         axes.plot(x, y, prediction)
-        axes.plot_surface(x, y, prediction, color="red",
+
+        xi = np.linspace(min(x), max(x), 100)
+        yi = np.linspace(min(y), max(y), 100)
+        prediction = np.linspace(min(prediction), max(prediction), 100)
+        x = rand.choices(x, k=100)
+        y = rand.choices(y, k=100)
+        xi, yi = np.meshgrid(xi, yi)
+        zi = griddata((x, y), prediction, (xi, yi), method="linear")
+
+        axes.plot_surface(xi, yi, zi, color="red",
                           alpha=0.5, label="Plano de Regresion")
         axes.set_xlabel(labels[0])
         axes.set_ylabel(labels[1])
