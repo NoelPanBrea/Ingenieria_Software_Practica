@@ -78,9 +78,9 @@ class InfoGroup(BasicGroup):
     
     def set_label_texts(self, model_data: dict):
         # Update UI labels with model formula and metrics
-        self.formula_label.setText(f"Fórmula del Modelo: {model_data["formula"]}")
-        self.r2_label.setText(f"R²: {float(model_data["metrics"]["r2_score"]):.4f}")
-        self.mse_label.setText(f"ECM: {float(model_data["metrics"]["rmse"]):.4f}")
+        self.formula_label.setText(f"Fórmula del Modelo: {model_data['formula']}")	
+        self.r2_label.setText(f"R²: {float(model_data['metrics']['r2_score']):.4f}")
+        self.mse_label.setText(f"ECM: {float(model_data['metrics']['rmse']):.4f}")
 
         # Update the model description if provided
         if "description" in model_data:
