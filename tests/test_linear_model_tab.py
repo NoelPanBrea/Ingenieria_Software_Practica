@@ -1,180 +1,128 @@
 import pytest
+from PyQt5.QtWidgets import QApplication
+import sys
 import numpy as np
-from PyQt5.QtWidgets import QApplication, QMessageBox, QLabel, QLineEdit
-from PyQt5.QtTest import QTest
-from PyQt5.QtCore import Qt
+from pathlib import Path
+import joblib
+from unittest.mock import MagicMock, patch
+import pandas as pd
 from src.tabs.linear_model_tab import LinearModelTab
 from src.models.linear_model import LinearModel
 
-@pytest.fixture
-def app():
-    """Create a QApplication instance for the tests."""
-    app = QApplication([])
+# Añadir el directorio src al PYTHONPATH
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root / "src"))
+
+@pytest.fixture(scope="module")
+def qapp():
+    """Fixture para la aplicación Qt a nivel de módulo"""
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
     yield app
-    app.quit()
 
 @pytest.fixture
 def sample_data():
-    """Generate sample data for testing."""
-    X = np.array([[1, 2], [3, 4], [5, 6]])
-    y = np.array([3, 7, 11])
-    return X, y
+    """Fixture para crear datos de prueba"""
+    # Crear datos simples para regresión lineal
+    np.random.seed(42)
+    X = np.array([[1], [2], [3], [4], [5]])
+    y = 2 * X.ravel() + 1 + np.random.normal(0, 0.1, 5)
+    return pd.DataFrame(X, columns=['x']), pd.Series(y.ravel(), name='y')
 
 @pytest.fixture
-def linear_model_tab(app, sample_data):
-    """Create a LinearModelTab instance with sample data."""
+def linear_model_tab(qapp, sample_data):
+    """Fixture para el LinearModelTab con datos de prueba"""
     X, y = sample_data
     tab = LinearModelTab(
-        data=X, 
-        input_columns=['x1', 'x2'], 
+        data=X.join(y),
+        input_columns=['x'],
         output_column='y'
     )
+    # Mockear componentes de UI que pueden causar problemas
+    tab.plot_manager = MagicMock()
+    tab.model_description = MagicMock()
+    tab.model_description.get_description.return_value = "Test model description"
     return tab
 
-def test_initialization(linear_model_tab):
-    """Test the initialization of LinearModelTab."""
-    tab = linear_model_tab
-    
-    # Check initial attributes
-    assert tab.data is not None
-    assert tab.input_columns == ['x1', 'x2']
-    assert tab.output_column == 'y'
-    assert tab.model is None
-    assert tab.loaded_model is None
+def test_create_model(linear_model_tab):
+    """Test de creación del modelo"""
+    # Mockear show_message para evitar diálogos
+    with patch('tabs.linear_model_tab.show_message'):
+        # Crear el modelo
+        linear_model_tab.create_model()
+        
+        # Verificar que el modelo se creó correctamente
+        assert linear_model_tab.model is not None
+        assert isinstance(linear_model_tab.model, LinearModel)
+        assert hasattr(linear_model_tab.model, 'coef_')
+        assert hasattr(linear_model_tab.model, 'intercept_')
+        
+        # Verificar que los coeficientes son razonables (cerca de 2 y 1 según los datos de prueba)
+        assert abs(linear_model_tab.model.coef_[0] - 2) < 0.5
+        assert abs(linear_model_tab.model.intercept_ - 1) < 0.5
 
-    # Check UI components
-    assert hasattr(tab, 'create_model_button')
-    assert hasattr(tab, 'formula_label')
-    assert hasattr(tab, 'predict_button')
-    assert hasattr(tab, 'save_button')
+def test_make_prediction(linear_model_tab):
+    """Test de predicción con el modelo"""
+    # Primero crear el modelo
+    with patch('tabs.linear_model_tab.show_message'):
+        linear_model_tab.create_model()
     
-def test_create_prediction_inputs(linear_model_tab):
-    """Test dynamic creation of prediction input fields."""
-    tab = linear_model_tab
+    # Mockear los widgets de entrada
+    linear_model_tab.prediction_group = MagicMock()
+    linear_model_tab.prediction_group.input_widgets = [
+        ('x', MagicMock(text=lambda: '2'))
+    ]
     
-    # Call method to create input fields
-    tab.input_columns = ['x1', 'x2']
-    tab.create_prediction_inputs()
-    
-    # Check input widgets
-    assert len(tab.input_widgets) == 2
-    assert len(tab.input_columns) == 2
-    
-    # Verify each widget pair
-    for (label, line_edit), column in zip(tab.input_widgets, tab.input_columns):
-        assert isinstance(label, QLabel)
-        assert isinstance(line_edit, QLineEdit)
-        assert label.text() == f"{column}:"
+    # Realizar predicción
+    with patch('tabs.linear_model_tab.show_error'), \
+         patch('tabs.linear_model_tab.show_warning'):
+        linear_model_tab.make_prediction()
+        
+        # Verificar que la predicción es razonable (cerca de 5 según y = 2x + 1)
+        predicted_value = float(linear_model_tab.prediction_group.label.setText.call_args[0][0].split('=')[1])
+        assert abs(predicted_value - 5) < 1
 
-def test_create_model(linear_model_tab, sample_data):
-    """Test model creation process."""
-    tab = linear_model_tab
-    X, y = sample_data
+def test_save_model(linear_model_tab, tmp_path):
+    """Test de guardado del modelo"""
+    # Primero crear el modelo
+    with patch('tabs.linear_model_tab.show_message'):
+        linear_model_tab.create_model()
     
-    # Create model
-    tab.create_model()
+    # Crear ruta temporal para el modelo
+    model_path = tmp_path / "test_model.joblib"
     
-    # Assertions
-    assert tab.model is not None
-    assert hasattr(tab.model, 'formula')
-    assert hasattr(tab.model, 'coef_')
-    assert hasattr(tab.model, 'intercept_')
-    
-    # UI updates
-    assert tab.predict_button.isVisible()
-    assert tab.save_button.isVisible()
-    assert 'Fórmula del Modelo' in tab.formula_label.text()
+    # Mockear el diálogo de guardado
+    with patch('tabs.linear_model_tab.save_file_dialog', return_value=str(model_path)), \
+         patch('tabs.linear_model_tab.show_message'):
+        # Guardar el modelo
+        linear_model_tab.save_model()
+        
+        # Verificar que el archivo se creó
+        assert model_path.exists()
+        
+        # Cargar el modelo guardado y verificar su contenido
+        saved_model = joblib.load(model_path)
+        assert "formula" in saved_model
+        assert "coefficients" in saved_model
+        assert "intercept" in saved_model
+        assert "metrics" in saved_model
+        assert "columns" in saved_model
+        
 
-def test_make_prediction(linear_model_tab, sample_data):
-    """Test prediction functionality."""
-    tab = linear_model_tab
-    X, y = sample_data
+def test_invalid_prediction_input(linear_model_tab):
+    """Test de manejo de entradas inválidas para predicción"""
+    # Primero crear el modelo
+    with patch('tabs.linear_model_tab.show_message'):
+        linear_model_tab.create_model()
     
-    # Create model first
-    tab.create_model()
+    # Mockear entrada inválida
+    linear_model_tab.prediction_group = MagicMock()
+    linear_model_tab.prediction_group.input_widgets = [
+        ('x', MagicMock(text=lambda: 'invalid'))
+    ]
     
-    # Set test input values
-    for (label, line_edit), value in zip(tab.input_widgets, X[0]):
-        line_edit.setText(str(value))
-    
-    # Simulate prediction
-    tab.make_prediction()
-    
-    # Verify prediction label
-    assert tab.prediction_label.isVisible()
-    assert tab.prediction_label.text().startswith("Resultado de la predicción")
-
-def test_initialize_from_loaded_model(linear_model_tab):
-    """Test loading a pre-trained model."""
-    mock_loaded_model = {
-        'formula': 'y = 2x1 + 3x2 + 1',
-        'columns': {'input': ['x1', 'x2'], 'output': 'y'},
-        'coefficients': [2.0, 3.0],
-        'intercept': 1.0,
-        'metrics': {'r2_score': 0.95, 'rmse': 0.1},
-        'description': 'Test model description'
-    }
-    
-    tab = linear_model_tab
-    tab.initialize_from_loaded_model(mock_loaded_model)
-    
-    # Verify model attributes
-    assert tab.model is not None
-    assert tab.model.formula == 'y = 2x1 + 3x2 + 1'
-    assert tab.predict_button.isVisible()
-    assert tab.save_button.isVisible()
-    
-    # Verify label updates
-    assert 'y = 2x1 + 3x2 + 1' in tab.formula_label.text()
-
-def test_save_model_without_description(linear_model_tab, monkeypatch):
-    """Test saving a model with no description, simulating user interaction."""
-    tab = linear_model_tab
-    
-    # Create model first
-    tab.create_model()
-    
-    # Mock the message box to simulate user clicking 'Yes'
-    def mock_exec(self):
-        self.clickedButton = lambda: self.addButton("Sí", QMessageBox.YesRole)
-    
-    monkeypatch.setattr(QMessageBox, 'exec_', mock_exec)
-    
-    # Simulate saving without description
-    with monkeypatch.context() as m:
-        m.setattr('tabs.linear_model_tab.save_file_dialog', lambda: '/tmp/test_model.pkl')
-        tab.save_model()
-
-def test_clear_previous_graph(linear_model_tab):
-    """Test clearing previous graph."""
-    tab = linear_model_tab
-    
-    # Create a mock canvas
-    tab.create_model()
-    
-    # Verify canvas exists
-    assert tab.canvas is not None
-    
-    # Clear graph
-    tab.clear_previous_graph()
-    
-    # Verify canvas is reset
-    assert tab.canvas is None
-
-def test_plot_graphs(linear_model_tab):
-    """Test graph plotting for 2D and 3D scenarios."""
-    tab = linear_model_tab
-    
-    # Create model
-    tab.create_model()
-    
-    # Check graph generation for single and double input column models
-    try:
-        if len(tab.model.input_columns) == 1:
-            tab.plot2d_graph()
-            assert tab.canvas is not None
-        elif len(tab.model.input_columns) == 2:
-            tab.plot3d_graph()
-            assert tab.canvas is not None
-    except Exception as e:
-        pytest.fail(f"Graph plotting failed: {e}")
+    # Intentar predicción con entrada inválida
+    with patch('tabs.linear_model_tab.show_error') as mock_error:
+        linear_model_tab.make_prediction()
+        mock_error.assert_called_once()

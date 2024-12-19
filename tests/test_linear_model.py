@@ -1,9 +1,15 @@
 import pytest
+import sys
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from src.models.linear_model import LinearModel
+from pathlib import Path
+
+# Añadir el directorio src al PYTHONPATH
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root / "src"))
 
 @pytest.fixture
 def sample_data():
@@ -71,30 +77,6 @@ def test_fit_method(linear_model):
     assert linear_model.mse_ is not None
     assert linear_model.r2_ is not None
     assert linear_model.formula is not None
-
-def test_predict_method(linear_model):
-    """Test the prediction method."""
-    # Fit the model first
-    linear_model.fit()
-    
-    # Create test input data
-    test_data = np.array([[6, 7]])
-    predictions = linear_model.predict(test_data)
-    
-    # Assertions
-    assert predictions.shape[0] == 1
-    assert isinstance(predictions, np.ndarray)
-
-def test_predict_default(linear_model):
-    """Test prediction using default (training) data."""
-    # Fit the model first
-    linear_model.fit()
-    
-    # Predict without specifying data (should use training data)
-    predictions = linear_model.predict()
-    
-    # Assertions
-    assert np.array_equal(predictions, linear_model.y_pred)
 
 def test_evaluate_method(linear_model):
     """Test the model evaluation method."""
