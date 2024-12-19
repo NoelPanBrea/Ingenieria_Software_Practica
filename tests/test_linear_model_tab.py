@@ -6,8 +6,8 @@ from pathlib import Path
 import joblib
 from unittest.mock import MagicMock, patch
 import pandas as pd
-from src.tabs.linear_model_tab import LinearModelTab
-from src.models.linear_model import LinearModel
+from tabs.linear_model_tab import LinearModelTab
+from models.linear_model import LinearModel
 
 # Añadir el directorio src al PYTHONPATH
 project_root = Path(__file__).parent.parent
