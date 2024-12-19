@@ -161,8 +161,6 @@ class LinearModelTab(QWidget):
             self.prediction_group.enable_line_edits()
             self.prediction_group.button.setVisible(True)
             self.save_button.setVisible(True)
-   
-            
 
             # Refresh the UI after updates
             self.update()
@@ -192,6 +190,16 @@ class LinearModelTab(QWidget):
                 "intercept": loaded_model["intercept"],
                 "coefficients": loaded_model["coefficients"]
                 })
+            
+                        # Show a message inside the graph container
+            message_label = QLabel(
+                "No se puede crear una gráfica a partir de un modelo cargado."
+            )
+            message_label.setStyleSheet("color: white; font-weight: bold;")
+            message_label.setAlignment(Qt.AlignCenter)
+        
+            # Add the message to the graph container
+            self.graph_layout.addWidget(message_label)
 
         except Exception as e:
             show_error(f"Error al inicializar el modelo cargado: {str(e)}", self)
@@ -247,10 +255,16 @@ class LinearModelTab(QWidget):
                                             selected_columns)
                 self.plot_manager.draw()
             else:
-                res = "No se puede crear una gráfica con más de 2 columnas de entrada. "
-                res += "Para visualizar el modelo, seleccione un máximo de 2 variables independientes."
-                show_message(res, self)
+                # Show a message inside the graph container
+                message_label = QLabel(
+                    "No se puede crear una gráfica con más de 2 columnas de entrada."
+                )
+                message_label.setStyleSheet("color: white; font-weight: bold;")
+                message_label.setAlignment(Qt.AlignCenter)
             
+                # Add the message to the graph container
+                self.graph_layout.addWidget(message_label)
+
             show_message("El modelo de regresión lineal ha sido creado exitosamente.", self)
 
         except Exception as e:
