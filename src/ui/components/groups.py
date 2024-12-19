@@ -135,7 +135,7 @@ class PredictionGroup(BasicGroup):
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
 
-        self.scroll_area.setMinimumHeight(50)
+        self.scroll_area.setMinimumHeight(200)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
