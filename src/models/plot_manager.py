@@ -2,7 +2,6 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from matplotlib import style
-from scipy.interpolate import griddata
 style.use("fivethirtyeight")
 
 
@@ -51,7 +50,7 @@ class PlotManager():
         """
         Fills the figure with a 2d plot using the data provided.
         """
-        
+
         axes = self.figure.add_subplot(111)
         axes.set_facecolor("none")
         # Plot all the data

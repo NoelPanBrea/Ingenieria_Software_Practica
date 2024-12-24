@@ -2,6 +2,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from numpy import ndarray
 
+
 class LinearModel:
     def __init__(self, data, input_columns, output_column):
         """
@@ -95,7 +96,7 @@ class LinearModel:
         self.y_pred = self.model.predict(self.x)  # Use the predict method
         self.evaluate()
         self.calc_formula()
-    
+
     def predict(self, input: ndarray = None) -> ndarray:
         """
         Makes predictions using the fitted model.
@@ -113,7 +114,8 @@ class LinearModel:
             Predicted values.
         """
         if input is None:
-            input = self.x[0]  # Usa los datos de entrenamiento si no se especifican otros
+            # Usa los datos de entrenamiento si no se especifican otros
+            input = self.x[0]
         prediction = self.intercept_
         for i in range(len(input)):
             prediction += self.coef_[i] * input[i]
@@ -121,7 +123,7 @@ class LinearModel:
         # Return predictions for the input data
         return prediction
 
-    def evaluate(self):      
+    def evaluate(self):
         """
         Evaluates the performance of the model.
 
@@ -134,8 +136,9 @@ class LinearModel:
             If predictions have not been generated before calling this method.
         """
         if self.y_pred is None:
-            raise ValueError("Predicciones no generadas. Asegúrate de llamar a 'fit' antes de evaluar.")
-        
+            raise ValueError(
+                "Predicciones no generadas. Asegúrate de llamar a 'fit' antes de evaluar.")
+
         # Calculate MSE and R² score
         self.mse_ = mean_squared_error(self.y, self.y_pred)
         self.r2_ = r2_score(self.y, self.y_pred)
@@ -149,7 +152,7 @@ class LinearModel:
         """
         # Start the formula with the intercept
         self.formula = f"{self.output_column} = {self.intercept_:.2f}"
-        
+
         # Add terms for each input column and its corresponding coefficient
         for i, col in enumerate(self.input_columns):
             self.formula += f" + ({self.coef_[i]:.2f} * {col})"

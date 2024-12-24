@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtWidgets
 class ComboBox(QtWidgets.QComboBox):
     new_signal = QtCore.pyqtSignal(str, str)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(ComboBox, self).__init__(parent)
         self.last_selected = 0
         self.current_selection = 0

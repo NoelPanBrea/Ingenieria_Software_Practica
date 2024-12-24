@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QLabel, QLineEdit)
 from PyQt5.QtCore import Qt
 
+
 class ModelDescription:
     """
     Manages the user interface and functionality for a model's description.
@@ -22,7 +23,7 @@ class ModelDescription:
         Input field used to edit the description.
     """
     DEFAULT_TEXT = "Haz clic para añadir una descripción..."
-    
+
     def __init__(self, parent_widget=None):
         """
         Initializes the ModelDescription object.
@@ -48,12 +49,12 @@ class ModelDescription:
         self.display_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.display_label.setMouseTracking(True)
         self.display_label.setCursor(Qt.PointingHandCursor)
-        
-        
+
         # Create the input field for editing the description
         self.input_field = QLineEdit()
         self.input_field.setObjectName("modelInput")
-        self.input_field.setPlaceholderText("Escribe aquí la descripción del modelo...")
+        self.input_field.setPlaceholderText(
+            "Escribe aquí la descripción del modelo...")
         self.input_field.hide()
 
     def setup_events(self):
@@ -74,13 +75,13 @@ class ModelDescription:
         """
         current_text = self.display_label.text()
         self.display_label.hide()
-        
+
         # Set input field text based on the current label content
         if current_text == self.DEFAULT_TEXT:
             self.input_field.setText("")
         else:
             self.input_field.setText(current_text)
-            
+
         self.input_field.show()
         self.input_field.setFocus()
 
@@ -92,15 +93,15 @@ class ModelDescription:
         Otherwise, the description is updated with the input text.
         """
         description = self.input_field.text()
-        
+
         if not description:
-             # Set default placeholder text if the input is empty
+            # Set default placeholder text if the input is empty
             self.display_label.setText(self.DEFAULT_TEXT)
         else:
             # Update the description and label text
             self.description = description
             self.display_label.setText(description)
-        
+
         self.input_field.hide()
         self.display_label.show()
 

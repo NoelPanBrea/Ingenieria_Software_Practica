@@ -1,14 +1,13 @@
 import joblib
 import numpy as np
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, 
-    QHBoxLayout, QApplication, QGroupBox, QScrollArea, QFrame)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QSizePolicy, QPushButton,
+                             QHBoxLayout, QApplication, QGroupBox)
 from models.linear_model import LinearModel
 from models.plot_manager import PlotManager
 from ui.components.groups import CreationGroup, InfoGroup, PredictionGroup, Qt
 from sklearn.metrics import mean_squared_error, r2_score
-from ui.popup_handler import (show_error, show_message, 
-    show_warning, show_suggestion, save_file_dialog)
-
+from ui.popup_handler import (show_error, show_message,
+                              show_warning, show_suggestion, save_file_dialog)
 
 
 class LinearModelTab(QWidget):
@@ -79,7 +78,7 @@ class LinearModelTab(QWidget):
         main_layout = QVBoxLayout()
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(10, 10, 10, 10)
-        
+
         # Group 1: Model creation (only shown if no model is loaded)
         if not self.loaded_model:
 
@@ -89,10 +88,10 @@ class LinearModelTab(QWidget):
 
         # Create horizontal layout for main content
         content_layout = QHBoxLayout()
-        
+
         # Left side container with vertical layout
         left_container = QVBoxLayout()
-        
+
         # Group 2: Model information
         self.model_info_group = InfoGroup()
         self.model_description = self.model_info_group.model_description
@@ -100,7 +99,7 @@ class LinearModelTab(QWidget):
         # Group 3: Prediction and visualization
         # Prediction group
         self.prediction_group = PredictionGroup()
-       
+
         # Prediction button
         self.prediction_group.button.clicked.connect(self.make_prediction)
 
@@ -108,7 +107,7 @@ class LinearModelTab(QWidget):
         left_widget = QWidget()
         left_widget.setLayout(left_container)
         left_widget.setFixedWidth(600)
-        
+
         left_container.addWidget(self.model_info_group)
         left_container.addWidget(self.prediction_group)
 
@@ -122,7 +121,7 @@ class LinearModelTab(QWidget):
         visualization_group = QGroupBox("Visualización")
         visualization_layout = QVBoxLayout()
         visualization_layout.setContentsMargins(10, 10, 10, 10)
-        
+
         # Graph container
         self.graph_container = QWidget()
         self.graph_layout = QVBoxLayout(self.graph_container)
@@ -132,7 +131,8 @@ class LinearModelTab(QWidget):
 
         # Set size policy for visualization group
         visualization_group.setLayout(visualization_layout)
-        visualization_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        visualization_group.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         # Add both sides to content layout
         content_layout.addWidget(left_widget)
@@ -156,7 +156,8 @@ class LinearModelTab(QWidget):
             self.model_info_group.set_label_texts(model_data)
             self.input_columns = model_data["columns"]["input"]
             self.output_column = model_data["columns"]["output"]
-            self.prediction_group.create_prediction_inputs(self.input_columns, self.model is not None)
+            self.prediction_group.create_prediction_inputs(
+                self.input_columns, self.model is not None)
             # Show prediction and save buttons
             self.prediction_group.enable_line_edits()
             self.prediction_group.button.setVisible(True)
@@ -174,13 +175,13 @@ class LinearModelTab(QWidget):
         """Initializes the tab with details from a pre-loaded model."""
         try:
             # Reconstruct the model using its coefficients and intercept
-            self.model = LinearModel(None, 
-                                loaded_model["columns"]["input"],
-                                loaded_model["columns"]["output"])
+            self.model = LinearModel(None,
+                                     loaded_model["columns"]["input"],
+                                     loaded_model["columns"]["output"])
             self.model.coef_ = np.array(loaded_model["coefficients"])
             self.model.intercept_ = float(loaded_model["intercept"])
             self.model.formula = loaded_model["formula"]
-            
+
             # Display the loaded model's details on the UI
             self.setup_model_display({
                 "formula": loaded_model["formula"],
@@ -189,28 +190,29 @@ class LinearModelTab(QWidget):
                 "columns": loaded_model["columns"],
                 "intercept": loaded_model["intercept"],
                 "coefficients": loaded_model["coefficients"]
-                })
-            
-                        # Show a message inside the graph container
+            })
+
+            # Show a message inside the graph container
             message_label = QLabel(
                 "No se puede crear una gráfica a partir de un modelo cargado."
             )
             message_label.setStyleSheet("color: white; font-weight: bold;")
             message_label.setAlignment(Qt.AlignCenter)
-        
+
             # Add the message to the graph container
             self.graph_layout.addWidget(message_label)
 
         except Exception as e:
-            show_error(f"Error al inicializar el modelo cargado: {str(e)}", self)
+            show_error(f"Error al inicializar el modelo cargado: {\
+                       str(e)}", self)
             raise
 
     def initialize_for_new_model(self):
         """
         Prepares the tab for a new model, enabling prediction input fields.
         """
-        self.prediction_group.create_prediction_inputs(self.input_columns, self.model is not None)
-
+        self.prediction_group.create_prediction_inputs(
+            self.input_columns, self.model is not None)
 
     def create_model(self):
         """
@@ -221,9 +223,10 @@ class LinearModelTab(QWidget):
         try:
             # Check for null values in the selected columns
             selected_columns = self.input_columns + [self.output_column]
-            
+
             # Initialize and fit the model
-            self.model = LinearModel(self.data, self.input_columns, self.output_column)
+            self.model = LinearModel(
+                self.data, self.input_columns, self.output_column)
             self.model.fit()
 
             # Display the model's details on the UI
@@ -245,14 +248,17 @@ class LinearModelTab(QWidget):
             # Create a visualization based on the number of input columns
             if len(self.model.input_columns) == 1:
                 self.plot_manager.plot2d(self.model.x, self.model.y,
-                        self.model.y_pred, selected_columns)
+                                         self.model.y_pred, selected_columns)
                 self.plot_manager.draw()
             elif len(self.model.input_columns) == 2:
                 x_array = [x[0] for x in self.model.x]
                 y_array = [x[1] for x in self.model.x]
-                x_grid, y_grid = np.meshgrid(np.linspace(min(x_array), max(x_array), 20), np.linspace(min(y_array), max(y_array), 20))
-                z_grid = self.model.coef_[0] * x_grid + self.model.coef_[1] * y_grid + self.model.intercept_
-                self.plot_manager.plot3d(x_array, y_array, self.model.y, x_grid, y_grid, z_grid, selected_columns)
+                x_grid, y_grid = np.meshgrid(np.linspace(min(x_array), max(
+                    x_array), 20), np.linspace(min(y_array), max(y_array), 20))
+                z_grid = self.model.coef_[
+                    0] * x_grid + self.model.coef_[1] * y_grid + self.model.intercept_
+                self.plot_manager.plot3d(
+                    x_array, y_array, self.model.y, x_grid, y_grid, z_grid, selected_columns)
                 self.plot_manager.draw()
             else:
                 # Show a message inside the graph container
@@ -261,11 +267,12 @@ class LinearModelTab(QWidget):
                 )
                 message_label.setStyleSheet("color: white; font-weight: bold;")
                 message_label.setAlignment(Qt.AlignCenter)
-            
+
                 # Add the message to the graph container
                 self.graph_layout.addWidget(message_label)
 
-            show_message("El modelo de regresión lineal ha sido creado exitosamente.", self)
+            show_message(
+                "El modelo de regresión lineal ha sido creado exitosamente.", self)
 
         except Exception as e:
             show_error(f"Error al crear el modelo lineal: {str(e)}", self)
@@ -296,10 +303,10 @@ class LinearModelTab(QWidget):
                 metrics = self.loaded_model["metrics"]
             else:
                 metrics = {
-                    "r2_score": float(self.model.r2_) if hasattr(self.model, "r2_") 
-                            else r2_score(self.model.y, self.model.y_pred),
-                    "rmse": float(self.model.mse_) if hasattr(self.model, "mse_") 
-                        else mean_squared_error(self.model.y, self.model.y_pred)
+                    "r2_score": float(self.model.r2_) if hasattr(self.model, "r2_")
+                    else r2_score(self.model.y, self.model.y_pred),
+                    "rmse": float(self.model.mse_) if hasattr(self.model, "mse_")
+                    else mean_squared_error(self.model.y, self.model.y_pred)
                 }
 
             # Prepare the model data dictionary
@@ -314,23 +321,23 @@ class LinearModelTab(QWidget):
                     "output": self.output_column
                 }
             }
-        
+
             # Save model dialog
             file_path = save_file_dialog()
             if file_path:
                 joblib.dump(model_data, file_path)
                 show_message("✅ ¡Modelo guardado exitosamente! 😃")
-         
+
         except Exception as e:
             show_error(f"⚠ Error al guardar el modelo: {str(e)} ⚠")
-
 
     def make_prediction(self):
         """
         Method to make predictions with the model.
         """
         if not self.model:
-            show_error("No hay un modelo disponible para realizar predicciones.", self)
+            show_error(
+                "No hay un modelo disponible para realizar predicciones.", self)
             return
 
         # Refresh the UI
@@ -341,9 +348,10 @@ class LinearModelTab(QWidget):
         for label, line_edit in self.prediction_group.input_widgets:
             value = line_edit.text()
             if not value:
-                show_warning("Debe rellenar todas las celdas para realizar predicción.", self)
+                show_warning(
+                    "Debe rellenar todas las celdas para realizar predicción.", self)
                 return None
-                
+
             try:
                 input_values.append(float(value))
             except ValueError:
@@ -355,7 +363,8 @@ class LinearModelTab(QWidget):
             prediction = self.model.predict(input_values)
 
             # Display the prediction result
-            self.prediction_group.label.setText(f"Resultado de la predicción:\n{self.output_column} = {prediction:.4f}")
+            self.prediction_group.label.setText(f"Resultado de la predicción:\n{\
+                                                self.output_column} = {prediction:.4f}")
             self.prediction_group.label.setVisible(True)  # Mostrar el QLabel
 
         except ValueError:

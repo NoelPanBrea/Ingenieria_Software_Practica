@@ -1,16 +1,17 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QSizePolicy
+    QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout
 )
 from typing import List, Optional
 import joblib
 from os.path import splitext
 from data_processing.import_module import DataFrame, load_file
 from ui.popup_handler import (InputDialog, open_file_dialog,
-    open_model_dialog, show_error, show_message, QtCore)
+                              open_model_dialog, show_error, show_message)
 from data_processing.dataset_calc import PreprocessApplier, none_count
 from ui.components.column_selector import ColumnSelector
 from ui.components.data_table import DataTable
 from ui.components.preprocess_toolbar import PreprocessToolbar
+
 
 class DataTab(QWidget):
     """
@@ -42,7 +43,6 @@ class DataTab(QWidget):
 
     """
 
-
     def __init__(self):
         """
         Initializes the DataTab class and sets up the user interface components.
@@ -64,7 +64,7 @@ class DataTab(QWidget):
         # Section for loading files
         self.load_widget = QWidget()
         load_bar = QHBoxLayout(self.load_widget)
-        
+
         # File and model loading buttons
         self.file_button = QPushButton("📂 Abrir Archivo")
         self.file_button.setFixedSize(200, 50)
@@ -75,20 +75,19 @@ class DataTab(QWidget):
         # Data preview table
         self.table = DataTable()
         self.table.setMinimumHeight(500)
-        
 
         # Initialize column selector and preprocessing section
         self.init_selector()
         self.init_preprocess()
-        
+
         # Connect buttons to their respective actions
         self.connect_buttons()
-        
+
         # Add widgets to the loading bar layout
         load_bar.addWidget(self.file_button)
         load_bar.addWidget(self.model_button)
         load_bar.addWidget(self.path_label)
-        
+
         # Add components to the main layout
         layout.addWidget(self.load_widget)
         layout.addWidget(self.table)
@@ -124,7 +123,7 @@ class DataTab(QWidget):
     def connect_buttons(self):
         # Connect file loading button
         self.file_button.clicked.connect(self.load_data)
-        
+
         # Connect preprocessing toolbar buttons
         self.preprocess_toolbar.buttons['delete'].clicked.connect(
             lambda: self.preprocessing_method('delete'))
@@ -143,7 +142,8 @@ class DataTab(QWidget):
 
         # Displays an error if the loaded file"s extension is not ".joblib"
         if splitext(model_path)[1] != ".joblib":
-            show_error("⚠ Error al cargar el modelo: Formato de archivo no válido ⚠", self)
+            show_error(
+                "⚠ Error al cargar el modelo: Formato de archivo no válido ⚠", self)
             return None
 
         try:
@@ -151,30 +151,31 @@ class DataTab(QWidget):
             model_data = joblib.load(model_path)
 
             # Ensure the model has the required keys
-            required_keys = ["formula", "coefficients", "intercept", "metrics", "columns"]
+            required_keys = ["formula", "coefficients",
+                             "intercept", "metrics", "columns"]
             if not all(key in model_data for key in required_keys):
                 show_error("⚠ El archivo no contiene un modelo válido ⚠", self)
                 return None
-            
+
             # Hide table and column selector for clarity
             self.table.clear()
             self.table.setRowCount(0)
             self.table.setColumnCount(0)
-            
+
             self.column_selector.setVisible(False)
             self.preprocess_label.hide()
             self.preprocess_toolbar.hide_buttons()
-            
+
             # Display the loaded file path and confirmation message
             self.path_label.setText(
                 f"📄 Ruta del modelo cargado: {model_path}")
             show_message("✅ ¡Modelo cargado exitosamente! 😃", self)
-            
+
             return model_data
         except Exception as e:
             show_error(f"⚠ Error al cargar el modelo: {str(e)} ⚠", self)
             return None
-    
+
     def load_data(self):
         """
         Loads a data file selected by the user, updating the table and column selector.
@@ -197,7 +198,7 @@ class DataTab(QWidget):
             self.column_selector.populate_columns(self.data)
             self.column_selector.setVisible(True)
             show_message("✅ ¡Archivo cargado exitosamente! 😃", self)
-                
+
         except Exception as e:
             show_error(f"⚠ {str(e)} ⚠", self)
 
@@ -217,9 +218,9 @@ class DataTab(QWidget):
 
         # Highlight the selected column in the table
         if column_index !=\
-            self.column_selector.output_column_selector.currentIndex() or state:
+                self.column_selector.output_column_selector.currentIndex() or state:
             self.table.highlight_column(column_index, state)
-        
+
     def on_output_column_selection_changed(self):
         """
         Highlights a column in the table when it is selected or deselected
@@ -233,7 +234,7 @@ class DataTab(QWidget):
         # Get the current and previously selected output column indices
         current_column_index = self.column_selector.output_column_selector.currentIndex()
         last_column_index = self.column_selector.output_column_selector.last_selected
-        
+
         # Highlight the current output column
         self.table.highlight_column(current_column_index, True)
 
@@ -267,9 +268,10 @@ class DataTab(QWidget):
         self.selected_output_column = output_column
         columns = input_columns + [output_column]
         none_columns = none_count(self.data, columns)
-        self.null_columns = [x for i, x in enumerate(columns) if none_columns[i] >= 1]
+        self.null_columns = [x for i, x in enumerate(
+            columns) if none_columns[i] >= 1]
         self.show_selection_summary(input_columns, output_column)
-        
+
         # Enable preprocessing if there are null values
         if sum(map(int, none_count(self.data, input_columns + [output_column]))) > 0:
             self.enable_preprocessing()
@@ -287,11 +289,10 @@ class DataTab(QWidget):
         """
         try:
             self.preprocess_applier.set_current_method(method)
-            
+
             self.apply_preprocessing()
         except Exception as e:
             show_error(f'⚠ Error al aplicar el preprocesado: {str(e)} ⚠', self)
-        
 
     def show_selection_summary(self, input_columns: List[str], output_column: str):
         """
@@ -350,37 +351,40 @@ class DataTab(QWidget):
         """
         if self.selected_input_columns and self.selected_output_column != None:
             # Combine selected input columns and output column
-            selected_columns = self.selected_input_columns + [self.selected_output_column]
-            
+            selected_columns = self.selected_input_columns + \
+                [self.selected_output_column]
+
             # Filter columns that are selected and contain null values
             null_columns = [
                 column for column in selected_columns
                 if column in self.data.columns and self.data[column].isnull().any()]
-        
+
             unique_columns = []
             for column in null_columns:
                 if column not in unique_columns:
                     unique_columns.append(column)
-          
+
             # Create and display the input dialog for constants
             input_window = InputDialog(
                 unique_columns, "Introduzca las constantes", parent=self)
-            
+
             # Use result() to handle the dialog's return value
             if input_window.exec_() == InputDialog.Accepted:
                 # Convert tuple to list and retrieve the constants entered by the user
                 constants = list(input_window.get_inputs())
-                
+
                 # Set the method with the constants
-                self.preprocess_applier.set_current_method("constant", constants)
-                
+                self.preprocess_applier.set_current_method(
+                    "constant", constants)
+
                 # Apply preprocessing
                 try:
                     self.apply_preprocessing(null_columns)
                 except Exception as e:
-                    show_error(f"⚠ Error al aplicar el preprocesado: {str(e)} ⚠", self)
+                    show_error(f"⚠ Error al aplicar el preprocesado: {\
+                               str(e)} ⚠", self)
 
-    def apply_preprocessing(self, columns = None):
+    def apply_preprocessing(self, columns=None):
         """
         Applies the selected preprocessing method to the loaded data
         and updates the table and column selector.
@@ -398,15 +402,16 @@ class DataTab(QWidget):
         if columns != None:
             selected_columns = columns
         else:
-            selected_columns = self.selected_input_columns + [self.selected_output_column]
-            
+            selected_columns = self.selected_input_columns + \
+                [self.selected_output_column]
+
         try:
             # Apply the preprocessing method to the selected columns
             preprocess_columns = []
             for column in selected_columns:
-                if column  not in preprocess_columns:
+                if column not in preprocess_columns:
                     preprocess_columns.append(column)
-                    
+
             self.preprocess_applier.apply_preprocess(
                 self.data,
                 preprocess_columns)

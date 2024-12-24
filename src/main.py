@@ -2,7 +2,6 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QIcon
 from ui.main_window import MainWindow
-from pathlib import Path
 
     
 if __name__ == "__main__":

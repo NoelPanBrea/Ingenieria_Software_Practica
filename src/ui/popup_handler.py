@@ -15,8 +15,9 @@ class InputDialog(QDialog):
     inputs : list[QLineEdit]
         List of input fields for user entry.
     """
+
     def __init__(self, labels: list[str], title: str = "default title",
-        stylesheet: str = None, parent=None):
+                 stylesheet: str = None, parent=None):
 
         super().__init__(parent, QtCore.Qt.WindowCloseButtonHint)
 
@@ -106,6 +107,7 @@ def show_error(message: str, parent=None):
     error_msg.setWindowTitle("Error")
     error_msg.exec_()
 
+
 def show_suggestion(title: str, text: str, informative_text: str, parent=None):
     msg_box = QMessageBox(parent=parent)
     msg_box.setIcon(QMessageBox.Warning)
@@ -114,13 +116,14 @@ def show_suggestion(title: str, text: str, informative_text: str, parent=None):
     msg_box.setInformativeText(informative_text)
     msg_box.setWindowTitle("Recomendación")
     msg_box.setText("El modelo no tiene una descripción.")
-    msg_box.setInformativeText("Se recomienda añadir una descripción para mejor documentación. ¿Desea continuar sin descripción?")
-    
+    msg_box.setInformativeText(
+        "Se recomienda añadir una descripción para mejor documentación. ¿Desea continuar sin descripción?")
+
     # Create custom button
     msg_box.addButton("Sí", QMessageBox.YesRole)
     no_button = msg_box.addButton("No", QMessageBox.NoRole)
     msg_box.setDefaultButton(no_button)
-    
+
     msg_box.exec_()
     return msg_box.clickedButton() == no_button
 
@@ -154,6 +157,7 @@ def save_file_dialog(parent=None) -> str:
     file_path, _ = QFileDialog.getSaveFileName(parent, "Guardar archivo",
                                                "", res, options=options)
     return file_path
+
 
 def open_model_dialog(parent=None) -> str:
     """

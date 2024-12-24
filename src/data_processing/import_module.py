@@ -28,7 +28,6 @@ def load_file(file_path: str) -> DataFrame:
         else:
             raise ValueError("Formato de archivo no soportado")
 
-
         return data
     # Error managing: File reading error
     except ValueError as e:
@@ -54,7 +53,7 @@ def __import_sql(file_path: str) -> DataFrame:
     -----------
      data: DataFrame
         Data in a DataFrame.
-        
+
     Raises
     -----------
     ValueError: If the database is empty or cannot be loaded
@@ -66,14 +65,14 @@ def __import_sql(file_path: str) -> DataFrame:
         # Obtain the name of the first table
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
         result = cursor.fetchone()
-        
+
         # Check if any tables exist
         if result is None:
             conn.close()
             raise ValueError("La base de datos no contiene ninguna tabla")
-            
+
         table_name = result[0]
-        
+
         # Load the data from the table to the DataFrame
         query = f"SELECT * FROM {table_name}"
         data = read_sql(query, conn)
@@ -128,8 +127,9 @@ def __import_csv(file_path: str) -> DataFrame:
         # Read csv file
         data = read_csv(file_path)
         return data
-    
+
     except ValueError as e:
-        raise ValueError(f"Error al cargar el archivo CSV: Documento CSV vacio")
+        raise ValueError(
+            f"Error al cargar el archivo CSV: Documento CSV vacio")
     except Exception as e:
         raise ValueError(f"Error al cargar el archivo CSV: {e}")

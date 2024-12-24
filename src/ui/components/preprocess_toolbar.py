@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QHBoxLayout
 
+
 class PreprocessToolbar(QWidget):
     """
     Preprocessing toolbar that allows selection of various data preprocessing methods.
@@ -50,8 +51,9 @@ class PreprocessToolbar(QWidget):
             self.buttons[method] = button
             layout.addWidget(button)
 
-            button.clicked.connect(lambda _, method=method: self.handle_button_click(method))
-        
+            button.clicked.connect(
+                lambda _, method=method: self.handle_button_click(method))
+
         self.setLayout(layout)
 
     def handle_button_click(self, method):
@@ -76,7 +78,7 @@ class PreprocessToolbar(QWidget):
         """
         for button in self.buttons.values():
             button.show()
-    
+
     def hide_buttons(self):
         """
         Hides all preprocessing method buttons

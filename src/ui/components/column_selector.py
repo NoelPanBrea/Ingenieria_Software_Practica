@@ -1,12 +1,13 @@
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import (
-    QWidget, QPushButton, QLabel, QListWidget, 
+    QWidget, QPushButton, QLabel, QListWidget,
     QGridLayout, QListWidgetItem
 )
 from ui.components.combo_box import ComboBox
 from PyQt5.QtCore import Qt
 from typing import List
 import pandas as pd
+
 
 class ColumnSelector(QWidget):
     """
@@ -29,7 +30,7 @@ class ColumnSelector(QWidget):
             Dropdown that displays available columns to choose the output column (target).
         confirm_button : QPushButton
             Button to confirm the column selection.
-    
+
     Other Attributes
         input_label : QLabel
             Descriptive label for the input columns list.
@@ -71,7 +72,8 @@ class ColumnSelector(QWidget):
                          alignment=Qt.AlignmentFlag.AlignBottom)
         layout.addWidget(self.input_column_selector, 1, 0,
                          alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.output_column_selector, 1, 1, Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.output_column_selector, 1,
+                         1, Qt.AlignmentFlag.AlignTop)
         layout.addWidget(self.confirm_button, 1, 2, Qt.AlignmentFlag.AlignTop)
 
         self.setLayout(layout)
@@ -93,9 +95,11 @@ class ColumnSelector(QWidget):
         self.data = data
         self.input_column_selector.clear()
         self.output_column_selector.clear()
-        
-        numeric_columns = data.select_dtypes(include=['int64', 'float64']).columns
-        numeric_columns = [col for col in data.columns if col in numeric_columns]
+
+        numeric_columns = data.select_dtypes(
+            include=['int64', 'float64']).columns
+        numeric_columns = [
+            col for col in data.columns if col in numeric_columns]
 
         for column in numeric_columns:
             item = QListWidgetItem(column)
@@ -131,4 +135,3 @@ class ColumnSelector(QWidget):
     def resizeEvent(self, a0: QResizeEvent | None) -> None:
         super().resizeEvent(a0)
         self.input_column_selector.setFixedWidth(self.width() // 2 - 25)
-

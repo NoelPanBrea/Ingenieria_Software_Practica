@@ -7,6 +7,7 @@ class HighlightDelegate(QStyledItemDelegate):
     """
     Controls how cells are displayed in the table, particularly their highlighting.
     """
+
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
         if index.data(Qt.UserRole + 1):  # Check if cell should be highlighted
@@ -17,6 +18,7 @@ class DataTable(QTableWidget):
     """
     _data table with lazy loading for large DataFrames.
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
@@ -94,7 +96,8 @@ class DataTable(QTableWidget):
                 if isinstance(cell_value, float):
                     cell_value = f"{cell_value:.{float_precision}f}"
                 item = QTableWidgetItem(str(cell_value))
-                item.setData(Qt.UserRole + 1, False)  # Initialize unhighlighted
+                # Initialize unhighlighted
+                item.setData(Qt.UserRole + 1, False)
                 self.setItem(i, j, item)
 
         self.loaded_rows = end_row
