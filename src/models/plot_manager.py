@@ -1,5 +1,4 @@
 import numpy as np
-import random as rand
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from matplotlib import style
@@ -52,15 +51,18 @@ class PlotManager():
         """
         Fills the figure with a 2d plot using the data provided.
         """
+        
         axes = self.figure.add_subplot(111)
         axes.set_facecolor("none")
+        # Plot all the data
         axes.scatter(x, y, label="Datos Reales")
+        # Generate a regression line
         axes.plot(x, prediction, color="red", label="Línea de Regresión")
         axes.set_xlabel(labels[0])
         axes.set_ylabel(labels[1])
         axes.legend()
 
-    def plot3d(self, x: list[float | int], y: list[float | int], z: list[float | int], prediction: list[float | int], labels: list[str]):
+    def plot3d(self, x: list[float | int], y: list[float | int], z: list[float | int], x_grid: np.ndarray, y_grid: np.ndarray, z_grid: np.ndarray, labels: list[str]):
         """
         Fills the figure with a 2d plot using the data provided.
         """
@@ -69,17 +71,7 @@ class PlotManager():
         axes.plot(x, y, z, "o", markersize=2,
                   alpha=0.5, label="Datos Reales")
         # Generate a regression plane
-        axes.plot(x, y, prediction)
-
-        xi = np.linspace(min(x), max(x), 100)
-        yi = np.linspace(min(y), max(y), 100)
-        prediction = np.linspace(min(prediction), max(prediction), 100)
-        x = rand.choices(x, k=100)
-        y = rand.choices(y, k=100)
-        xi, yi = np.meshgrid(xi, yi)
-        zi = griddata((x, y), prediction, (xi, yi), method="linear")
-
-        axes.plot_surface(xi, yi, zi, color="red",
+        axes.plot_surface(x_grid, y_grid, z_grid, color="red",
                           alpha=0.5, label="Plano de Regresion")
         axes.set_xlabel(labels[0])
         axes.set_ylabel(labels[1])

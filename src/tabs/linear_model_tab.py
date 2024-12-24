@@ -248,11 +248,11 @@ class LinearModelTab(QWidget):
                         self.model.y_pred, selected_columns)
                 self.plot_manager.draw()
             elif len(self.model.input_columns) == 2:
-                self.plot_manager.plot3d([x[0] for x in self.model.x],
-                                          [x[1] for x in self.model.x],
-                                          self.model.y,
-                                            self.model.y_pred,
-                                            selected_columns)
+                x_array = [x[0] for x in self.model.x]
+                y_array = [x[1] for x in self.model.x]
+                x_grid, y_grid = np.meshgrid(np.linspace(min(x_array), max(x_array), 20), np.linspace(min(y_array), max(y_array), 20))
+                z_grid = self.model.coef_[0] * x_grid + self.model.coef_[1] * y_grid + self.model.intercept_
+                self.plot_manager.plot3d(x_array, y_array, self.model.y, x_grid, y_grid, z_grid, selected_columns)
                 self.plot_manager.draw()
             else:
                 # Show a message inside the graph container
@@ -283,7 +283,13 @@ class LinearModelTab(QWidget):
         # Check if model has description and show recommendation dialog if not
         description = self.model_description.get_description()
         if not description:
-            show_suggestion()
+            title = "Recomendación"
+            text = "El modelo no tiene una descripción."
+            subtext = "Se recomienda añadir una descripción para\
+                                mejor documentación. ¿Desea continuar\
+                                sin descripción?"
+            if show_suggestion(title, text, subtext, self):
+                return
         try:
             # Use existing metrics for loaded models, or compute metrics for new ones
             if hasattr(self, "loaded_model") and self.loaded_model is not None:

@@ -122,8 +122,8 @@ def show_suggestion(title: str, text: str, informative_text: str, parent=None):
     msg_box.setDefaultButton(no_button)
     
     msg_box.exec_()
-    if msg_box.clickedButton() == no_button:
-        return
+    return msg_box.clickedButton() == no_button
+
 
 def open_file_dialog(parent=None) -> str:
     """
