@@ -240,7 +240,7 @@ QLabel#displayLabel {
     color: #3A2F33;
     font-size: 15px;
     padding: 5px;
-    background: #D1D3D71;
+    background: #D1D3D7;
     border: 2px solid #C6007D;
     border-radius: 4px
 }

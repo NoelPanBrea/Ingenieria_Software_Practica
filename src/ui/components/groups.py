@@ -223,7 +223,6 @@ class PredictionGroup(BasicGroup):
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
 
-        self.scroll_area.setMinimumHeight(200)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -232,7 +231,7 @@ class PredictionGroup(BasicGroup):
 
         self.outer_layout.addWidget(self.scroll_area)
         self.outer_layout.addWidget(self._label)
-        self.outer_layout.setSpacing(30)
+        self.outer_layout.setSpacing(10)
         self.outer_layout.addWidget(self._button, Qt.AlignBottom)
         self.setLayout(self.outer_layout)
 
@@ -293,4 +292,4 @@ class PredictionGroup(BasicGroup):
                 label.setVisible(modelmade)
 
             # Add spacing at the end of the inputs
-            self.outer_layout.addStretch()
+            self._layout.addStretch()
